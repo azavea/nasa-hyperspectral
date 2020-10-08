@@ -1,0 +1,10 @@
+version: '2.4'
+services:
+  aviris:
+    build: ./aviris
+    image: nasa-hyperspectral-catalogs-aviris
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-nasa-hsi}
+    volumes:
+      - ./aviris/data:/opt/aviris/data
+      - $HOME/.aws:/root/.aws:ro
