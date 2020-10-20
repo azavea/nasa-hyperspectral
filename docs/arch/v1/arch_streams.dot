@@ -1,0 +1,24 @@
+digraph G {
+    # nodesep = 1
+    # ranksep = 0.5
+
+    stac_api
+
+    stream -> activator
+
+    stream -> processor
+
+    stream -> model_application
+
+    activator -> stac_api [style = dashed, dir = both]
+
+    processor -> stac_api [style = dashed, dir = both]
+
+    model_application -> stac_api [style = dashed, dir = both]
+
+    stac_api [shape = box3d, label = "STAC API"]
+    stream [shape = cds, label = "Stream", width = 2]
+    activator [shape = box3d, label = "Activator"]
+    processor [shape = box3d, label = "Processor"]
+    model_application [shape = box3d, label = "Model Application"]
+}
