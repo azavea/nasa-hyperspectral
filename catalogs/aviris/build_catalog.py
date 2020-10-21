@@ -62,7 +62,7 @@ def set_collection_bounds(collection):
         dates.append(i.datetime)
     if len(geoms) > 0:
         bounds = GeometryCollection(geoms).bounds
-        collection.extent.spatial = pystac.SpatialExtent(bounds)
+        collection.extent.spatial = pystac.SpatialExtent([bounds])
     if len(dates) > 0:
         collection.extent.temporal = pystac.TemporalExtent([(min(dates), max(dates))])
 
