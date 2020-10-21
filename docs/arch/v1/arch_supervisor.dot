@@ -41,7 +41,7 @@ digraph G {
     activation_msg [shape = note, label = "Activation message"]
     stream_activator [shape = cds, label = "Activator stream", width = 2]
     activator [shape = box3d, label = "Activator"]
-    preprocessed_input [shape = folder, label = "Preprocessed input"]
+    preprocessed_input [shape = folder, label = "Preprocessed output"]
     product_msg [shape = note, label = "Product message"]
     stream_products [shape = cds, label = "Products stream", width = 2]
     processor [shape = box3d, label = "Processor"]
