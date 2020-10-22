@@ -10,7 +10,6 @@ ENV PATH /opt/conda/envs/env/bin:$PATH
 
 WORKDIR /opt/aviris
 
-COPY ./stac_s3_io.py stac_s3_io.py
 COPY ./build_catalog.py build_catalog.py
 COPY ./aviris-flight-lines.csv aviris-flight-lines.csv
 

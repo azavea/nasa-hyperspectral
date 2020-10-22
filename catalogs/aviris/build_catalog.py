@@ -9,10 +9,6 @@ import fastkml
 import pystac
 from shapely.geometry import GeometryCollection, box, mapping, shape
 
-from stac_s3_io import register_s3_io
-
-register_s3_io()
-
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -89,22 +85,11 @@ def set_catalog_bounds(catalog):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "output_path",
-        help="Path to write catalog to. Supports local file or S3 uris.",
-    )
-    parser.add_argument(
-        "-t",
-        "--catalog-type",
-        type=str,
-        choices=(
-            pystac.CatalogType.ABSOLUTE_PUBLISHED,
-            pystac.CatalogType.RELATIVE_PUBLISHED,
-            pystac.CatalogType.SELF_CONTAINED,
-        ),
-        default=pystac.CatalogType.SELF_CONTAINED,
+        "--output-path",
+        default="./data/catalog",
+        help="Local file path to write catalog to",
     )
     args = parser.parse_args()
-    print(args)
 
     # First we have to monkeypatch a fastkml date method. It crashes on parsing invalid dates
     # that are present in the AVIRIS KML files. We only want the polygon so it's fine to just
@@ -248,7 +233,7 @@ def main():
             flight_collection.add_item(item)
 
     set_catalog_bounds(catalog)
-    catalog.normalize_and_save(args.output_path, catalog_type=args.catalog_type)
+    catalog.normalize_and_save(args.output_path, catalog_type=pystac.CatalogType.SELF_CONTAINED)
 
 
 if __name__ == "__main__":
