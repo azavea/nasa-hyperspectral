@@ -10,6 +10,4 @@ This folder contains a series of scripts used to generate STAC Catalogs for this
 
 ## Generating Catalogs
 
-Build containers with `docker-compose build`.
-
-Run `docker-compose run --rm <catalog_folder>` in this directory, using the catalog folder name according to the table above.
+Build all containers with `docker-compose build`. See each catalog's README for details.

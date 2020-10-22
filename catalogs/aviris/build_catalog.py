@@ -1,15 +1,17 @@
+import argparse
 import csv
 from datetime import datetime, timedelta, timezone
 import logging
-import os
 import sys
 from xml.dom import minidom
 
 import fastkml
 import pystac
-import requests
-from shapely import wkt
 from shapely.geometry import GeometryCollection, box, mapping, shape
+
+from stac_s3_io import register_s3_io
+
+register_s3_io()
 
 
 logger = logging.getLogger(__name__)
@@ -43,10 +45,20 @@ def default_flight_extent(flight_dt):
 
 def kml_poly_to_geom(kml_poly):
     # Not all KML polygons are correct (missing LinearRing tag); grab coords directly
-    kmldom = minidom.parseString('<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark>'+kml_poly+'</Placemark></Document></kml>')
-    coords = kmldom.getElementsByTagName('outerBoundaryIs')[0].getElementsByTagName('coordinates')[0]
+    kmldom = minidom.parseString(
+        '<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark>'
+        + kml_poly
+        + "</Placemark></Document></kml>"
+    )
+    coords = kmldom.getElementsByTagName("outerBoundaryIs")[0].getElementsByTagName(
+        "coordinates"
+    )[0]
     kml = fastkml.KML()
-    kml.from_string('<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><Polygon><outerBoundaryIs><LinearRing>'+coords.toxml()+'</LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>')
+    kml.from_string(
+        '<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><Polygon><outerBoundaryIs><LinearRing>'
+        + coords.toxml()
+        + "</LinearRing></outerBoundaryIs></Polygon></Placemark></Document></kml>"
+    )
     return next(next(kml.features()).features()).geometry
 
 
@@ -75,6 +87,25 @@ def set_catalog_bounds(catalog):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "output_path",
+        help="Path to write catalog to. Supports local file or S3 uris.",
+    )
+    parser.add_argument(
+        "-t",
+        "--catalog-type",
+        type=str,
+        choices=(
+            pystac.CatalogType.ABSOLUTE_PUBLISHED,
+            pystac.CatalogType.RELATIVE_PUBLISHED,
+            pystac.CatalogType.SELF_CONTAINED,
+        ),
+        default=pystac.CatalogType.SELF_CONTAINED,
+    )
+    args = parser.parse_args()
+    print(args)
+
     # First we have to monkeypatch a fastkml date method. It crashes on parsing invalid dates
     # that are present in the AVIRIS KML files. We only want the polygon so it's fine to just
     # not parse dates.
@@ -89,10 +120,12 @@ def main():
         reader = csv.DictReader(fp)
         for row in reader:
             year = int(row["Year"])
-            collection = catalog.get_child(year)
+            collection = catalog.get_child(str(year))
             if collection is None:
                 collection = pystac.Collection(
-                    year, "{} AVIRIS Missions".format(year), default_year_extent(year)
+                    str(year),
+                    "{} AVIRIS Missions".format(year),
+                    default_year_extent(year),
                 )
                 catalog.add_child(collection)
                 logger.info("Created new Collection({})".format(collection.id))
@@ -105,10 +138,11 @@ def main():
                 int(year), int(row["Month"]), int(row["Day"]), tzinfo=timezone.utc,
             ) + timedelta(hours=hour, minutes=minute)
 
-            flight_collection = collection.get_child(row["Flight"])
+            flight_id = str(row["Flight"])
+            flight_collection = collection.get_child(flight_id)
             if flight_collection is None:
                 flight_collection = pystac.Collection(
-                    row["Flight"],
+                    flight_id,
                     "Flight Number {}".format(row["Flight"]),
                     default_flight_extent(flight_dt),
                 )
@@ -214,9 +248,7 @@ def main():
             flight_collection.add_item(item)
 
     set_catalog_bounds(catalog)
-    catalog.normalize_and_save(
-        "./data/catalog", catalog_type=pystac.CatalogType.SELF_CONTAINED
-    )
+    catalog.normalize_and_save(args.output_path, catalog_type=args.catalog_type)
 
 
 if __name__ == "__main__":

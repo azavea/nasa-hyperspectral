@@ -1,6 +1,6 @@
-FROM continuumio/miniconda3
+FROM continuumio/miniconda3:4.8.2
 
-RUN conda create -n env python=3.7
+RUN conda create -n env python=3.8
 COPY ./requirements-conda.txt /tmp/requirements-conda.txt
 RUN conda install -n env --yes --channel conda-forge \
   --file /tmp/requirements-conda.txt
@@ -10,6 +10,7 @@ ENV PATH /opt/conda/envs/env/bin:$PATH
 
 WORKDIR /opt/aviris
 
+COPY ./stac_s3_io.py stac_s3_io.py
 COPY ./build_catalog.py build_catalog.py
 COPY ./aviris-flight-lines.csv aviris-flight-lines.csv
 
