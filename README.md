@@ -1,2 +1,9 @@
-# nasa-hsi
-NASA SBIR - Hyperspectral Imagery Processing
+# NASA SBIR - Hyperspectral Imagery Processing
+
+An event-driven image processing pipeline for developing our foundational capability to work with HSI data sources.
+
+## Scripts
+
+| Name    | Description                                                 |
+|---------|-------------------------------------------------------------|
+| `infra` | Execute Terraform subcommands with remote state management. |
