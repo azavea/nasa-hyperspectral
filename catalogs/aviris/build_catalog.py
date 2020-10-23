@@ -2,6 +2,7 @@ import argparse
 import csv
 from datetime import datetime, timedelta, timezone
 import logging
+from pathlib import Path
 import sys
 from xml.dom import minidom
 
@@ -25,7 +26,15 @@ def default_year_extent(year):
             [
                 (
                     datetime(int(year), 1, 1, 0, 0, 0, tzinfo=timezone.utc),
-                    datetime(int(year), 12, 31, 23, 59, 59, tzinfo=timezone.utc,),
+                    datetime(
+                        int(year),
+                        12,
+                        31,
+                        23,
+                        59,
+                        59,
+                        tzinfo=timezone.utc,
+                    ),
                 )
             ]
         ),
@@ -101,7 +110,8 @@ def main():
 
     catalog = pystac.Catalog("aviris", AVIRIS_DESCRIPTION)
 
-    with open("aviris-flight-lines.csv") as fp:
+    aviris_csv = Path(Path(__file__).parent.absolute(), "aviris-flight-lines.csv")
+    with open(aviris_csv) as fp:
         reader = csv.DictReader(fp)
         for row in reader:
             # Filter rows with invalid data
@@ -127,9 +137,15 @@ def main():
             # Use timedelta for hh:mm because some values are out of range, e.g. minutes=60
             hour = max(int(row.get("UTC Hour", 0)), 0)
             minute = max(int(row.get("UTC Minute", 0)), 0)
-            flight_dt = datetime(
-                int(year), int(row["Month"]), int(row["Day"]), tzinfo=timezone.utc,
-            ) + timedelta(hours=hour, minutes=minute)
+            flight_dt = (
+                datetime(
+                    int(year),
+                    int(row["Month"]),
+                    int(row["Day"]),
+                    tzinfo=timezone.utc,
+                )
+                + timedelta(hours=hour, minutes=minute)
+            )
 
             flight_collection_id = "aviris_{}_{}".format(year, row["Flight"])
             flight_collection = collection.get_child(flight_collection_id)

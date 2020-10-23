@@ -1,0 +1,4 @@
+awscli
+ipython
+black
+flake8

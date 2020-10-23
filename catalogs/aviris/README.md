@@ -4,14 +4,23 @@ STAC Catalog generated from the AVIRIS sensor flight lines in `aviris-flight-lin
 
 CSV file downloaded on 2020-10-08 from https://docs.google.com/spreadsheets/d/16geeqURwEyuLljM4lX4b2queRWAcvJmAOQklCFEeUhA/edit#gid=1335809227 available at https://aviris.jpl.nasa.gov/dataportal/.
 
-Write the catalog with:
+## Writing the Catalog
+
+Enter dev container shell and cd to this dir:
+```shell
+./scripts/console
+cd catalogs/aviris
+```
+
+Generate the catalog:
 
 ```shell
-docker-compose run --rm aviris
+python build_catalog.py
 ```
 
 Once the catalog is written, upload with:
 
 ```shell
-aws s3 cp --recursive --quiet ./data/catalog/ s3://aviris-data/stac-catalog/
+# Still in dev container console in dir catalogs/aviris
+aws s3 cp --recursive --quiet data/catalog/ s3://aviris-data/stac-catalog
 ```
