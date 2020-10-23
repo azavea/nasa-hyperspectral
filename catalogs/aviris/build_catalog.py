@@ -104,11 +104,19 @@ def main():
     with open("aviris-flight-lines.csv") as fp:
         reader = csv.DictReader(fp)
         for row in reader:
+            # Filter rows with invalid data
+            if not (
+                int(row["Gzip File Size (Bytes)"]) > 0
+                and int(row["Number of Samples"]) > 0
+            ):
+                continue
+
             year = int(row["Year"])
-            collection = catalog.get_child(str(year))
+            year_collection_id = "aviris_{}".format(year)
+            collection = catalog.get_child(year_collection_id)
             if collection is None:
                 collection = pystac.Collection(
-                    str(year),
+                    year_collection_id,
                     "{} AVIRIS Missions".format(year),
                     default_year_extent(year),
                 )
@@ -123,16 +131,27 @@ def main():
                 int(year), int(row["Month"]), int(row["Day"]), tzinfo=timezone.utc,
             ) + timedelta(hours=hour, minutes=minute)
 
-            flight_id = str(row["Flight"])
-            flight_collection = collection.get_child(flight_id)
+            flight_collection_id = "aviris_{}_{}".format(year, row["Flight"])
+            flight_collection = collection.get_child(flight_collection_id)
             if flight_collection is None:
                 flight_collection = pystac.Collection(
-                    flight_id,
+                    flight_collection_id,
                     "Flight Number {}".format(row["Flight"]),
                     default_flight_extent(flight_dt),
                 )
                 collection.add_child(flight_collection)
                 logger.info("\tCreated new Collection({})".format(flight_collection.id))
+
+            item_id = "aviris_{}".format(row["Flight Scene"])
+            # There are duplicate rows where the older info is exactly the same except
+            # for link_log, and the later row has the correct url.
+            if flight_collection.get_item(item_id) is not None:
+                logger.warning(
+                    "\t\tSuperseding duplicate Item {} with newer info...".format(
+                        item_id
+                    )
+                )
+                flight_collection.remove_item(item_id)
 
             lons = [float(row["Lon{}".format(n)]) for n in range(1, 5)]
             lats = [float(row["Lat{}".format(n)]) for n in range(1, 5)]
@@ -172,9 +191,7 @@ def main():
                 )
             }
 
-            item = pystac.Item(
-                row["Name"], mapping(geometry), bbox, flight_dt, properties
-            )
+            item = pystac.Item(item_id, mapping(geometry), bbox, flight_dt, properties)
             item.add_asset(
                 "ftp",
                 pystac.Asset(
@@ -233,7 +250,9 @@ def main():
             flight_collection.add_item(item)
 
     set_catalog_bounds(catalog)
-    catalog.normalize_and_save(args.output_path, catalog_type=pystac.CatalogType.SELF_CONTAINED)
+    catalog.normalize_and_save(
+        args.output_path, catalog_type=pystac.CatalogType.SELF_CONTAINED
+    )
 
 
 if __name__ == "__main__":
