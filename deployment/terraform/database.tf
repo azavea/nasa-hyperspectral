@@ -16,16 +16,6 @@ resource "aws_db_parameter_group" "default" {
   family      = var.rds_parameter_group_family
 
   parameter {
-    name  = "seq_page_cost"
-    value = var.rds_seq_page_cost
-  }
-
-  parameter {
-    name  = "random_page_cost"
-    value = var.rds_random_page_cost
-  }
-
-  parameter {
     name  = "log_min_duration_statement"
     value = var.rds_log_min_duration_statement
   }
