@@ -1,0 +1,4 @@
+boto3==1.16.1
+fastkml==0.11
+pystac==0.5.2
+shapely==1.7.1
