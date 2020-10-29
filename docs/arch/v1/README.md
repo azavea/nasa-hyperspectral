@@ -1,8 +1,10 @@
 ## Arch Draft v1
 
+_The goal of this document is not to propose an architecture, but to describe an assumption that we can follow towards bulding it. In the end of this document you can find a bit premature diagram that we can try to achieve. It may be the case that it is not viable._
+
 ### Context
 
-The goal of this projec is to _develop hyperspectral imagery processing pipeline_ with the following requirements (Part 4. Phase II Work Plan, Develop Imagery Processing Pipeline):
+The goal of this project is to _develop hyperspectral imagery processing pipeline_ with the following requirements (Part 4. Phase II Work Plan, Develop Imagery Processing Pipeline):
 * Develop Workflow Configuration (declarative workflow configuration)
 * Develop New Scene Analysis (processing of new hyperspectral imagery as it becomes available in response to an external event)
 * Develop On-Demand Analysis (on demand analysis of a desired type, analysis here is oil spill detetion, tree mortality)
@@ -37,13 +39,39 @@ We had a Farmers Edge contract where they experienced issues with maintaining th
 
 #### Options
 
-1. To follow the known path, and to build a system similar to FFDA. That would require non trivial, but exsiting instruments interaction and it would be another FFDA like project with its benefits and issues. However, it can be challenging to satisfy assumptions 4, 5, 6.
+1. To follow the known path, and to build a system similar to FFDA (not in terms of the raster vision usage but in terms of using known stack of technologies). That would require non trivial, but exsiting instruments interaction and it would be another but similar to existing projects with its benefits and issues. However, it can be challenging to satisfy assumptions 4, 5, 6.
 
 2. To build an event driven processing pipeline which does not exsit yet. All the usecases above can be generalized and consolidated. The general idea is to build a composable and simple at the same time system that would consist of independent (or weakly dependent) modules. Modules itself can be written in any languages and communication between modules can be provided only through the messages stream. Each module can only process the input message if possible and in this model there is no "branching". Each module listens to its own topic and processes or tries to process all messages.
 
-The second option is described in the sections below.
+The second option is described in more details in the sections below.
+
+### Decision and evaluation criteria
+
+* There should be mechanisms to introspect and debug failures within the pipeline
+* The messages exchange between the execution steps should be robust enough
+
+### Next steps
+
+The next step would be to map the architecture assumption to the exsiting set of tools and to prevent us from unnecessary wheel reinvention within the given set of constraints.
+
+* **Mock up the architecture and the pipeline execution**
+  * AWS Step functions, airflow, nextflow
+  * AWS Batch or K8S
+* **Stream selection (if necessary)**
+  * Kafka, SQS, Pulsar
+* **MVP**
+  * Build some working prototype with activator and processor
+  * The goal is to look at how viable the proposed architure would be, what are the issues
+  * Determine how modules can interact or should they interact with each other
+* **Consumers abstraction**
+  * In the proposed architecture it is not clea how the processor should be implemented
+  * It is possible to implement a generic consumer that would be responsible for the application
+
+
 
 ### The general view, streams, modules, metadata
+
+Even though this diagram may seem to align more with option 2, it doesn't necessarily mean that.
 
 <img width="400" alt="Arch Streams" src="img/arch_streams.dot.png">
 
@@ -85,20 +113,3 @@ Processor is a module that is responsible for the actual product generation. Pro
 <img width="800" alt="Arch No Supervisor" src="img/arch_supervisor.dot.png">
 
 The reasonable question is should there be some supervisor that schedules the input user messages and sends messages into an appropriate queue. Supervisor is intentionally moved out of this diagram and it is probably on the application level and not a first citizen of this streaming application itself.
-
-### Next steps
-
-The next step would be to map the described high level diagram to the exsiting set of tools.
-
-* Architecture and execution, what tools should be used to describe the diagram and to execute it
-  * AWS Step function, airflow, nextflow
-  * AWS Batch or K8S
-* Stream selection
-  * Kafka, SQS, Pulsar
-* MVP
-  * Build some working prototype with activator and processor
-  * The goal is to look at how viable the proposed architure would be, what are the issues
-  * Determine how modules can interact or should they interact with each other
-* Consumers abstraction
-  * In the proposed architecture it is not clea how the processor should be implemented
-  * It is possible to implement a generic consumer that would be responsible for the application
