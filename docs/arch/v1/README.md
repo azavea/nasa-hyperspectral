@@ -1,21 +1,8 @@
 ## Arch Draft v1
 
-This document is not attached to any existing technologies.
-
 ### Context
 
-For a while there has been a need in a raster processing pipeline. Originally, GeoTrellis (v1.0.0+) was mostly designed 
-towards batch processing and towards large jobs on scale. Scaling was achieved via Spark and its inbuilt functionality to distribute 
-data and tasks across the allocated cluster. However, it turned out that such usecase is not that popular and it is a very often that clients
-may not have such cluster capacities or don't need to process such data amount at the same time. A more usual pipeline, that almost all raster companies (i.e. Planet) have, is an on demand preprocessing and / or processing.
-
-[Back in 2016](https://github.com/locationtech/geotrellis/pull/1936) we have already tried to refactor the GeoTrellis ingest process and make it more iterative, since there was a client interset in ingesting large datasets by portions. That was a not succesfull experience though (in terms of the API).
-
-We had a Farmers Edge contract where the task was to implement a consumer that would process rasters basing on the input messages on demand, and deliver results into STAC and AzureFS. That was a succesfull integration into their system that processes now 9000 Orthotiles a day and were over 800k products per hour created (products here is a cropped / resampled input + cloud removal (ML) + the actual peoduct computation (i.e. NDVI, PCA)).
-
-The current FFDA project also represents an on demand processing flow where the processing (imagery download + predictions) happens basing on the input task grid. With the help of the Raster Vision Command it is possible to schedule and lunch such jobs on AWS Batch.
-
-This project also requires to _develop imagery processing pipeline_ with the following requirements (Part 4. Phase II Work Plan, Develop Imagery Processing Pipeline):
+The goal of this projec is to _develop hyperspectral imagery processing pipeline_ with the following requirements (Part 4. Phase II Work Plan, Develop Imagery Processing Pipeline):
 * Develop Workflow Configuration (declarative workflow configuration)
 * Develop New Scene Analysis (processing of new hyperspectral imagery as it becomes available in response to an external event)
 * Develop On-Demand Analysis (on demand analysis of a desired type, analysis here is oil spill detetion, tree mortality)
@@ -24,18 +11,33 @@ This project also requires to _develop imagery processing pipeline_ with the fol
 
 #### Assumptions
 
-* Input sources can vary (the system should not be tight to a single source)
-* Products can vary (oil spill, tree mortality) and can use different sources
-* Both preprocessing of input and processing should be scalable on demand
-* AVIRIS Source is the only available dataset at this point
-* There are no requirements on the throughput
-* Target both constant messages stream and non constant messages stream
+1. Input sources can vary (the system should not be tight to a single source)
+2. Products can vary (oil spill, tree mortality) and can use different sources
+3. Modules should be scalable on demand
+4. Target both constant messages stream and non constant messages stream
+5. Flexible ad-hoc modules invocation that doesn't neccesarily mean scheduling (i.e. it should be possible to re-use individual modules)
+6. Developer receives feedback that new job types have started successfully within a few minutes
+
+##### Modules and sources assumptions
+
 * At least preprocessing (activation) and processing modules should exist
-* Ad-hoc modules invocation that doesn't neccesarily mean scheduling
+* AVIRIS Source is the only available dataset at this point
+
+#### More Context
+
+Originally, GeoTrellis (v1.0.0+) was mostly designed 
+towards batch processing and towards large jobs on scale. Scaling was achieved via Spark and its inbuilt functionality to distribute 
+data and tasks across the allocated cluster. Unfortunately, such approach required maintaining an allocated cluster or rising an on demand cluster to process the entire (large) dataset as a single batch. It turned out, that a more regular usecase for companies (Planet, Sentinel Hub) is an on demand preprocessing and processing.
+
+[Back in 2016](https://github.com/locationtech/geotrellis/pull/1936) we have already tried to refactor the GeoTrellis ingest process and make it more iterative, since there was a client interset in ingesting large datasets by portions. That was a not succesfull experience though.
+
+The current FFDA project also represents an on demand processing flow where the processing (imagery download + predictions) happens basing on the input task grid. With the help of the Raster Vision Command it is possible to schedule and lunch such jobs on AWS Batch. It addresses Spark issues related to on demand processing and made it easier to maintain, however it adds some extra complexities to deploy, submit and lunch of such jobs.
+
+We had a Farmers Edge contract where they experienced issues with maintaining the (AWS) Batch like environment, experiencing issues with throughput, and difficulties during the new features development and deployment (development requires a quick enough feedback from the jobs, which is not possible with Batch). The task was to implement a Spark streaming consumer that would process rasters basing on the input messages on demand, and deliver results into STAC and AzureFS. That was _a succesfull_ integration into their system that processes now 9000 Orthotiles a day and were over 800k products per hour created (products here is a cropped / resampled input + cloud removal (ML) + the actual peoduct computation (i.e. NDVI, PCA)).
 
 #### Options
 
-1. To follow the known path, and to build a system similar to one build in terms of FFDA. That would require non trivial, but exsiting instruments interaction and it would be another FFDA project with its benefits and issues.
+1. To follow the known path, and to build a system similar to FFDA. That would require non trivial, but exsiting instruments interaction and it would be another FFDA like project with its benefits and issues. However, it can be challenging to satisfy assumptions 4, 5, 6.
 
 2. To build an event driven processing pipeline which does not exsit yet. All the usecases above can be generalized and consolidated. The general idea is to build a composable and simple at the same time system that would consist of independent (or weakly dependent) modules. Modules itself can be written in any languages and communication between modules can be provided only through the messages stream. Each module can only process the input message if possible and in this model there is no "branching". Each module listens to its own topic and processes or tries to process all messages.
 
