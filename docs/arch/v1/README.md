@@ -11,21 +11,28 @@ The goal of this project is to _develop hyperspectral imagery processing pipelin
 * Develop Publish Workflow (catalog with results)
 * Record Data Provenance Metadata (record provenance metadata in the STAC items)
 
-#### Assumptions
+The intent is to have a reference architecture that is adaptable for new usecases involving imagery processing.
 
-1. Input sources can vary (the system should not be tight to a single source)
+### Evaluation criteria / non-functional requirements
+
+1. Input sources can vary
+    - We should be able to work not only with a single source of data
 2. Products can vary (oil spill, tree mortality) and can use different sources
-3. Modules should be scalable on demand
-4. Target both constant messages stream and non constant messages stream
-5. Flexible ad-hoc modules invocation that doesn't neccesarily mean scheduling (i.e. it should be possible to re-use individual modules)
-6. Developer receives feedback that new job types have started successfully within a few minutes
+    - We should not be attached to any single selected use case (no matter what it is), it is important to build up the system a way that it is not attached to single product
+3. Processing of large volumes of data
+    - Should be able to work with relatively large inputs (each AVIRIS input is more than of 8Gb size)
+4. Scalability
+    - We don't expect that system would be in a constat use and the static cost (cost of a system that does not function) should be minimized
+5. Flexible async ad-hoc componentes invocation that doesn't neccesarily mean scheduling (i.e. it should be possible to re-use individual components), compontents independence
+    - Components independnce reduces complexity of development and should allow to recombine components in somewhat order that increases the reusability of the system
+6. There should be mechanisms to introspect and debug failures within the pipeline
+    - In addition to low start times, there should be a set of tools to start investigating possible issues
+7. Low startup times
+    - Should be easy enough to start diagnosing the issue and to have a simple development cycle
+8. Heterogeneous execution environment
+    - Implementation of components is not limited to a single language
 
-##### Modules and sources assumptions
-
-* At least preprocessing (activation) and processing modules should exist
-* AVIRIS Source is the only available dataset at this point
-
-#### More Context
+#### Background
 
 Originally, GeoTrellis (v1.0.0+) was mostly designed 
 towards batch processing and towards large jobs on scale. Scaling was achieved via Spark and its inbuilt functionality to distribute 
@@ -33,69 +40,42 @@ data and tasks across the allocated cluster. Unfortunately, such approach requir
 
 [Back in 2016](https://github.com/locationtech/geotrellis/pull/1936) we have already tried to refactor the GeoTrellis ingest process and make it more iterative, since there was a client interset in ingesting large datasets by portions. That was a not succesfull experience though.
 
-The current FFDA project also represents an on demand processing flow where the processing (imagery download + predictions) happens basing on the input task grid. With the help of the Raster Vision Command it is possible to schedule and lunch such jobs on AWS Batch. It addresses Spark issues related to on demand processing and made it easier to maintain, however it adds some extra complexities to deploy, submit and lunch of such jobs.
+The current FFDA project also represents an on demand processing flow where the processing (imagery download + predictions) happens basing on the input task grid. With the help of the Raster Vision Command it is possible to schedule and lunch such jobs on AWS Batch. It addresses Spark issues related to on demand processing and made it easier to maintain, however it adds some extra complexities to deploy, lunch and debugging of such jobs - the project usually had long startup times and it only complicated debugging.
 
-We had a Farmers Edge contract where they experienced issues with maintaining the (AWS) Batch like environment, experiencing issues with throughput, and difficulties during the new features development and deployment (development requires a quick enough feedback from the jobs, which is not possible with Batch). The task was to implement a Spark streaming consumer that would process rasters basing on the input messages on demand, and deliver results into STAC and AzureFS. That was _a succesfull_ integration into their system that processes now 9000 Orthotiles a day and were over 800k products per hour created (products here is a cropped / resampled input + cloud removal (ML) + the actual peoduct computation (i.e. NDVI, PCA)).
+We had a Farmers Edge contract where they experienced issues with maintaining the (AWS) Batch like environment, experiencing issues with throughput, and difficulties during the new features development and deployment (development requires a quick enough feedback from the jobs, which is not possible with Batch). The task was to implement a Spark streaming consumer that would process rasters basing on the input messages on demand, and deliver results into STAC and AzureFS. That was _a succesfull_ integration into their system that processes now 9000 Orthotiles a day and were over 800k products per hour created (products here is a cropped / resampled input + cloud removal (ML) + the actual peoduct computation (i.e. NDVI, PCA)). However, this architecture had issues with scalability and required to have a constantly launched cluster. It is unknown would this case fit our needs or not.
 
-#### Options
+### Usecase diagrams
 
-1. To follow the known path, and to build a system similar to FFDA (not in terms of the raster vision usage but in terms of using known stack of technologies). That would require non trivial, but exsiting instruments interaction and it would be another but similar to existing projects with its benefits and issues. However, it can be challenging to satisfy assumptions 4, 5, 6.
-
-2. To build an event driven processing pipeline which does not exsit yet. All the usecases above can be generalized and consolidated. The general idea is to build a composable and simple at the same time system that would consist of independent (or weakly dependent) modules. Modules itself can be written in any languages and communication between modules can be provided only through the messages stream. Each module can only process the input message if possible and in this model there is no "branching". Each module listens to its own topic and processes or tries to process all messages.
-
-The second option is described in more details in the sections below.
-
-### Decision and evaluation criteria
-
-* There should be mechanisms to introspect and debug failures within the pipeline
-* The messages exchange between the execution steps should be robust enough
-
-### Next steps
-
-The next step would be to map the architecture assumption to the exsiting set of tools and to prevent us from unnecessary wheel reinvention within the given set of constraints.
-
-* **Mock up the architecture and the pipeline execution**
-  * AWS Step functions, airflow, nextflow
-  * AWS Batch or K8S
-* **Stream selection (if necessary)**
-  * Kafka, SQS, Pulsar
-* **MVP**
-  * Build some working prototype with activator and processor
-  * The goal is to look at how viable the proposed architure would be, what are the issues
-  * Determine how modules can interact or should they interact with each other
-* **Consumers abstraction**
-  * In the proposed architecture it is not clea how the processor should be implemented
-  * It is possible to implement a generic consumer that would be responsible for the application
-
-
-
-### The general view, streams, modules, metadata
-
-Even though this diagram may seem to align more with option 2, it doesn't necessarily mean that.
+Given the background above it is possible to describe a general usecase that would cover it.
 
 <img width="400" alt="Arch Streams" src="img/arch_streams.dot.png">
 
 #### Legend
+
 * STAC API: rest service that implements stac api spec (in this case it would be Franklin).
 * Module: messages consumer
-* Stream: a stream of messages that modules would consume (in other words modules are stream consumers)
+* Stream: a "stream" of messages that modules would consume (in other words modules are stream consumers); it can be not a "stream", but some service that produces messages
 * Activator: module that preprocesses data
 * Processor: module that produces _products_ (i.e. oil spill, tree mortality) from the preprocessed data
 
-### A more detailed view, a flow diagram
+### A flow diagram
 
 <img width="600" alt="Arch No Supervisor" src="img/arch_no_supervisor.dot.png">
 
+#### STAC API
+
+During the pipeline execution there would be a need to store input and output metadata. At this point, it is already a selected option and is one of the proposal requirements. Franklin implements STAC API Spec that fully covers our usecase.
+
 #### Activator
 
-Activator is a module that is responsible for preprocessing of the input raw (i.e. AVRIS) files.
+Activator is a module that is responsible for preprocessing of the input raw (i.e. AVRIS, Planet) files. AVRIS is stored on FTP encoded into archives and definitely of these purposes there is a need in a preprocessing step.
 
 1. It accepts the activation message (that can be i.e. AVRIS STAC item id with some extra metadata).
 2. Queries STAC API and retrieves RAW Items from the catalog basing on the message parameters. It can also skip doing anything in case the preprocessed result is already in the catalog.
 3. Runs preprocessing which can be downloading of neccesary assets from the AVRIS FTP, converting it into an appropriate format (i.e. TIFF) if neccesary.
 4. Uploads the "Preprocessed output" on S3.
 5. Generates the corresponding metadata that would be added into the STAC Catalog through the STAC API.
-6. Sends the result message back into the stream. This can be only an alert message or it can send message directly into the next (product) module queue.
+6. Sends the result message back into the stream. This can be only an alert message or it can send message directly to the next (product) module.
 
 #### Processor
 
@@ -106,10 +86,23 @@ Processor is a module that is responsible for the actual product generation. Pro
 3. Applies neccesary transofrmations to the corresponding preprocessed data (i.e. AVRIS preprocessed scenes).
 4. Uploads all result on S3.
 5. Generates the corresponding metadata that would be added into the STAC Catalog through the STAC API.
-6. Sends the result message back into the stream. This can be only an alert message or it can send message directly into the next (product) module queue.
+6. Sends the result message back into the stream. This can be only an alert message or it can send message directly to the next (product) module.
 
-#### A more detailed view, a flow diagram (with supervisor)
+#### A flow diagram with supervisor
 
 <img width="800" alt="Arch No Supervisor" src="img/arch_supervisor.dot.png">
 
 The reasonable question is should there be some supervisor that schedules the input user messages and sends messages into an appropriate queue. Supervisor is intentionally moved out of this diagram and it is probably on the application level and not a first citizen of this streaming application itself.
+
+### Conclusion
+
+We are not clear yet what technologies to use and what architecture to implement. The next step would be to map the architecture assumption to the exsiting set of tools to prevent us from the unnecessary wheel reinvention within the given set of constraints.
+
+### Next steps
+
+* **Mock up the architecture and the pipeline execution**
+  * Using [AWS Step functions](https://github.com/azavea/nasa-hyperspectral/issues/28) and [Nextflow](https://github.com/azavea/nasa-hyperspectral/issues/17)
+* **MVP**
+  * Build some working prototype with activator and processor
+  * The goal is to look at how viable the proposed architure would be, what are the issues
+  * Determine how modules can interact or should they interact with each other
