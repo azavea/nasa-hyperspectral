@@ -159,16 +159,6 @@ variable "rds_deletion_protection" {
   type    = bool
 }
 
-variable "rds_seq_page_cost" {
-  default = 1
-  type    = number
-}
-
-variable "rds_random_page_cost" {
-  default = 1
-  type    = number
-}
-
 variable "rds_log_min_duration_statement" {
   default = 500
   type    = number
