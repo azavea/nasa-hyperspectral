@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  terraform:
+    image: quay.io/azavea/terraform:0.13.5
+    volumes:
+      - ./:/usr/local/src
+      - $HOME/.aws:/root/.aws:ro
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-nasa-hsi}
+      - GIT_COMMIT=${GIT_COMMIT:-latest}
+      - NASA_HSI_DEBUG=1
+      - NASA_HSI_SETTINGS_BUCKET=${NASA_HSI_SETTINGS_BUCKET:-nasahyperspectral-staging-config-us-east-1}
+    working_dir: /usr/local/src
+    entrypoint: bash
