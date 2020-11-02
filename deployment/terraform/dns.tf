@@ -10,8 +10,7 @@ resource "aws_route53_zone" "internal" {
   }
 
   tags = {
-    Project     = var.project
-    Environment = var.environment
+    Project = var.project
   }
 }
 
@@ -30,8 +29,7 @@ resource "aws_route53_zone" "external" {
   name = var.r53_public_hosted_zone
 
   tags = {
-    Project     = var.project
-    Environment = var.environment
+    Project = var.project
   }
 }
 
