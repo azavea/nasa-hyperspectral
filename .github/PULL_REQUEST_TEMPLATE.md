@@ -24,5 +24,4 @@ Optional. Ancillary topics, caveats, alternative strategies that didn't work out
 
 - [ ] `fixup!` commits have been squashed
 - [ ] CI passes after rebase
-- [ ] CHANGELOG.md updated with summary of features or fixes, following [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) guidelines
 - [ ] README.md updated if necessary to reflect the changes
