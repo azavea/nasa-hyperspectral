@@ -60,7 +60,7 @@ Given the background above it is possible to describe a general use case that wo
 
 ### A flow diagram
 
-<img width="600" alt="Arch No Supervisor" src="img/arch_no_supervisor.dot.png">
+<img width="600" alt="Arch No Supervisor" src="img/arch.dot.png">
 
 #### STAC API
 
@@ -87,12 +87,6 @@ Processor is a module that is responsible for the actual product generation. Pro
 4. Uploads all results on S3.
 5. Generates the corresponding metadata that would be added into the STAC Catalog through the STAC API.
 6. Sends the result message back into the stream. This can be only an alert message or it can send a message directly to the next (product) module.
-
-#### A flow diagram with supervisor
-
-<img width="800" alt="Arch No Supervisor" src="img/arch_supervisor.dot.png">
-
-The reasonable question is should there be some supervisor that schedules the input user messages and sends messages into an appropriate queue. Supervisor is intentionally moved out of this diagram and it is probably on the application level and not a first citizen of this streaming application itself.
 
 ### Conclusion
 
