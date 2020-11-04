@@ -1,0 +1,15 @@
+.DS_Store
+
+# VSCode
+.vscode
+.history
+
+# Terraform
+.terraform
+.terraform/
+*.tfplan
+*.tfstate
+*.tfstate.backup
+*.tfvars
+lambdas.zip
+plan.txt

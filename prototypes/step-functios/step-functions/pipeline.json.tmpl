@@ -1,0 +1,14 @@
+{
+  "Comment": "HSI Pipeline prototype",
+  "StartAt": "Activator",
+  "States": {
+    "Activator": {
+      "Type" : "Task",
+      "Resource": "${activator_arn}",
+      "Next": "SuccessState"
+    },
+    "SuccessState": {
+      "Type": "Succeed"
+    }
+  }
+}
