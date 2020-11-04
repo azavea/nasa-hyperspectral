@@ -1,15 +1,27 @@
-.DS_Store
+# Operating System Files
+
+*.DS_Store
+Thumbs.db
 
 # VSCode
+
 .vscode
 .history
 
 # Terraform
+
 .terraform
 .terraform/
 *.tfplan
 *.tfstate
-*.tfstate.backup
+*.tfstate.*
 *.tfvars
 lambdas.zip
 plan.txt
+
+# IntelliJ IDEA Files
+
+*.iml
+*.ipr
+*.iws
+*.idea

@@ -3,6 +3,7 @@ data "template_file" "pipeline" {
 
   vars = {
     activator_arn = aws_lambda_function.activator.arn
+    processor_arn = aws_lambda_function.processor.arn
   }
 }
 

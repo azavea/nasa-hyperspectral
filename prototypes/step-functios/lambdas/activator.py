@@ -1,4 +1,7 @@
 import json
 
 def handler(event, context):
-    print("--Received-event--: " + json.dumps(event, indent=2))
+    print("Activator received event: " + json.dumps(event, indent=2))
+    return { 
+        'message' : 'activation msg result'
+    }  

@@ -5,6 +5,11 @@
     "Activator": {
       "Type" : "Task",
       "Resource": "${activator_arn}",
+      "Next": "Processor"
+    },
+    "Processor": {
+      "Type" : "Task",
+      "Resource": "${processor_arn}",
       "Next": "SuccessState"
     },
     "SuccessState": {
