@@ -12,7 +12,7 @@ resource "aws_lambda_function" "activator" {
   handler          = "activator.handler"
   source_code_hash = fileexists("lambdas.zip") ? base64sha256(filebase64("lambdas.zip")) : null
   runtime          = var.runtime
-  depends_on       = [
+  depends_on = [
     data.archive_file.lambdas,
     aws_iam_role_policy_attachment.lambda_logs
   ]

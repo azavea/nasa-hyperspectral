@@ -1,10 +1,10 @@
 resource "aws_cloudwatch_log_group" "pipeline-group" {
-  name    = "/aws/lambda/${aws_lambda_function.activator.function_name}"
+  name              = "/aws/lambda/${aws_lambda_function.activator.function_name}"
   retention_in_days = "1"
 }
 
 resource "aws_cloudwatch_event_rule" "pipeline" {
-  name = "pipeline"
+  name                = "pipeline"
   schedule_expression = "rate(1 minute)"
 }
 
@@ -40,7 +40,7 @@ resource "aws_cloudwatch_event_target" "health_monitor_event_target" {
   rule     = aws_cloudwatch_event_rule.pipeline.id
   arn      = aws_sfn_state_machine.pipeline-state-machine.id
   role_arn = aws_iam_role.iam_for_sfn.arn
-  input = <<EOF
+  input    = <<EOF
   { "msg": "test" }
 EOF
 }
