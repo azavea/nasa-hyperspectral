@@ -5,7 +5,7 @@ resource "aws_cloudwatch_log_group" "pipeline-group" {
 
 resource "aws_cloudwatch_event_rule" "pipeline" {
   name                = "pipeline"
-  schedule_expression = "rate(1 minute)"
+  schedule_expression = "rate(30 minutes)"
 }
 
 resource "aws_iam_policy" "lambda_logging" {
