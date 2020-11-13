@@ -213,3 +213,32 @@ variable "rds_cpu_credit_balance_threshold" {
   default = 30
   type    = number
 }
+
+variable "franklin_desired_count" {
+  type = number
+}
+
+variable "franklin_deployment_min_percent" {
+  type = number
+}
+
+variable "franklin_deployment_max_percent" {
+  type = number
+}
+
+variable "franklin_image_tag" {
+  type = string
+}
+
+variable "franklin_cpu" {
+  type = number
+}
+
+variable "franklin_memory" {
+  type = number
+}
+
+variable "aws_ecs_task_execution_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+  type    = string
+}
