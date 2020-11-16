@@ -10,4 +10,4 @@ This folder contains a series of scripts used to generate STAC Catalogs for this
 
 ## Generating Catalogs
 
-Build all containers with `docker-compose build`. See each catalog's README for details.
+Build the dev container with `docker-compose build dev`. See individual catalog folders for how to run a specific catalog.
