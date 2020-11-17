@@ -214,6 +214,10 @@ variable "rds_cpu_credit_balance_threshold" {
   type    = number
 }
 
+variable "fargate_platform_version" {
+  default = "1.4.0"
+}
+
 variable "franklin_desired_count" {
   type = number
 }
