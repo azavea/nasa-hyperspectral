@@ -1,0 +1,54 @@
+[
+  {
+    "cpu": 0,
+    "essential": true,
+    "image": "${image}",
+    "name": "franklin",
+    "portMappings": [
+      {
+        "containerPort": 9090
+      }
+    ],
+    "command": [
+      "serve",
+      "--api-host",
+      "${api_host}",
+      "--api-scheme",
+      "https",
+      "--external-port",
+      "443",
+      "--with-transactions",
+      "--with-tiles"
+    ],
+    "environment": [
+      {
+        "name": "DB_USER",
+        "value": "${db_user}"
+      },
+      {
+        "name": "DB_PASSWORD",
+        "value": "${db_password}"
+      },
+      {
+        "name": "DB_NAME",
+        "value": "${db_name}"
+      },
+      {
+        "name": "DB_HOST",
+        "value": "${db_host}"
+      },
+      {
+        "name": "DB_PORT",
+        "value": "${db_port}"
+      }
+    ],
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-group": "logFranklin",
+        "awslogs-region": "${aws_region}",
+        "awslogs-stream-prefix": "franklin"
+      }
+    }
+  }
+]
