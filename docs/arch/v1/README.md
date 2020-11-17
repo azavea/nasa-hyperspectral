@@ -1,64 +1,64 @@
-## Arch Draft v1
+# Arch Draft v1
 
 _The goal of this document is not to propose an architecture, but to describe an assumption that we can follow towards building it._
 
-### Context
+## Context
 
-The goal of this project is to _develop hyperspectral imagery processing pipeline_ with the following requirements (Part 4. Phase II Work Plan, Develop Imagery Processing Pipeline):
-* Develop Workflow Configuration (declarative workflow configuration)
-* Develop New Scene Analysis (processing of new hyperspectral imagery as it becomes available in response to an external event)
-* Develop On-Demand Analysis (on demand analysis of a desired type, analysis here is oil spill detection, tree mortality)
-* Develop Publish Workflow (catalog with results)
-* Record Data Provenance Metadata (record provenance metadata in the STAC items)
+The goal of this project is to _develop hyperspectral imagery processing pipeline_.
+While the project has reference use cases it we do not if the ultimatly they will be relevant to a potential cilent.
+The overarching goal is to imporove our ability to cheaply and efficiently iterate on a number of potential use cases.
+As such this project seeks to develop a reference architecture that can enable us to do that.
 
-The intent is to have a reference architecture that is adaptable for new use cases involving imagery processing.
+Based on our work in phase 1 the proposal outlines the following taks and requirements (Part 4. Phase II Work Plan, Develop Imagery Processing Pipeline) for that reference architecture:
 
-### Evaluation criteria / non-functional requirements
+### Develop New Scene Analysis
 
-1. Input sources can vary
-    - We should be able to work not only with a single source of data
-2. Products can vary (oil spill, tree mortality) and can use different sources
-    - We should not be attached to any single selected use case (no matter what it is), it is important to build up the system a way that it is not attached to single product
-3. Processing of large volumes of data
-    - Should be able to work with relatively large inputs (each AVIRIS input is more than of 8Gb size)
-4. Scalability
-    - We don't expect that system would be in a constant use and the static cost (cost of a system that does not function) should be minimized
-5. Flexible asynchronous ad-hoc components invocation that doesn't necessarily mean scheduling (i.e. it should be possible to re-use individual components), components independence
-    - Components independence reduces complexity of development and should allow to recombine components in somewhat order that increases the reusability of the system
-6. There should be mechanisms to introspect and debug failures within the pipeline
-    - In addition to low start times, there should be a set of tools to start investigating possible issues
-7. Low startup times
-    - Should be easy enough to start diagnosing the issue and to have a simple development cycle
-8. Heterogeneous execution environment
-    - Implementation of components is not limited to a single language
+This is first model use case: AVIRIS flight to detect areas inundated with oil spill
 
-#### Background
+ - a new hyperspectral imagery becomes available
+ - an external event is generated and received by the system
+ - this even triggers one or more asyncronous processes that may ultimatly result in production of derived data products
+ - system produces an event when products are finally generated, alerting the users
 
-Originally, GeoTrellis (v1.0.0+) was mostly designed 
-towards batch processing and towards large jobs on scale. Scaling was achieved via Spark and its inbuilt functionality to distribute 
-data and tasks across the allocated cluster. Unfortunately, such an approach required maintaining an allocated cluster or raising an on demand cluster to process the entire (large) dataset as a single batch. It turns out that a more regular use case for companies (Planet, Sentinel Hub) is an on demand preprocessing and processing.
+### Develop On-Demand Analysis
 
-[Back in 2016](https://github.com/locationtech/geotrellis/pull/1936) we have already tried to refactor the GeoTrellis ingest process and make it more iterative, since there was a client interest in ingesting large datasets by portions. That was not a successful experience though.
+This is the second model use case: Azavea requests production of dead trees layer
 
-The current FFDA project also represents an on demand processing flow where the processing (imagery download + predictions) happens  based on the input task grid. With the help of the Raster Vision Command it is possible to schedule and launch such jobs on AWS Batch. It addresses Spark issues related to on demand processing and made it easier to maintain, however it adds some extra complexities to deploy, launch and debugging of such jobs - the project has long startup times and it only complicates debugging.
+- a request for tree mortaility product at AOI gets made
+- relevant HSI scenes are identified from catalog
+- if not already available, those HSI scenes are downloaded and staged
+- scenes are pre-processed to generate additional feature rasters
+- RasterVision model is applied, generating tree mortality rasters
+- system produces an event reporting success or failure of the job
 
-We had a Farmers Edge contract where they experienced issues with maintaining the (AWS) Batch like environment, experiencing issues with throughput, and difficulties during the new features development and deployment (development requires quick enough feedback from jobs, which is not possible with Batch). The task was to implement a Spark streaming consumer that would process rasters basing on the input messages on demand, and deliver results into STAC and AzureFS. That was _a successful_ integration into their system that processes now 9000 Orthotiles a day and were over 800k products per hour created (products here is a cropped / resampled input + cloud removal (ML) + the actual product computation (i.e. NDVI, PCA)). However, this architecture had issues with scalability and required to have a constantly launched cluster. It is unknown would this case fit our needs or not.
+### Develop Workflow Configuration
 
-### Use case diagrams
+There should be some form of succinct and flexible configuration/script for the entire workflow.
+When development new client use cases we should be able to use workflow configuration to sketch out and document
+the processing requirements for the new use case before fully implementing it.
+It is assumed that without this requirement the tendency will be to develop a very specific system that may not be easily reconfigured.
 
-Given the background above it is possible to describe a general use case that would cover it.
+### Develop Publish Workflow
+
+A lot of system output will be during development process or for internal consumption.
+However, the pubish workflow considers how data products and their metadata can be published for external consumers.
+Not every data product generated by the system must be published in this manner.
+
+### Record Data Provenance Metadata
+
+Both final and intermidate datasets produced by this system should include metadata that identifies both the process
+and the inputs used in its creation. This information is expected to be used both for debugging and producability.
+
+## Oil Detection Use Case
+
+Here we present a high-level diagram of oil spill detection workflow in more detail.
+Because system components must work asyncronsly we adopt message passing model in this diagram.
+
+#### Component Diagram
 
 <img width="400" alt="Arch Streams" src="img/arch_streams.dot.png">
 
-#### Legend
-
-* STAC API: rest service that implements STAC Api Spec (in this case it would be Franklin).
-* Module: messages consumer
-* Stream: a "stream" of messages that modules would consume (in other words modules are stream consumers); it can be not a "stream", but some service that produces messages
-* Activator: module that preprocesses data
-* Processor: module that produces _products_ (i.e. oil spill, tree mortality) from the preprocessed data
-
-### A flow diagram
+#### Data Flow Diagram
 
 <img width="600" alt="Arch No Supervisor" src="img/arch.dot.png">
 
@@ -88,11 +88,83 @@ Processor is a module that is responsible for the actual product generation. Pro
 5. Generates the corresponding metadata that would be added into the STAC Catalog through the STAC API.
 6. Sends the result message back into the stream. This can be only an alert message or it can send a message directly to the next (product) module.
 
+## Evaluation criteria / non-functional requirements
+
+At this time we don't know exactly what technology or architecture will fit project requirements.
+It is expected that there will be a perioud of exploration and evaluation of possible alternatives.
+Here we provide some non-functional requirements based on what we already know about the problem domain.
+These should be addressed in subsequent techonlogy evaluation ADRs.
+The final system architecture will undoubtably have to be a compromise among these.
+
+1. General purpose raster processing system
+    - Input sources can vary. While primary input will be raster data we can not restrict it to a single data source.
+    - Output data products will vary. Initial use case describes oil spill detection and tree mortailty map.
+    Ultimatly the system should accomidate variaty of data products.
+
+2. Scalability
+    - Should be able to work with relatively large inputs. Single input scene may be larger than 8Gb.
+    - We don't expect that system would be in a constant use and the static cost
+      - stand-by cost of a system should be minimized
+
+3. Modularity
+    - It should be possible to re-use individual processing steps and recombine them to produces no data products.
+    - Components independence reduces complexity of development and should allow to recombine components in somewhat order that increases the reusability of the system
+
+4. Logging and Tracing
+    - System should have accessible and usable logging that allows tracing of process execution and failure.
+
+5. Low Latency
+    - Start-up and warm-up times should be minimized
+    - This is not real-time system but end-to-end execution time should be minimized.
+
+6. Heterogeneous execution environment
+    - Implementation of components is not limited to a single language
+    - Should be easy enough to start diagnosing the issue and to have a simple development cycle
+
+7. Development Workflow
+   - Development should ergonimic, with emphasis on minimizing the iteration cycle.
+   - Individual processing steps should be executable outside of the overall workflow to aid development and debugging process.
+   - Logging and tracing information has to be easily available for remote executions
+
+## Background
+
+Scalable general purpose raster processing system has been target of previous development efforts.
+This section highlights some of them with lessons learned that relate to this project.
+
+### GeoTrellis
+Originally, GeoTrellis (v1.0.0+) was designed towards batch processing of raster data at scale. Scaling was achieved via Apache Spark and its functionality to distribute data and tasks across a cluster.
+We found that batch workflow required us to load all relevant raster data into memory of a large cluster. However, many uses cases are better served by smaller incremental jobs.
+
+Additionally, start-up time for a cluster on AWS EMR is high (15 minutes).
+Maintaining a running cluster is cost prohibitive and auto-scaling one has been challanging.
+
+### AWS Batch in FFDA Contract
+The FFDA project also represents an on demand processing flow where the imagery download and predictions happens on AWS Batch using Raster Vision pipelines.
+
+In contrast to AWS EMR the AWS Batch handles auto-scaling well.
+However, debugging multi-stop jobs is hard and testing interation time is high.
+
+### Spark Streaming in Farmers Edge Contract
+Farmers Edge developed an on demand, event driven, raster processing system. In response to stream of user reqeusts the system downloads the neccesary satelitle imagery and generates derived products (NDVI, PCA, field clipping) for given field boundaries as the result.
+
+Initially this system was implemented in AWS Batch with each user request sbumitting multiple jobs.
+The client was unhappy with the system performance. Critically, the system didn't delivery sufficient thoughput. Additionaly, tasks would sporadically fail and they could not be rescheduled. Debugging these failures was also challenging for variety of reasons.
+
+Replacement system was implemented as Spark Streaming application deployed on K8s cluster.
+The client wanted to keep deployment through Docker containers and to avoid vendor lock-in.
+The spark streaming system has better throughput because spark mini-batch stream resulted in lower
+amortized overhead per user request.
+Debugging and failure retry was also improvied because spark can aggregate job status across nodes.
+Development expirience was much improved because of K8s/Docker integration.
+
+The system now processes 9000 Orthotiles a day with over 800k field products per hour created.
+However, this architecture had issues with auto-scalability and requires to have a constantly running cluster.
+
 ### Conclusion
 
 We are not clear yet what technologies to use and what architecture to implement. The next step would be to map the architecture assumption to the existing set of tools to prevent us from the unnecessary wheel reinvention within the given set of constraints.
 
-### Next steps
+## Next steps
 
 * **Mock up the architecture and the pipeline execution**
   * Using [AWS Step functions](https://github.com/azavea/nasa-hyperspectral/issues/28) and [Nextflow](https://github.com/azavea/nasa-hyperspectral/issues/17)
