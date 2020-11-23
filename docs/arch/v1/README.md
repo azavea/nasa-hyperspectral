@@ -70,23 +70,23 @@ During the pipeline execution there would be a need to store input and output me
 
 Activator is a module that is responsible for preprocessing of the input raw (i.e. AVRIS, Planet) files. AVRIS is stored on FTP encoded into archives and definitely of these purposes there is a need in a preprocessing step.
 
-1. It accepts the activation message (that can be i.e. AVRIS STAC item id with some extra metadata).
-2. Queries STAC API and retrieves RAW Items from the catalog based on the message parameters. It can also skip doing anything in case the preprocessed result is already in the catalog.
+1. Accepts the activation message (that can be i.e. AVRIS STAC item id with some extra metadata).
+2. Queries STAC API and retrieves Items from the catalog based on the message parameters. It can skip doing anything in case the preprocessed result is already in the catalog.
 3. Runs preprocessing which can be downloading of necessary assets from the AVRIS FTP, converting it into an appropriate format (i.e. TIFF) if necessary.
-4. Uploads the "Preprocessed output" on S3.
-5. Generates the corresponding metadata that would be added into the STAC Catalog through the STAC API.
-6. Sends the result message back into the stream. This can be only an alert message or it can send message directly to the next (product) module.
+4. Uploads the "Preprocessed output" (i.e. on S3).
+5. Generates the corresponding metadata and puts it into the STAC Catalog through the STAC API.
+6. Sends the result message back into the stream. This can send an alert message or a message directly to the next module.
 
 #### Processor
 
 Processor is a module that is responsible for the actual product generation. Product here is the result of applying HSI tooling and is any derivative that is build from the input Activated data.
 
-1. It accepts the product processing message (i.e. product name, input preprocessed scene ids).
-2. Queries STAC API and retrieves PreProcessed Items from the catalog basing on the message parameters. It can also skip doing anything in case the result product is already in the catalog.
-3. Applies necessary transformations to the corresponding preprocessed data (i.e. AVRIS preprocessed scenes).
-4. Uploads all results on S3.
-5. Generates the corresponding metadata that would be added into the STAC Catalog through the STAC API.
-6. Sends the result message back into the stream. This can be only an alert message or it can send a message directly to the next (product) module.
+1. Accepts the product processing message (i.e. product name, input preprocessed scene ids).
+2. Queries STAC API and retrieves PreProcessed Items from the catalog basing on the message parameters. It can skip doing anything in case the result is already in the catalog.
+3. Applies necessary transformations to the corresponding preprocessed data (i.e. to AVRIS preprocessed scenes).
+4. Uploads "Product" (i.e. on S3).
+5. Generates the corresponding metadata and puts it into the STAC Catalog through the STAC API.
+6. Sends the result message back into the stream. This can send an alert message or a message directly to the next module.
 
 ## Evaluation criteria / non-functional requirements
 
