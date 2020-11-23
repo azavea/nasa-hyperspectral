@@ -5,11 +5,11 @@ _The goal of this document is not to propose an architecture, but to describe an
 ## Context
 
 The goal of this project is to _develop hyperspectral imagery processing pipeline_.
-While the project has reference use cases it we do not if the ultimatly they will be relevant to a potential cilent.
-The overarching goal is to imporove our ability to cheaply and efficiently iterate on a number of potential use cases.
-As such this project seeks to develop a reference architecture that can enable us to do that.
+While the project has two reference use cases we do not know what specific use case will ultimately be relevant to a future client.
+The overarching goal is to improve our ability to cheaply and efficiently iterate on a number of potential use cases.
+This project seeks to develop a reference architecture that can enable us to do that.
 
-Based on our work in phase 1 the proposal outlines the following taks and requirements (Part 4. Phase II Work Plan, Develop Imagery Processing Pipeline) for that reference architecture:
+Based on our work in phase 1 the proposal outlines the following tasks and requirements (Part 4. Phase II Work Plan, Develop Imagery Processing Pipeline) for that reference architecture:
 
 ### Develop New Scene Analysis
 
@@ -17,14 +17,14 @@ This is first model use case: AVIRIS flight to detect areas inundated with oil s
 
  - a new hyperspectral imagery becomes available
  - an external event is generated and received by the system
- - this even triggers one or more asyncronous processes that may ultimatly result in production of derived data products
+ - this even triggers one or more asynchronous processes that may ultimately result in production of derived data products
  - system produces an event when products are finally generated, alerting the users
 
 ### Develop On-Demand Analysis
 
 This is the second model use case: Azavea requests production of dead trees layer
 
-- a request for tree mortaility product at AOI gets made
+- a request for tree mortality product at AOI gets made
 - relevant HSI scenes are identified from catalog
 - if not already available, those HSI scenes are downloaded and staged
 - scenes are pre-processed to generate additional feature rasters
@@ -52,7 +52,7 @@ and the inputs used in its creation. This information is expected to be used bot
 ## Oil Detection Use Case
 
 Here we present a high-level diagram of oil spill detection workflow in more detail.
-Because system components must work asyncronsly we adopt message passing model in this diagram.
+Because system components must work asynchronously we adopt message passing model in this diagram.
 
 #### Component Diagram
 
@@ -91,15 +91,15 @@ Processor is a module that is responsible for the actual product generation. Pro
 ## Evaluation criteria / non-functional requirements
 
 At this time we don't know exactly what technology or architecture will fit project requirements.
-It is expected that there will be a perioud of exploration and evaluation of possible alternatives.
+It is expected that there will be a period of exploration and evaluation of possible alternatives.
 Here we provide some non-functional requirements based on what we already know about the problem domain.
-These should be addressed in subsequent techonlogy evaluation ADRs.
+These should be addressed in subsequent technology evaluation ADRs.
 The final system architecture will undoubtably have to be a compromise among these.
 
 1. General purpose raster processing system
     - Input sources can vary. While primary input will be raster data we can not restrict it to a single data source.
-    - Output data products will vary. Initial use case describes oil spill detection and tree mortailty map.
-    Ultimatly the system should accomidate variaty of data products.
+    - Output data products will vary. Initial use case describes oil spill detection and tree mortality map.
+    Ultimately the system should accommodate variaty of data products.
 
 2. Scalability
     - Should be able to work with relatively large inputs. Single input scene may be larger than 8Gb.
@@ -122,7 +122,7 @@ The final system architecture will undoubtably have to be a compromise among the
     - Should be easy enough to start diagnosing the issue and to have a simple development cycle
 
 7. Development Workflow
-   - Development should ergonimic, with emphasis on minimizing the iteration cycle.
+   - Development should ergonomic, with emphasis on minimizing the iteration cycle.
    - Individual processing steps should be executable outside of the overall workflow to aid development and debugging process.
    - Logging and tracing information has to be easily available for remote executions
 
@@ -136,26 +136,26 @@ Originally, GeoTrellis (v1.0.0+) was designed towards batch processing of raster
 We found that batch workflow required us to load all relevant raster data into memory of a large cluster. However, many uses cases are better served by smaller incremental jobs.
 
 Additionally, start-up time for a cluster on AWS EMR is high (15 minutes).
-Maintaining a running cluster is cost prohibitive and auto-scaling one has been challanging.
+Maintaining a running cluster is cost prohibitive and auto-scaling one has been challenging.
 
 ### AWS Batch in FFDA Contract
 The FFDA project also represents an on demand processing flow where the imagery download and predictions happens on AWS Batch using Raster Vision pipelines.
 
 In contrast to AWS EMR the AWS Batch handles auto-scaling well.
-However, debugging multi-stop jobs is hard and testing interation time is high.
+However, debugging multi-stop jobs is hard and testing iteration time is high.
 
 ### Spark Streaming in Farmers Edge Contract
-Farmers Edge developed an on demand, event driven, raster processing system. In response to stream of user reqeusts the system downloads the neccesary satelitle imagery and generates derived products (NDVI, PCA, field clipping) for given field boundaries as the result.
+Farmers Edge developed an on demand, event driven, raster processing system. In response to stream of user requests the system downloads the necessary satellite imagery and generates derived products (NDVI, PCA, field clipping) for given field boundaries as the result.
 
-Initially this system was implemented in AWS Batch with each user request sbumitting multiple jobs.
-The client was unhappy with the system performance. Critically, the system didn't delivery sufficient thoughput. Additionaly, tasks would sporadically fail and they could not be rescheduled. Debugging these failures was also challenging for variety of reasons.
+Initially this system was implemented in AWS Batch with each user request submitting multiple jobs.
+The client was unhappy with the system performance. Critically, the system didn't delivery sufficient thoughput. Additionaly, tasks would sporadically fail, and they could not be rescheduled. Debugging these failures was also challenging for variety of reasons.
 
 Replacement system was implemented as Spark Streaming application deployed on K8s cluster.
 The client wanted to keep deployment through Docker containers and to avoid vendor lock-in.
 The spark streaming system has better throughput because spark mini-batch stream resulted in lower
 amortized overhead per user request.
 Debugging and failure retry was also improvied because spark can aggregate job status across nodes.
-Development expirience was much improved because of K8s/Docker integration.
+Development experience was much improved because of K8s/Docker integration.
 
 The system now processes 9000 Orthotiles a day with over 800k field products per hour created.
 However, this architecture had issues with auto-scalability and requires to have a constantly running cluster.
