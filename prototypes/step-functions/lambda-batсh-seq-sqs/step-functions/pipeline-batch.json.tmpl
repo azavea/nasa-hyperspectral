@@ -1,0 +1,28 @@
+{
+  "Comment": "HSI Pipeline prototype",
+  "StartAt": "Activator",
+  "States": {
+    "Activator": {
+      "Type": "Task",
+      "Resource": "${activator_batch_arn}",
+      "Parameters": {  
+        "JobDefinition": "${job_definition_arn}",
+        "JobName": "ActivatorBatchJob",
+        "JobQueue": "${queue_arn}",
+        "Parameters.$": "$.parameters",
+        "ContainerOverrides": {
+          "Vcpus": 1
+        }
+      },
+      "Next": "Processor"
+    },
+    "Processor": {
+      "Type" : "Task",
+      "Resource": "${processor_arn}",
+      "Next": "SuccessState"
+    },
+    "SuccessState": {
+      "Type": "Succeed"
+    }
+  }
+}

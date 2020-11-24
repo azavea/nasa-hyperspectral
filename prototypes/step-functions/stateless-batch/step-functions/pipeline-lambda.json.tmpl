@@ -1,0 +1,14 @@
+{
+  "Comment": "HSI Pipeline prototype",
+  "StartAt": "ActivatorSubmit",
+  "States": {
+    "ActivatorSubmit": {
+      "Type" : "Task",
+      "Resource": "${pre_activator_lambda_arn}",
+      "Next": "SuccessState"
+    },
+    "SuccessState": {
+      "Type": "Succeed"
+    }
+  }
+}
