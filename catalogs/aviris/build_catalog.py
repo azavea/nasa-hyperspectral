@@ -2,6 +2,7 @@ from datetime import datetime, timedelta, timezone
 from xml.dom import minidom
 
 import fastkml
+from geopandas import GeoDataFrame
 import pandas as pd
 import pystac
 from shapely.geometry import box
@@ -139,7 +140,7 @@ def map_series_to_item(series):
     )
 
 
-def main():
+def aviris_to_dataframe(aviris_csv):
     df = pd.read_csv("aviris-flight-lines.csv")
 
     # Filter to only include flights with data
@@ -154,11 +155,14 @@ def main():
 
     assert len(df) == 3741
 
-    df = df.apply(map_series_to_item, axis=1)
+    return GeoDataFrame(df.apply(map_series_to_item, axis=1)).set_crs(epsg=4326)
+
+
+def main():
+    df = aviris_to_dataframe("aviris-flight-lines.csv")
     df = stacframes.parents.from_properties_accum(
         ["Year", "Flight"], df, prefix="aviris", separator="_"
     )
-
     catalog = pystac.Catalog("aviris", AVIRIS_DESCRIPTION)
     stacframes.df_to(catalog, df)
 
