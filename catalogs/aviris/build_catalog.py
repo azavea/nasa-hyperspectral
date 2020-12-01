@@ -25,7 +25,7 @@ def kml_poly_to_geom(kml_poly):
     )[0]
     kml = fastkml.KML()
     kml.from_string(
-        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<?xml version="1.0" ?>'
         + '<kml xmlns="http://www.opengis.net/kml/2.2">'
         + "<Document><Placemark><Polygon><outerBoundaryIs><LinearRing>"
         + coords.toxml()
@@ -153,13 +153,19 @@ def aviris_to_dataframe(aviris_csv):
     # Ensure all empty values in columns aren't NaN so we write valid STAC
     df = df.fillna("")
 
+    # With the filters above applied to the aviris-flight-lines.csv checked into the repo,
+    # we should see exactly this many results. This number may need to be changed if the csv
+    # is updated. Ensure that the "Flight Scene" field remains unique in the DF after all
+    # filters are applied.
     assert len(df) == 3741
 
     return GeoDataFrame(df.apply(map_series_to_item, axis=1)).set_crs(epsg=4326)
 
 
 def main():
+    print("Loading AVIRIS data...")
     df = aviris_to_dataframe("aviris-flight-lines.csv")
+
     df = stacframes.parents.from_properties_accum(
         ["Year", "Flight"], df, prefix="aviris", separator="_"
     )
@@ -167,9 +173,13 @@ def main():
     stacframes.df_to(catalog, df)
 
     # Normalize before validation to set all the required object links
-    catalog.normalize_hrefs("./data/catalog")
+    catalog_path = "./data/catalog"
+    catalog.normalize_hrefs(catalog_path)
+    print("Validating catalog...")
     catalog.validate_all()
+    print("Saving catalog to {}...".format(catalog_path))
     catalog.save(catalog_type=pystac.CatalogType.SELF_CONTAINED)
+    print("Done!")
 
 
 if __name__ == "__main__":
