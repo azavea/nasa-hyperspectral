@@ -1,7 +1,10 @@
 from datetime import datetime, timedelta, timezone
+from ftplib import FTP
+from pathlib import Path
 from xml.dom import minidom
 
 import fastkml
+from functools import partial
 from geopandas import GeoDataFrame
 import pandas as pd
 import pystac
@@ -34,7 +37,42 @@ def kml_poly_to_geom(kml_poly):
     return next(next(kml.features()).features()).geometry
 
 
-def map_series_to_item(series):
+def find_s2_scenes():
+    print("Finding scenes with atmo corrected data...")
+    JPL_FTP_HOSTNAME = "popo.jpl.nasa.gov"
+    JPL_FTP_USERNAME = "avoil"
+    JPL_FTP_PASSWORD = "Gulf0il$pill"
+
+    ftp = FTP(JPL_FTP_HOSTNAME)
+    ftp.login(JPL_FTP_USERNAME, JPL_FTP_PASSWORD)
+
+    s2_scenes = {}
+
+    aviris_dir_list = ftp.nlst()
+    for aviris_dir in aviris_dir_list:
+        print("\tSearching FTP dir {}...".format(aviris_dir))
+        aviris_files = set(ftp.nlst(aviris_dir))
+        aviris_scenes = set(
+            map(
+                lambda x: Path(x).name.replace(".tar.gz", ""),
+                filter(
+                    lambda x: x.endswith(".tar.gz") and "_" not in Path(x).name,
+                    aviris_files,
+                ),
+            )
+        )
+
+        for scene in aviris_scenes:
+            s2_file = "{}/{}_refl.tar.gz".format(aviris_dir, scene)
+            if s2_file in aviris_files:
+                s2_scenes[scene] = "ftp://{}:{}@{}/{}".format(
+                    JPL_FTP_USERNAME, JPL_FTP_PASSWORD, JPL_FTP_HOSTNAME, s2_file
+                )
+    print("Found {} scenes with refl data".format(len(s2_scenes.keys())))
+    return s2_scenes
+
+
+def map_series_to_item(s2_scenes_map, series):
     year = int(series["Year"])
     hour = max(int(series.get("UTC Hour", 0)), 0)
     minute = max(int(series.get("UTC Minute", 0)), 0)
@@ -65,6 +103,7 @@ def map_series_to_item(series):
             "NASA Log",
             "Investigator",
             "Comments",
+            "Name",
             "Flight Scene",
             "RDN Ver",
             "Scene",
@@ -126,6 +165,15 @@ def map_series_to_item(series):
             media_type="text/html",
         ).to_dict(),
     }
+    if series["Name"] in s2_scenes_map:
+        # Include in properties so we can STAC API query for Items with this asset
+        properties["has_refl"] = True
+        assets["ftp_refl"] = pystac.Asset(
+            s2_scenes_map[series["Name"]],
+            title="ftp_refl",
+            description="AVIRIS data archive of atmospheric corrected imagery for this scene.",
+            media_type="application/gzip",
+        ).to_dict()
 
     return pd.Series(
         {
@@ -141,8 +189,9 @@ def map_series_to_item(series):
 
 
 def aviris_to_dataframe(aviris_csv):
-    df = pd.read_csv("aviris-flight-lines.csv")
 
+    print("Loading AVIRIS data...")
+    df = pd.read_csv(aviris_csv)
     # Filter to only include flights with data
     df = df[(df["Gzip File Size (Bytes)"] > 0) & (df["Number of Samples"] > 0)]
 
@@ -159,11 +208,14 @@ def aviris_to_dataframe(aviris_csv):
     # filters are applied.
     assert len(df) == 3741
 
-    return GeoDataFrame(df.apply(map_series_to_item, axis=1)).set_crs(epsg=4326)
+    s2_scenes_map = find_s2_scenes()
+
+    print("Converting AVIRIS to DataFrame...")
+    map_series_to_item_partial = partial(map_series_to_item, s2_scenes_map)
+    return GeoDataFrame(df.apply(map_series_to_item_partial, axis=1)).set_crs(epsg=4326)
 
 
 def main():
-    print("Loading AVIRIS data...")
     df = aviris_to_dataframe("aviris-flight-lines.csv")
 
     df = stacframes.parents.from_properties_accum(
