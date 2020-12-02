@@ -68,7 +68,7 @@ def find_s2_scenes():
                 s2_scenes[scene] = "ftp://{}:{}@{}/{}".format(
                     JPL_FTP_USERNAME, JPL_FTP_PASSWORD, JPL_FTP_HOSTNAME, s2_file
                 )
-    print("Found {} scenes with S2 data".format(len(s2_scenes.keys())))
+    print("Found {} scenes with refl data".format(len(s2_scenes.keys())))
     return s2_scenes
 
 
@@ -103,6 +103,7 @@ def map_series_to_item(s2_scenes_map, series):
             "NASA Log",
             "Investigator",
             "Comments",
+            "Name",
             "Flight Scene",
             "RDN Ver",
             "Scene",
@@ -190,7 +191,7 @@ def map_series_to_item(s2_scenes_map, series):
 def aviris_to_dataframe(aviris_csv):
 
     print("Loading AVIRIS data...")
-    df = pd.read_csv("aviris-flight-lines.csv")
+    df = pd.read_csv(aviris_csv)
     # Filter to only include flights with data
     df = df[(df["Gzip File Size (Bytes)"] > 0) & (df["Number of Samples"] > 0)]
 
