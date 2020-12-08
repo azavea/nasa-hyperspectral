@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+
+function usage() {
+    echo -n \
+"Usage: $(basename "$0")
+Generate AVIRIS Catalog and then ingest into Franklin if not already available
+Example: ./scripts/ingest-aviris
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]
+then
+    case "${1}" in
+        --help)
+            usage
+            ;;
+        *)
+            ./scripts/server
+
+            docker-compose run \
+                --rm \
+                --entrypoint python \
+                --workdir="/workspace/catalogs/aviris" \
+                app build_catalog.py
+
+            docker-compose run -v "$(pwd)/catalogs/aviris/data:/data:ro" --rm franklin \
+                import-catalog --catalog-root /data/catalog/catalog.json
+
+            ;;
+    esac
+fi

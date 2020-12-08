@@ -1,0 +1,30 @@
+#!/bin/bash
+set -e
+
+function usage() {
+    echo -n \
+"Usage: $(basename "$0")
+Use Docker Compose to run the AVIRIS L2 activator
+Example: ./scripts/run-activator-aviris-l2 <AVIRIS STAC Item ID>
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]
+then
+    case "${1}" in
+        --help)
+            usage
+            ;;
+        *)
+
+            DEV_S3_BUCKET="aviris-data-${USER}"
+
+
+            docker-compose run --rm \
+                --entrypoint python \
+                --workdir="/workspace/pipeline/activators/aviris-l2" \
+                -e "AAL2_S3_BUCKET=${DEV_S3_BUCKET}" \
+                app main.py "$@"
+            ;;
+    esac
+fi

@@ -1,6 +1,37 @@
-version: '3'
+version: "3"
 
 services:
+  database:
+    image: quay.io/azavea/postgis:3-postgres12.4-slim
+    environment:
+      - POSTGRES_USER=franklin
+      - POSTGRES_PASSWORD=franklin
+      - POSTGRES_DB=franklin
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "franklin"]
+      interval: 3s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+  franklin:
+    image: quay.io/azavea/franklin:c93f2ff
+    depends_on:
+      database:
+        condition: service_healthy
+    command:
+      - serve
+    environment:
+      - ENVIRONMENT=development
+      - DB_HOST=database.service.internal
+      - DB_NAME=franklin
+      - DB_USER=franklin
+      - DB_PASSWORD=franklin
+      - AWS_PROFILE
+      - AWS_REGION
+    links:
+      - database:database.service.internal
+    ports:
+      - "9090:9090"
   app:
     build:
       context: .
@@ -12,6 +43,8 @@ services:
       - $HOME/.aws:/root/.aws:ro
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
+    links:
+      - franklin:franklin.service.internal
   dev:
     build:
       context: .

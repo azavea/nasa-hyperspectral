@@ -4,7 +4,7 @@ set -e
 function usage() {
     echo -n \
 "Usage: $(basename "$0")
-Use Docker Compose to drop into a console in the dev container
+Use Docker Compose to start the app services
 Example: ./scripts/console
 "
 }
@@ -16,7 +16,7 @@ then
             usage
             ;;
         *)
-            docker-compose run --rm --entrypoint /bin/bash dev
+            docker-compose up -d franklin
             ;;
     esac
 fi

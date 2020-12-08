@@ -74,19 +74,24 @@ def main():
         ),
     )
     parser.add_argument(
+        "--franklin-scheme",
+        type=str,
+        default=os.environ.get("AAL2_FRANKLIN_SCHEME", "http"),
+    )
+    parser.add_argument(
         "--franklin-hostname",
         type=str,
-        default=os.environ.get("FRANKLIN_HOSTNAME", "franklin.nasa-hsi.azavea.com"),
+        default=os.environ.get("AAL2_FRANKLIN_HOSTNAME", "franklin.service.internal:9090"),
     )
     parser.add_argument(
         "--s3-bucket",
         type=str,
-        default=os.environ.get("S3_BUCKET", "aviris-data"),
+        default=os.environ.get("AAL2_S3_BUCKET"),
     )
     parser.add_argument(
         "--s3-prefix",
         type=str,
-        default=os.environ.get("S3_PREFIX", "aviris-scene-cogs-l2"),
+        default=os.environ.get("AAL2_S3_PREFIX", "aviris-scene-cogs-l2"),
     )
     parser.add_argument(
         "--temp-dir", type=str, default=os.environ.get("TEMP_DIR", None)
@@ -111,7 +116,7 @@ def main():
         Path("collections", AVIRIS_ARCHIVE_COLLECTION_ID, "items", args.aviris_stac_id)
     )
     franklin_url = urlunparse(
-        ("https", args.franklin_hostname, franklin_url_path, None, None, None)
+        (args.franklin_scheme, args.franklin_hostname, franklin_url_path, None, None, None)
     )
     response = requests.get(franklin_url)
     response.raise_for_status()
@@ -252,7 +257,7 @@ def main():
 
     franklin_url_path = str(Path("collections", AVIRIS_L2_COG_COLLECTION_ID, "items"))
     franklin_url = urlunparse(
-        ("https", args.franklin_hostname, franklin_url_path, None, None, None)
+        (args.franklin_scheme, args.franklin_hostname, franklin_url_path, None, None, None)
     )
     print("POST Item {} to {}".format(cog_item.id, franklin_url))
     response = requests.post(
