@@ -6,7 +6,7 @@ This folder contains a series of scripts used to generate STAC Catalogs for this
 
 | Catalog Name | Folder | Published Location |
 |--------------|--------|--------------------|
-| AVIRIS       | aviris | `s3://aviris-data/stac-catalog/collection.json` |
+| AVIRIS       | aviris | `s3://aviris-data/stac-catalog/catalog.json` |
 
 ## Generating Catalogs
 

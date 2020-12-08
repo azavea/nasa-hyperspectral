@@ -218,8 +218,8 @@ def aviris_to_dataframe(aviris_csv):
 def main():
     df = aviris_to_dataframe("aviris-flight-lines.csv")
 
-    catalog = pystac.Collection(
-        "aviris-data",
+    collection = pystac.Collection(
+        "aviris-collection",
         AVIRIS_DESCRIPTION,
         pystac.Extent(
             spatial=pystac.SpatialExtent([[None, None, None, None]]),
@@ -228,7 +228,9 @@ def main():
             ),
         ),
     )
-    stacframes.df_to(catalog, df)
+    stacframes.df_to(collection, df)
+    catalog = pystac.Catalog("aviris", AVIRIS_DESCRIPTION)
+    catalog.add_child(collection)
 
     # Normalize before validation to set all the required object links
     catalog_path = "./data/catalog"
