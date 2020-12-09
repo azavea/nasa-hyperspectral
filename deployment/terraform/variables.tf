@@ -3,6 +3,10 @@ variable "project" {
   type    = string
 }
 
+locals {
+  short = replace(var.project, " ", "")
+}
+
 variable "environment" {
   default = "Staging"
   type    = string
@@ -214,6 +218,42 @@ variable "rds_cpu_credit_balance_threshold" {
   type    = number
 }
 
+variable "batch_root_block_device_size" {
+  default = 32
+  type    = number
+}
+
+variable "batch_root_block_device_type" {
+  default = "gp3"
+  type    = string
+}
+
+variable "batch_spot_fleet_allocation_strategy" {
+  default = "SPOT_CAPACITY_OPTIMIZED"
+  type    = string
+}
+
+variable "batch_spot_fleet_bid_percentage" {
+  default = 64
+  type    = number
+}
+
+variable "batch_min_vcpus" {
+  default = 0
+  type    = number
+}
+
+variable "batch_max_vcpus" {
+  default = 256
+  type    = number
+}
+
+variable "batch_instance_types" {
+  default = ["c5d", "m5d"]
+
+  type = list(string)
+}
+
 variable "fargate_platform_version" {
   default = "1.4.0"
 }
@@ -240,6 +280,21 @@ variable "franklin_cpu" {
 
 variable "franklin_memory" {
   type = number
+}
+
+variable "aws_batch_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
+  type    = string
+}
+
+variable "aws_spot_fleet_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2SpotFleetTaggingRole"
+  type    = string
+}
+
+variable "aws_ec2_service_role_policy_arn" {
+  default = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+  type    = string
 }
 
 variable "aws_ecs_task_execution_role_policy_arn" {
