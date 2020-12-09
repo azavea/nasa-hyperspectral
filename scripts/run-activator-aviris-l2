@@ -14,7 +14,9 @@ then
     DEV_S3_BUCKET="aviris-data-dev-${USER}"
 
     if ! docker-compose run --rm --entrypoint aws dev s3 ls "s3://${DEV_S3_BUCKET}"; then
-        echo "Please create your dev S3 bucket s3://${DEV_S3_BUCKET} with the AWS CLI and then retry this command."
+        echo "Creating developer S3 bucket: s3://${DEV_S3_BUCKET}..."
+        docker-compose run --rm --entrypoint aws dev s3api create-bucket --bucket "${DEV_S3_BUCKET}"
+        echo "Done."
         exit 1
     fi
 
