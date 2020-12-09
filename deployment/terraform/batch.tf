@@ -37,7 +37,7 @@ resource "aws_launch_template" "default" {
 }
 
 resource "aws_batch_compute_environment" "default" {
-  compute_environment_name_prefix = "batch${replace(var.project, " ", "")}"
+  compute_environment_name_prefix = "batch${local.short}"
   type                            = "MANAGED"
   state                           = "ENABLED"
   service_role                    = aws_iam_role.batch_service_role.arn
@@ -80,14 +80,14 @@ resource "aws_batch_compute_environment" "default" {
 }
 
 resource "aws_batch_job_queue" "default" {
-  name                 = "queue${replace(var.project, " ", "")}"
+  name                 = "queue${local.short}"
   priority             = 1
   state                = "ENABLED"
   compute_environments = [aws_batch_compute_environment.default.arn]
 }
 
 resource "aws_batch_job_definition" "download_test" {
-  name = "job${replace(var.project, " ", "")}DownloadTest"
+  name = "job${local.short}DownloadTest"
   type = "container"
 
   container_properties = templatefile("${path.module}/job-definitions/download-test.json.tmpl", {})

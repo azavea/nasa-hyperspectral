@@ -3,6 +3,10 @@ variable "project" {
   type    = string
 }
 
+locals {
+  short = replace(var.project, " ", "")
+}
+
 variable "environment" {
   default = "Staging"
   type    = string
