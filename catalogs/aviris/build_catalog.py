@@ -218,11 +218,19 @@ def aviris_to_dataframe(aviris_csv):
 def main():
     df = aviris_to_dataframe("aviris-flight-lines.csv")
 
-    df = stacframes.parents.from_properties_accum(
-        ["Year", "Flight"], df, prefix="aviris", separator="_"
+    collection = pystac.Collection(
+        "aviris-collection",
+        AVIRIS_DESCRIPTION,
+        pystac.Extent(
+            spatial=pystac.SpatialExtent([[None, None, None, None]]),
+            temporal=pystac.TemporalExtent(
+                [[datetime(1970, 1, 1, tzinfo=timezone.utc), None]]
+            ),
+        ),
     )
+    stacframes.df_to(collection, df)
     catalog = pystac.Catalog("aviris", AVIRIS_DESCRIPTION)
-    stacframes.df_to(catalog, df)
+    catalog.add_child(collection)
 
     # Normalize before validation to set all the required object links
     catalog_path = "./data/catalog"
