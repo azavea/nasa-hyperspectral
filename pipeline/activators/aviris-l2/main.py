@@ -296,7 +296,7 @@ def main():
     )
     if response.status_code == 404:
         requests.post(
-            "{}://{}/collections",
+            "{}://{}/collections".format(args.franklin_scheme, args.franklin_hostname),
             headers={"Content-Type": "application/json"},
             data=json.dumps(AVIRIS_L2_COG_COLLECTION),
         )

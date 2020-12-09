@@ -18,8 +18,7 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    command:
-      - serve
+    command: ["serve", "--with-transactions"]
     environment:
       - ENVIRONMENT=development
       - DB_HOST=database.service.internal
