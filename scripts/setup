@@ -18,6 +18,8 @@ then
         *)
             docker-compose up -d database
             ./scripts/migrate
+            ./scripts/update
+
             ;;
     esac
 fi

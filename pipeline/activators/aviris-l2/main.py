@@ -23,8 +23,19 @@ import requests
 GB = 1024 ** 3
 s3 = boto3.client("s3")
 
-AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-data"
+AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-collection"
 AVIRIS_L2_COG_COLLECTION_ID = "aviris-l2-cogs"
+AVIRIS_L2_COG_COLLECTION = {
+    "id": AVIRIS_L2_COG_COLLECTION_ID,
+    "stac_version": "1.0.0-beta.2",
+    "description": "AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
+    "license": "proprietary",
+    "extent": {
+        "spatial": {"bbox": [[-180, -90, 180, 90]]},
+        "temporal": {"interval": [["2014-01-01T00:00:00Z", "2019-12-31T00:00:00Z"]]},
+    },
+    "links": [],
+}
 
 
 @contextmanager
@@ -81,7 +92,9 @@ def main():
     parser.add_argument(
         "--franklin-hostname",
         type=str,
-        default=os.environ.get("AAL2_FRANKLIN_HOSTNAME", "franklin.service.internal:9090"),
+        default=os.environ.get(
+            "AAL2_FRANKLIN_HOSTNAME", "franklin.service.internal:9090"
+        ),
     )
     parser.add_argument(
         "--s3-bucket",
@@ -116,7 +129,14 @@ def main():
         Path("collections", AVIRIS_ARCHIVE_COLLECTION_ID, "items", args.aviris_stac_id)
     )
     franklin_url = urlunparse(
-        (args.franklin_scheme, args.franklin_hostname, franklin_url_path, None, None, None)
+        (
+            args.franklin_scheme,
+            args.franklin_hostname,
+            franklin_url_path,
+            None,
+            None,
+            None,
+        )
     )
     response = requests.get(franklin_url)
     response.raise_for_status()
@@ -257,8 +277,29 @@ def main():
 
     franklin_url_path = str(Path("collections", AVIRIS_L2_COG_COLLECTION_ID, "items"))
     franklin_url = urlunparse(
-        (args.franklin_scheme, args.franklin_hostname, franklin_url_path, None, None, None)
+        (
+            args.franklin_scheme,
+            args.franklin_hostname,
+            franklin_url_path,
+            None,
+            None,
+            None,
+        )
     )
+
+    response = requests.get(
+        "{}://{}/collections/{}".format(
+            args.franklin_scheme,
+            args.franklin_hostname,
+            AVIRIS_L2_COG_COLLECTION_ID,
+        )
+    )
+    if response.status_code == 404:
+        requests.post(
+            "{}://{}/collections",
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(AVIRIS_L2_COG_COLLECTION),
+        )
     print("POST Item {} to {}".format(cog_item.id, franklin_url))
     response = requests.post(
         franklin_url,

@@ -4,8 +4,8 @@ set -e
 function usage() {
     echo -n \
 "Usage: $(basename "$0")
-Use Docker Compose to start the app services
-Example: ./scripts/console
+Run database migrations
+Example: ./scripts/migrate
 "
 }
 
