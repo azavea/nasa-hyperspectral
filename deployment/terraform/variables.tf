@@ -224,7 +224,7 @@ variable "batch_root_block_device_size" {
 }
 
 variable "batch_root_block_device_type" {
-  default = "gp2"
+  default = "gp3"
   type    = string
 }
 
