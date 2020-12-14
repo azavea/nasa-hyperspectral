@@ -1,5 +1,6 @@
 import argparse
 from contextlib import contextmanager
+from datetime import datetime, timezone
 import ftplib
 import json
 from math import floor
@@ -24,18 +25,21 @@ GB = 1024 ** 3
 s3 = boto3.client("s3")
 
 AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-collection"
-AVIRIS_L2_COG_COLLECTION_ID = "aviris-l2-cogs"
-AVIRIS_L2_COG_COLLECTION = {
-    "id": AVIRIS_L2_COG_COLLECTION_ID,
-    "stac_version": "1.0.0-beta.2",
-    "description": "AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
-    "license": "proprietary",
-    "extent": {
-        "spatial": {"bbox": [[-180, -90, 180, 90]]},
-        "temporal": {"interval": [["2014-01-01T00:00:00Z", "2019-12-31T00:00:00Z"]]},
-    },
-    "links": [],
-}
+AVIRIS_L2_COG_COLLECTION = pystac.Collection(
+    "aviris-l2-cogs",
+    "AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
+    pystac.Extent(
+        pystac.SpatialExtent([[-180, -90, 180, 90]]),
+        pystac.TemporalExtent(
+            [
+                [
+                    datetime(2014, 1, 1, tzinfo=timezone.utc),
+                    datetime(2020, 1, 1, tzinfo=timezone.utc),
+                ]
+            ]
+        ),
+    ),
+)
 
 
 @contextmanager
@@ -97,9 +101,7 @@ def main():
         ),
     )
     parser.add_argument(
-        "--s3-bucket",
-        type=str,
-        default=os.environ.get("AAL2_S3_BUCKET"),
+        "--s3-bucket", type=str, default=os.environ.get("AAL2_S3_BUCKET", "aviris-data")
     )
     parser.add_argument(
         "--s3-prefix",
@@ -120,9 +122,6 @@ def main():
         help="If provided, script will not process any COG > 200 MB to keep processing times reasonable. Useful for debugging.",
     )
     args = parser.parse_args()
-
-    # TODO: Check if COG item already exists and skip processing?
-    #       Maybe separate issue?
 
     # POST Franklin /search for Name=<scene name> argument, retrieve STAC Item
     franklin_url_path = str(
@@ -150,9 +149,45 @@ def main():
         )
     scene_name = item.properties.get("Name")
 
-    gzip_ftp_url = urlparse(l2_asset.href)
-    username_password, ftp_hostname = gzip_ftp_url.netloc.split("@")
-    ftp_username, ftp_password = username_password.split(":")
+    # Create new COG STAC Item
+    cog_item_id = "{}-{}_{}".format(
+        AVIRIS_L2_COG_COLLECTION.id,
+        item.properties.get("Name"),
+        item.properties.get("Scene"),
+    )
+    cog_item = pystac.Item(
+        cog_item_id,
+        item.geometry,
+        item.bbox,
+        item.datetime,
+        item.properties,
+        collection=AVIRIS_L2_COG_COLLECTION.id,
+    )
+
+    # Create COG Collection if it doesn't exist
+    response = requests.get(
+        "{}://{}/collections/{}".format(
+            args.franklin_scheme, args.franklin_hostname, AVIRIS_L2_COG_COLLECTION.id
+        )
+    )
+    if response.status_code == 404:
+        requests.post(
+            "{}://{}/collections".format(args.franklin_scheme, args.franklin_hostname),
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(AVIRIS_L2_COG_COLLECTION.to_dict()),
+        )
+
+    # Exit early if COG STAC Item already exists
+    cog_item_url = "{}://{}/collections/{}/items/{}".format(
+        args.franklin_scheme,
+        args.franklin_hostname,
+        AVIRIS_L2_COG_COLLECTION.id,
+        cog_item_id,
+    )
+    response = requests.get(cog_item_url)
+    if response.status_code == 200:
+        print("STAC Item {} already exists. Exiting.".format(cog_item_url))
+        return
 
     # Create tmpdir
     temp_dir = Path(args.temp_dir if args.temp_dir is not None else mkdtemp())
@@ -164,6 +199,9 @@ def main():
             print("Using existing archive: {}".format(local_archive))
         else:
             with open(local_archive, "wb") as fp:
+                gzip_ftp_url = urlparse(l2_asset.href)
+                username_password, ftp_hostname = gzip_ftp_url.netloc.split("@")
+                ftp_username, ftp_password = username_password.split(":")
                 ftp_path = gzip_ftp_url.path.lstrip("/")
                 print("FTP RETR {}".format(ftp_path))
                 with timing("FTP RETR"):
@@ -185,21 +223,6 @@ def main():
                 print("Extracting {} to {}".format(local_archive, extract_path))
                 with timing("Extract"):
                     tar_gz_fp.extractall(extract_path)
-
-        # Create new COG STAC Item
-        cog_item_id = "{}-{}_{}".format(
-            AVIRIS_L2_COG_COLLECTION_ID,
-            item.properties.get("Name"),
-            item.properties.get("Scene"),
-        )
-        cog_item = pystac.Item(
-            cog_item_id,
-            item.geometry,
-            item.bbox,
-            item.datetime,
-            item.properties,
-            collection=AVIRIS_L2_COG_COLLECTION_ID,
-        )
 
         # Find HDR data files in unzipped package
         hdr_files = list(filter(lambda x: x.endswith(".hdr"), tar_files))
@@ -251,9 +274,7 @@ def main():
                 metadata_s3_uri = "s3://{}/{}".format(args.s3_bucket, metadata_key)
                 print("Uploading {} to {}".format(cog_metadata_path, metadata_s3_uri))
                 s3.upload_file(
-                    str(cog_metadata_path),
-                    args.s3_bucket,
-                    str(metadata_key),
+                    str(cog_metadata_path), args.s3_bucket, str(metadata_key)
                 )
 
             # Add assets to COG STAC Item
@@ -275,7 +296,8 @@ def main():
             print("Removing temp dir: {}".format(temp_dir))
             shutil.rmtree(temp_dir, ignore_errors=True)
 
-    franklin_url_path = str(Path("collections", AVIRIS_L2_COG_COLLECTION_ID, "items"))
+    # Add COG Item to AVIRIS L2 STAC Collection
+    franklin_url_path = str(Path("collections", AVIRIS_L2_COG_COLLECTION.id, "items"))
     franklin_url = urlunparse(
         (
             args.franklin_scheme,
@@ -286,20 +308,6 @@ def main():
             None,
         )
     )
-
-    response = requests.get(
-        "{}://{}/collections/{}".format(
-            args.franklin_scheme,
-            args.franklin_hostname,
-            AVIRIS_L2_COG_COLLECTION_ID,
-        )
-    )
-    if response.status_code == 404:
-        requests.post(
-            "{}://{}/collections".format(args.franklin_scheme, args.franklin_hostname),
-            headers={"Content-Type": "application/json"},
-            data=json.dumps(AVIRIS_L2_COG_COLLECTION),
-        )
     print("POST Item {} to {}".format(cog_item.id, franklin_url))
     response = requests.post(
         franklin_url,
