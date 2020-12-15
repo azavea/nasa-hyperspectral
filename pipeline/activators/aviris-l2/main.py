@@ -1,18 +1,13 @@
 import argparse
-from contextlib import contextmanager
 from datetime import datetime, timezone
 import ftplib
-import json
 from math import floor
 import os
 from pathlib import Path
 import shutil
-import sys
 import tarfile
 from tempfile import mkdtemp
-import threading
-from time import time
-from urllib.parse import urlparse, urlunparse
+from urllib.parse import urlparse
 
 import boto3
 from boto3.s3.transfer import TransferConfig
@@ -20,9 +15,11 @@ from osgeo import gdal
 import pystac
 import requests
 
+from progress import ProgressPercentage, timing, translate_callback
+from stac_client import STACClient
+
 
 GB = 1024 ** 3
-s3 = boto3.client("s3")
 
 AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-collection"
 AVIRIS_L2_COG_COLLECTION = pystac.Collection(
@@ -40,43 +37,7 @@ AVIRIS_L2_COG_COLLECTION = pystac.Collection(
         ),
     ),
 )
-
-
-@contextmanager
-def timing(description: str) -> None:
-    start = time()
-    yield
-    elapsed = time() - start
-    print("{}: {:.4f}s".format(description, elapsed))
-
-
-class ProgressPercentage(object):
-    def __init__(self, filename):
-        self._filename = filename
-        self._size = float(os.path.getsize(filename))
-        self._seen_so_far = 0
-        self._lock = threading.Lock()
-
-    def __call__(self, bytes_amount):
-        # To simplify we'll assume this is hooked up
-        # to a single filename.
-        with self._lock:
-            self._seen_so_far += bytes_amount
-            percentage = (self._seen_so_far / self._size) * 100
-            sys.stdout.write(
-                "\r{}  {} / {} ({:.2f}%)".format(
-                    self._filename, self._seen_so_far, self._size, percentage
-                )
-            )
-            sys.stdout.flush()
-            if percentage >= 100:
-                print("")
-
-
-def translate_callback(progress, *args):
-    progress_pct = floor(progress * 100)
-    if progress_pct % 10 == 0 > progress_pct > 0:
-        print("GDAL Translate: {}%".format(progress_pct))
+AVIRIS_L2_COG_COLLECTION.links = []
 
 
 def main():
@@ -89,15 +50,10 @@ def main():
         ),
     )
     parser.add_argument(
-        "--franklin-scheme",
-        type=str,
-        default=os.environ.get("AAL2_FRANKLIN_SCHEME", "http"),
-    )
-    parser.add_argument(
-        "--franklin-hostname",
+        "--franklin-url",
         type=str,
         default=os.environ.get(
-            "AAL2_FRANKLIN_HOSTNAME", "franklin.service.internal:9090"
+            "AAL2_FRANKLIN_URL", "http://franklin.service.internal:9090"
         ),
     )
     parser.add_argument(
@@ -123,28 +79,18 @@ def main():
     )
     args = parser.parse_args()
 
-    # POST Franklin /search for Name=<scene name> argument, retrieve STAC Item
-    franklin_url_path = str(
-        Path("collections", AVIRIS_ARCHIVE_COLLECTION_ID, "items", args.aviris_stac_id)
+    s3 = boto3.client("s3")
+    stac_client = STACClient(args.franklin_url)
+
+    # GET STAC Item from AVIRIS Catalog
+    item = stac_client.get_collection_item(
+        AVIRIS_ARCHIVE_COLLECTION_ID, args.aviris_stac_id
     )
-    franklin_url = urlunparse(
-        (
-            args.franklin_scheme,
-            args.franklin_hostname,
-            franklin_url_path,
-            None,
-            None,
-            None,
-        )
-    )
-    response = requests.get(franklin_url)
-    response.raise_for_status()
-    item = pystac.Item.from_dict(response.json())
     l2_asset = item.assets.get("ftp_refl", None)
     if l2_asset is None:
         raise ValueError(
             "STAC Item {} from {} has no asset 'ftp_refl'!".format(
-                args.aviris_stac_id, franklin_url
+                args.aviris_stac_id, args.franklin_url
             )
         )
     scene_name = item.properties.get("Name")
@@ -165,29 +111,16 @@ def main():
     )
 
     # Create COG Collection if it doesn't exist
-    response = requests.get(
-        "{}://{}/collections/{}".format(
-            args.franklin_scheme, args.franklin_hostname, AVIRIS_L2_COG_COLLECTION.id
-        )
-    )
-    if response.status_code == 404:
-        requests.post(
-            "{}://{}/collections".format(args.franklin_scheme, args.franklin_hostname),
-            headers={"Content-Type": "application/json"},
-            data=json.dumps(AVIRIS_L2_COG_COLLECTION.to_dict()),
-        )
+    if not stac_client.has_collection(AVIRIS_L2_COG_COLLECTION.id):
+        stac_client.post_collection(AVIRIS_L2_COG_COLLECTION)
 
     # Exit early if COG STAC Item already exists
-    cog_item_url = "{}://{}/collections/{}/items/{}".format(
-        args.franklin_scheme,
-        args.franklin_hostname,
-        AVIRIS_L2_COG_COLLECTION.id,
-        cog_item_id,
-    )
-    response = requests.get(cog_item_url)
-    if response.status_code == 200:
-        print("STAC Item {} already exists. Exiting.".format(cog_item_url))
+    try:
+        stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
+        print("STAC Item {} already exists. Exiting.".format(cog_item_id))
         return
+    except requests.exceptions.HTTPError:
+        pass
 
     # Create tmpdir
     temp_dir = Path(args.temp_dir if args.temp_dir is not None else mkdtemp())
@@ -297,27 +230,9 @@ def main():
             shutil.rmtree(temp_dir, ignore_errors=True)
 
     # Add COG Item to AVIRIS L2 STAC Collection
-    franklin_url_path = str(Path("collections", AVIRIS_L2_COG_COLLECTION.id, "items"))
-    franklin_url = urlunparse(
-        (
-            args.franklin_scheme,
-            args.franklin_hostname,
-            franklin_url_path,
-            None,
-            None,
-            None,
-        )
-    )
-    print("POST Item {} to {}".format(cog_item.id, franklin_url))
-    response = requests.post(
-        franklin_url,
-        headers={"Content-Type": "application/json"},
-        data=json.dumps(cog_item.to_dict()),
-    )
-    response.raise_for_status()
-    post_data = response.json()
-    post_url = "/".join([franklin_url, post_data.get("id")])
-    print("Success: {}".format(post_url))
+    print("POST Item {} to {}".format(cog_item.id, args.franklin_url))
+    item_data = stac_client.post_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item)
+    print("Success: {}".format(item_data["id"]))
 
 
 if __name__ == "__main__":
