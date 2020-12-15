@@ -1,4 +1,4 @@
-version: "3"
+version: "3.8"
 
 services:
   database:
@@ -7,28 +7,17 @@ services:
       - POSTGRES_USER=franklin
       - POSTGRES_PASSWORD=franklin
       - POSTGRES_DB=franklin
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "franklin"]
-      interval: 3s
-      timeout: 3s
-      retries: 3
-      start_period: 5s
   franklin:
     image: quay.io/azavea/franklin:c93f2ff
-    depends_on:
-      database:
-        condition: service_healthy
     command: ["serve", "--with-transactions"]
     environment:
       - ENVIRONMENT=development
-      - DB_HOST=database.service.internal
+      - DB_HOST=database
       - DB_NAME=franklin
       - DB_USER=franklin
       - DB_PASSWORD=franklin
       - AWS_PROFILE
       - AWS_REGION
-    links:
-      - database:database.service.internal
     ports:
       - "9090:9090"
   app:
@@ -36,14 +25,12 @@ services:
       context: .
       dockerfile: Dockerfile
       target: app
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-nasa}
     image: nasa-hyperspectral_app
     volumes:
       - .:/workspace:cached
       - $HOME/.aws:/root/.aws:ro
-    environment:
-      - AWS_PROFILE=${AWS_PROFILE:-nasa}
-    links:
-      - franklin:franklin.service.internal
   dev:
     build:
       context: .

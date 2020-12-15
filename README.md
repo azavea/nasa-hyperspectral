@@ -5,6 +5,23 @@ An event-driven image processing pipeline for developing our foundational capabi
 - [STAC Catalogs](#stac-catalogs)
 - [Scripts](#scripts)
 
+## Requirements
+
+- Docker
+- Docker Compose
+
+## Setup
+
+Run `./scripts/setup`.
+
+## Development
+
+Run the local Franklin instance with `./scripts/server`. It is available at http://localhost:9090.
+
+Build and ingest the AVIRIS catalog into Franklin with `./scripts/catalogs-aviris`. The [catalogs README](./catalogs/README.md) has more information.
+
+Run the AVIRIS L2 activator in dev mode with `./scripts/run-activiator-l2-aviris`
+
 ## Scripts
 
 | Name    | Description                                                 |
@@ -18,22 +35,3 @@ An event-driven image processing pipeline for developing our foundational capabi
 | `server` | Start application servers, including Franklin |
 | `setup` | Run project setup after checkout |
 | `update` | Update project dependencies and rebuild containers |
-
-## Application
-
-### Requirements
-
-- Docker
-- Docker Compose
-
-### Setup
-
-Run `./scripts/setup`.
-
-### Development
-
-Run the local Franklin instance with `./scripts/server`. It is available at http://localhost:9090.
-
-Build and ingest the AVIRIS catalog into Franklin with `./scripts/catalogs-aviris`. The [catalogs README](./catalogs/README.md) has more information.
-
-Run the AVIRIS L2 activator in dev mode with `./scripts/run-activiator-l2-aviris`

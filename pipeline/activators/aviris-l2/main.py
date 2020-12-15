@@ -53,7 +53,7 @@ def main():
         "--franklin-url",
         type=str,
         default=os.environ.get(
-            "AAL2_FRANKLIN_URL", "http://franklin.service.internal:9090"
+            "AAL2_FRANKLIN_URL", "http://franklin:9090"
         ),
     )
     parser.add_argument(
