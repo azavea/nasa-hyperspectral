@@ -1,6 +1,8 @@
-boto3==1.16.1
+boto3==1.16.31
 fastkml==0.11
+gdal==3.1.4
 geopandas==0.8.1
 jsonschema==3.2.0
 pystac==0.5.3
+requests==2.25.0
 shapely==1.7.1

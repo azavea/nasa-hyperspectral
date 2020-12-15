@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+
+if [[ -n "${NASA_HSI_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+"Usage: $(basename "$0")
+Generate AVIRIS Catalog and then ingest into Franklin if not already available
+Example: ./scripts/catalogs-aviris
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]
+then
+    case "${1}" in
+        --help)
+            usage
+            ;;
+        *)
+            ./scripts/server
+
+            docker-compose run \
+                --rm \
+                --entrypoint python \
+                --workdir="/workspace/catalogs/aviris" \
+                app build_catalog.py
+
+            echo "Importing catalog to Franklin. If this script is still running after a few minutes,"
+            echo 'check that `select count(*) from collection_items;` is still increasing '
+            echo "in a psql shell. If it isn't, ctrl+c the import."
+            echo "There is a Franklin bug where sometimes imports do not exit when complete."
+
+            docker-compose run -v "$(pwd)/catalogs/aviris/data:/data:ro" --rm franklin \
+                import-catalog --catalog-root /data/catalog/catalog.json
+
+            ;;
+    esac
+fi

@@ -1,17 +1,36 @@
-version: '3'
+version: "3.8"
 
 services:
+  database:
+    image: quay.io/azavea/postgis:3-postgres12.4-slim
+    environment:
+      - POSTGRES_USER=franklin
+      - POSTGRES_PASSWORD=franklin
+      - POSTGRES_DB=franklin
+  franklin:
+    image: quay.io/azavea/franklin:c93f2ff
+    command: ["serve", "--with-transactions"]
+    environment:
+      - ENVIRONMENT=development
+      - DB_HOST=database
+      - DB_NAME=franklin
+      - DB_USER=franklin
+      - DB_PASSWORD=franklin
+      - AWS_PROFILE
+      - AWS_REGION
+    ports:
+      - "9090:9090"
   app:
     build:
       context: .
       dockerfile: Dockerfile
       target: app
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-nasa}
     image: nasa-hyperspectral_app
     volumes:
       - .:/workspace:cached
       - $HOME/.aws:/root/.aws:ro
-    environment:
-      - AWS_PROFILE=${AWS_PROFILE:-nasa}
   dev:
     build:
       context: .

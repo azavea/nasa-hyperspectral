@@ -1,0 +1,32 @@
+#!/bin/bash
+set -e
+
+if [[ -n "${NASA_HSI_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+"Usage: $(basename "$0") --help
+Use Docker Compose to run the AVIRIS L2 activator
+Example: ./scripts/run-activator-aviris-l2 <AVIRIS STAC Item ID>
+"
+}
+
+if [ "${BASH_SOURCE[0]}" = "${0}" ]
+then
+    DEV_S3_BUCKET="aviris-data-dev-${USER}"
+
+    if ! docker-compose run --rm --entrypoint aws dev s3 ls "s3://${DEV_S3_BUCKET}"; then
+        echo "Creating developer S3 bucket: s3://${DEV_S3_BUCKET}..."
+        docker-compose run --rm --entrypoint aws dev s3api create-bucket --bucket "${DEV_S3_BUCKET}"
+        echo "Done."
+        exit 1
+    fi
+
+    docker-compose run --rm \
+        --entrypoint python \
+        --workdir="/workspace/pipeline/activators/aviris-l2" \
+        -e "AAL2_S3_BUCKET=${DEV_S3_BUCKET}" \
+        app main.py "$@"
+fi
