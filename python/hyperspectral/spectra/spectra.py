@@ -1,6 +1,7 @@
 from collections import Counter
 from copy import deepcopy
 from functools import reduce
+import re
 
 import numpy as np
 import parsec
@@ -18,6 +19,8 @@ class Spectrum:
         self.y = np.array(y)
 
     def plot(self, rnga=None, rngb=None):
+        import matplotlib.pyplot as plt
+
         if rnga:
             if rngb:
                 ixs = (rnga <= self.x) & (self.x <= rngb)
@@ -138,7 +141,7 @@ class SpectralLibrary:
             self.source_bands = list(range(0, len(band_frequencies)))
 
     @property
-    def bands(self):
+    def band_count(self):
         assert self.is_regular(), 'Spectral collection must be regular'
         return len(self.spectra[0].x)
 
@@ -157,6 +160,7 @@ class SpectralLibrary:
         )
 
     def invalid_band_count(self):
+        assert self.is_regular(), 'Spectral collection must be regular'
         samples = np.array([s.y for s in self.spectra])
         return np.sum(np.isnan(samples), 0)
 

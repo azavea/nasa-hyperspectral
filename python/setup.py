@@ -6,4 +6,9 @@ setup(
     description='Hyperspectral imaging and processing utilities',
     packages=find_packages(),
     python_requires='>=3.6',
+    install_requires=[
+        'numpy',
+        'scipy',
+        'parsec'
+    ],
 )
