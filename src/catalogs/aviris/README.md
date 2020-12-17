@@ -6,21 +6,32 @@ CSV file downloaded on 2020-10-08 from https://docs.google.com/spreadsheets/d/16
 
 ## Writing the Catalog
 
-Enter dev container shell and cd to this dir:
 ```shell
-./scripts/console
-cd catalogs/aviris
+docker-compose run --rm catalogs-aviris
 ```
 
-Generate the catalog:
+## Upload the Catalog to S3
 
 ```shell
-python build_catalog.py
-```
-
-Once the catalog is written, upload with:
-
-```shell
-# Still in dev container console in dir catalogs/aviris
+# Still in container console
+./scripts/console catalogs-aviris
 aws s3 cp --recursive --quiet data/catalog/ s3://aviris-data/stac-catalog
 ```
+
+## Ingest into local Franklin
+
+```shell
+# Run from repository root directory
+docker-compose run -v "$(pwd)/src/catalogs/aviris/data:/data:ro" --rm franklin \
+                import-catalog --catalog-root /data/catalog/catalog.json
+```
+
+The franklin ingest may not exit. If it's still running after a few minutes, log into the db and see if
+the count in collection_items table is still increasing:
+
+```
+./scripts/db-console
+> select count(*) from collection_items;
+```
+
+If the count is no longer increasing, ctrl+c the ingest. It is complete.
