@@ -50,9 +50,14 @@ class Spectrum:
         self.x = np.array(x)
         self.y = np.array(y)
 
-    def plot(self, rnga=None, rngb=None):
+    def plot(self, rnga=None, rngb=None, ax=None):
         """
         Produce a matplotlib plot of the sampled spectrum
+
+        Arguments:
+            rnga (float or (float, float)): The start of the x range to plot if a single number, or a tuple giving the start and end of the x range
+            rngb (float): The end of the x range to plot
+            ax (matplotlib.axes.Axes): The axes object to target, in case working with subplots
         """
         import matplotlib.pyplot as plt
 
@@ -68,13 +73,15 @@ class Spectrum:
             x = self.x
             y = self.y
 
-        fig = plt.figure()
-        plt.plot(x, y)
-        fig.suptitle(self.name)
+        if not ax:
+            fig, ax = plt.subplots()
+
+        ax.plot(x, y)
+        ax.set_title(self.name)
         if 'X Units' in self.info:
-            plt.xlabel(self.info['X Units'])
+            ax.set_xlabel(self.info['X Units'])
         if 'Y Units' in self.info:
-            plt.ylabel(self.info['Y Units'])
+            ax.set_ylabel(self.info['Y Units'])
         return ax
 
     def resample(self, new_x):
@@ -216,10 +223,10 @@ class SpectralLibrary:
         else:
             self.source_bands = list(range(0, len(band_frequencies)))
 
-    @property
     """
     Count the number of sampled bands in the (regular) library
     """
+    @property
     def band_count(self):
         assert self.is_regular(), 'Spectral collection must be regular'
         return len(self.spectra[0].x)
@@ -291,15 +298,18 @@ class SpectralLibrary:
         self.groups = None
 
     """
-    Filter the available spectra (in place)
+    Filter the available spectra
 
     Applies a function of type Spectrum → Boolean to all the spectra in the library and
-    filters in place based on the results.
+    filters based on the results.  Can be in-place, or return a new, filtered library.
     """
-    def filter_spectra(self, filter_fn):
-        self.spectra = list(filter(filter_fn, self.spectra))
-        self.grp_fn = None
-        self.groups = None
+    def filter_spectra(self, filter_fn, inplace=False):
+        if inplace:
+            self.spectra = list(filter(filter_fn, self.spectra))
+            self.grp_fn = None
+            self.groups = None
+        else:
+            return SpectralLibrary(list(filter(filter_fn, self.spectra)))
 
     """
     Puts spectra into groups based on a user-specified function
