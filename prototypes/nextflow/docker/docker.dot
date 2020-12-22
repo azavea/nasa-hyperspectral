@@ -1,0 +1,18 @@
+digraph "docker" {
+p0 [shape=point,label="",fixedsize=true,width=0.1,xlabel="Channel.of"];
+p1 [label="activator"];
+p0 -> p1 [label="event_ch"];
+
+p1 [label="activator"];
+p2 [label="processor"];
+p1 -> p2 [label="processor_ch"];
+
+p2 [label="processor"];
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="view"];
+p2 -> p3 [label="result"];
+
+p3 [shape=circle,label="",fixedsize=true,width=0.1,xlabel="view"];
+p4 [shape=point];
+p3 -> p4;
+
+}

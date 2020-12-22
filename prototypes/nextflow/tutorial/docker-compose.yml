@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  nextflow:
+    image: nextflow/nextflow:20.11.0-edge
+    volumes:
+      - $HOME/.aws:/root/.aws:ro
+      - $PWD:/workspace
+    environment:
+      - AWS_PROFILE=${AWS_PROFILE:-hsi}
