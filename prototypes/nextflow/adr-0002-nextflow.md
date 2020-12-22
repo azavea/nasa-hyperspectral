@@ -26,7 +26,7 @@ In practice a `Nextflow` pipeline script is made by joining together different `
 
 Along with the `workflow` descirption DSL `Nextflow` provides an abtraction over [executors](https://www.nextflow.io/docs/latest/executor.html). `Executor` is the component that determines the system where a pipeline process is run and supervises its execution. The executor provides an abstraction between the pipeline processes and the underlying execution system. This allows you to write the pipeline functional logic independently from the actual processing platform. 
 
-In other words the same `Nextflow` pipeline can be launched in a different execution environment (local, local docker, aws batch, k8s, etc) only with minimal configuration changes.
+In other words the same `Nextflow` pipeline can be launched in a different execution environment (local, local docker, aws batch, k8s, etc) with minimal configuration changes only.
 
 ## Solution
 
@@ -103,16 +103,16 @@ workflow {
 
 ```
 
-* [Activator Sources](docker-v2/batch/activator.py)
-* [Processor Sources](docker-v2/batch/processor.py)
-* [.nextflow.config](docker-v2/.nextflow.config)
-* [docker.nf](docker-v2/docker.nf)
+* [Activator Sources](docker/batch/activator.py)
+* [Processor Sources](docker/batch/processor.py)
+* [.nextflow.config](docker/.nextflow.config)
+* [docker.nf](docker/docker.nf)
 
 ### How to run
 
 _NOTE: All diagrams in this section are generated via nextflow and converted into png format._
 
-To run this `Nextflow` script enter the [docker-v2 directory](./docker-v2) and run `make nextflow-run` command:
+To run this `Nextflow` script enter the [docker directory](./docker) and run `make nextflow-run` command:
 
 ```bash
 nextflow run docker.nf -with-report docker.html -with-dag docker.dot --event '{"msg": "workflow run"}'
@@ -163,7 +163,7 @@ Report output example (available as HTML file):
 
 ### Execution environment
 
-The example above is located in the [docker-v2 directory](./docker-v2) and runs locally. Each processor in this case is represented as a separate docker container. To run the same script on `AWS Batch` it is neccesary to add an appropriate `Nextflow` configuration into the [.nextflow.config](./docker-aws/.nextflow.config) file. All AWS Batch Examples are located in the [docker-aws](./docker-aws) directory.
+The example above is located in the [docker directory](./docker) and runs locally. Each processor in this case is represented as a separate docker container. To run the same script on `AWS Batch` it is neccesary to add an appropriate `Nextflow` configuration into the [.nextflow.config](./docker-aws/.nextflow.config) file. All AWS Batch Examples are located in the [docker-aws](./docker-aws) directory.
 
 ### Deployment
 
