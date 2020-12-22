@@ -1,55 +1,15 @@
 package azavea.nasa
 
-import cats.data.Validated
-import cats.implicits._
 import com.azavea.stac4s._
 import com.azavea.stac4s.types._
-import com.monovore.decline._
 import geotrellis.vector.Extent
 import io.circe.syntax._
-import io.lemonlabs.uri.Url
 
 import java.time.Instant
-import scala.util.{Failure, Success, Try}
 
 package object hsi {
 
   val HsiStacVersion = "1.0.0-beta.2"
-
-  implicit val extentArgument: Argument[Extent] = new Argument[Extent] {
-    def read(string: String) = {
-      string
-        .replaceAll("\"", "")
-        .replaceAll("'", "")
-        .split(",")
-        .map(x => Try(x.toDouble)) match {
-        case Array(
-              Success(minlon),
-              Success(minlat),
-              Success(maxlon),
-              Success(maxlat)
-            ) =>
-          Validated.valid(Extent(minlon, minlat, maxlon, maxlat))
-        case _ => Validated.invalidNel(s"Invalid extent: $string")
-      }
-    }
-
-    def defaultMetavar = "minlon,minlat,maxlon,maxlat"
-  }
-
-  implicit val urlArgument: Argument[Url] = new Argument[Url] {
-    def read(string: String) = {
-      Url.parseTry(string) match {
-        case Success(url) => Validated.valid(url)
-        case Failure(e)   => Validated.invalidNel(e.getMessage)
-      }
-    }
-
-    def defaultMetavar = "url"
-  }
-
-  implicit def extentToTwoDimBbox(e: Extent): TwoDimBbox =
-    TwoDimBbox(e.xmin, e.ymin, e.xmax, e.ymax)
 
   private val cogCollectionId = "nasa-hsi-activator-cog-clip"
   private val JAN_1_2006_EPOCH = 1136073600
@@ -89,4 +49,7 @@ package object hsi {
     List.empty[StacLink],
     Map.empty[String, String].asJsonObject
   )
+
+  implicit def extentToTwoDimBbox(e: Extent): TwoDimBbox =
+    TwoDimBbox(e.xmin, e.ymin, e.xmax, e.ymax)
 }
