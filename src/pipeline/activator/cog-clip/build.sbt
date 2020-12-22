@@ -11,8 +11,8 @@ libraryDependencies ++= Seq(
   "com.monovore" %% "decline-refined" % "1.3.0",
   "org.locationtech.geotrellis" %% "geotrellis-raster" % "3.5.1",
   "org.locationtech.geotrellis" %% "geotrellis-vector" % "3.5.1",
+  "org.locationtech.geotrellis" %% "geotrellis-s3" % "3.5.1",
   "org.typelevel" %% "cats-effect" % "2.3.1",
-  "software.amazon.awssdk" % "s3" % "2.15.50"
 )
 
 initialCommands in console :=

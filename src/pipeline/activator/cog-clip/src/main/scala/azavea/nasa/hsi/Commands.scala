@@ -6,9 +6,6 @@ import geotrellis.raster.RasterSource
 import geotrellis.raster.io.geotiff.GeoTiff
 import io.circe._
 import io.circe.syntax._
-import software.amazon.awssdk.services.s3.S3Client
-import software.amazon.awssdk.services.s3.model.PutObjectRequest
-import software.amazon.awssdk.core.sync.RequestBody
 
 object Commands {
 
@@ -32,16 +29,10 @@ object Commands {
         )
     }
     val resultId = s"${clipCogConfig.collectionId}-${clipCogConfig.itemId.value}"
-    val cogData = geotiff.toCloudOptimizedByteArray
-    val s3Client = S3Client.create
     val targetS3Key = s"activator-cog-clip/$resultId.tiff"
-    val objectRequest = PutObjectRequest.builder
-      .bucket(clipCogConfig.targetS3Bucket.value)
-      .key(targetS3Key)
-      .build
-    s3Client.putObject(objectRequest, RequestBody.fromBytes(cogData))
-
     val cogAssetHref = s"s3://${clipCogConfig.targetS3Bucket.value}/$targetS3Key"
+    geotiff.write(cogAssetHref, optimizedOrder = true)
+
     val assets = Map(
       "cog" -> StacItemAsset(
         cogAssetHref,
