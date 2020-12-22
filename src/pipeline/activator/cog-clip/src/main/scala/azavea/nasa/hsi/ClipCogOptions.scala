@@ -13,16 +13,6 @@ import scala.util.{Failure, Success, Try}
 
 trait ClipCogOptions {
 
-  val clipCogConfig: Opts[ClipCogConfig] =
-    (
-      assetId,
-      collectionId,
-      extent,
-      itemId,
-      stacApiUrl,
-      targetS3Bucket
-    ) mapN ClipCogConfig
-
   private val assetId = Opts.argument[NonEmptyString]("stac-asset-id")
 
   private val collectionId = Opts.argument[NonEmptyString]("collection-id")
@@ -85,4 +75,14 @@ trait ClipCogOptions {
 
     def defaultMetavar = "url"
   }
+
+  val clipCogConfig: Opts[ClipCogConfig] =
+    (
+      assetId,
+      collectionId,
+      extent,
+      itemId,
+      stacApiUrl,
+      targetS3Bucket
+    ) mapN ClipCogConfig
 }
