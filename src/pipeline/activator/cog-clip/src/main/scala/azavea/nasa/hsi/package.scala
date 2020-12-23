@@ -7,7 +7,7 @@ import io.circe.syntax._
 
 import java.time.Instant
 
-package object hsi {
+package object hsi extends Implicits {
 
   val HsiStacVersion = "1.0.0-beta.2"
 
@@ -50,6 +50,4 @@ package object hsi {
     Map.empty[String, String].asJsonObject
   )
 
-  implicit def extentToTwoDimBbox(e: Extent): TwoDimBbox =
-    TwoDimBbox(e.xmin, e.ymin, e.xmax, e.ymax)
 }
