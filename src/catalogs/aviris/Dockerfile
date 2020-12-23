@@ -1,12 +1,16 @@
-FROM continuumio/miniconda3:4.8.2 AS app
+FROM continuumio/miniconda3:4.9.2
 
-RUN conda install --yes --channel conda-forge python=3.8
-COPY ./requirements-conda.txt /tmp/requirements-conda.txt
-RUN conda install --yes --channel conda-forge \
-  --file /tmp/requirements-conda.txt
+RUN mkdir -p /usr/local/src
+WORKDIR /usr/local/src
 
-RUN pip install git+https://github.com/azavea/stacframes.git@dd7959d1a9fee7227624aa185f797402209b0ad0
+COPY requirements-conda.txt /usr/local/src/requirements-conda.txt
+COPY requirements-pip.txt /usr/local/src/requirements-pip.txt
 
-WORKDIR /workspace
+RUN set -ex \
+  && conda install --yes --channel conda-forge python=3.8 \
+  && conda install --yes --channel conda-forge --file /usr/local/src/requirements-conda.txt \
+  && pip install -r /usr/local/src/requirements-pip.txt
+
+COPY . /usr/local/src
 
 ENTRYPOINT [ "python", "build_catalog.py" ]

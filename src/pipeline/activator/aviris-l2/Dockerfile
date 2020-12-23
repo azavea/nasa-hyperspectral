@@ -1,10 +1,14 @@
-FROM continuumio/miniconda3:4.8.2 AS app
+FROM continuumio/miniconda3:4.9.2
 
-RUN conda install --yes python=3.8
-COPY ./requirements-conda.txt /tmp/requirements-conda.txt
-RUN conda install --yes --channel conda-forge \
-  --file /tmp/requirements-conda.txt
+RUN mkdir -p /usr/local/src
+WORKDIR /usr/local/src
 
-WORKDIR /workspace
+COPY requirements-conda.txt /usr/local/src/requirements-conda.txt
+
+RUN set -ex \
+  && conda install --yes --channel conda-forge python=3.8 \
+  && conda install --yes --channel conda-forge --file /usr/local/src/requirements-conda.txt
+
+COPY . /usr/local/src
 
 ENTRYPOINT [ "python", "main.py" ]
