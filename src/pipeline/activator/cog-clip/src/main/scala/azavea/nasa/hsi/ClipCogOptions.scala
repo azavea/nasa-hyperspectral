@@ -6,7 +6,9 @@ import com.monovore.decline._
 import com.monovore.decline.refined._
 import eu.timepit.refined.types.string.NonEmptyString
 import geotrellis.vector.Extent
+import geotrellis.vector.io.json._
 import io.lemonlabs.uri.Url
+import io.circe.Json
 
 import java.util.UUID
 import scala.util.{Failure, Success, Try}
@@ -17,7 +19,15 @@ trait ClipCogOptions {
 
   private val collectionId = Opts.argument[NonEmptyString]("collection-id")
 
-  private val extent = Opts.argument[Extent]("extent")
+  private val features = Opts.option[JsonFeatureCollection](
+    "features",
+    help = "Feature Collection of features to clip from COG"
+  ) orElse Opts
+    .env[JsonFeatureCollection](
+      "ACC_FEATURES",
+      help = "Feature Collection of features to clip from COG"
+    )
+    .withDefault(JsonFeatureCollection(List.empty[Json]))
 
   private val itemId = Opts.argument[NonEmptyString]("stac-item-id")
 
@@ -25,62 +35,28 @@ trait ClipCogOptions {
   private val stacApiUrl = (Opts
     .option[Url](
       "stac-api-url",
-      help = stacApiUrlHelp,
-      metavar = "stac-api-url"
+      help = stacApiUrlHelp
     )
     orElse
       Opts
         .env[Url](
           "STAC_API_URL",
-          help = stacApiUrlHelp,
-          metavar = "stac-api-url"
+          help = stacApiUrlHelp
         )
         .withDefault(Url.parse("http://localhost:9090")))
 
   private val targetS3Bucket = (Opts
-    .option[NonEmptyString]("target-s3-bucket", help = "", metavar = "")
+    .option[NonEmptyString]("target-s3-bucket", help = "")
     orElse
       Opts
-        .env[NonEmptyString]("ACC_TARGET_S3_BUCKET", help = "", metavar = "")
+        .env[NonEmptyString]("ACC_TARGET_S3_BUCKET", help = "")
         .withDefault(NonEmptyString("nasa-hsi-activator-clip-cogs")))
-
-  private implicit val extentArgument: Argument[Extent] = new Argument[Extent] {
-    def read(string: String) = {
-      string
-        .replaceAll("\"", "")
-        .replaceAll("'", "")
-        .split(",")
-        .map(x => Try(x.toDouble)) match {
-        case Array(
-              Success(minlon),
-              Success(minlat),
-              Success(maxlon),
-              Success(maxlat)
-            ) =>
-          Validated.valid(Extent(minlon, minlat, maxlon, maxlat))
-        case _ => Validated.invalidNel(s"Invalid extent: $string")
-      }
-    }
-
-    def defaultMetavar = "minlon,minlat,maxlon,maxlat"
-  }
-
-  private implicit val urlArgument: Argument[Url] = new Argument[Url] {
-    def read(string: String) = {
-      Url.parseTry(string) match {
-        case Success(url) => Validated.valid(url)
-        case Failure(e)   => Validated.invalidNel(e.getMessage)
-      }
-    }
-
-    def defaultMetavar = "url"
-  }
 
   val clipCogConfig: Opts[ClipCogConfig] =
     (
       assetId,
       collectionId,
-      extent,
+      features,
       itemId,
       stacApiUrl,
       targetS3Bucket
