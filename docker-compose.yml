@@ -46,10 +46,12 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     volumes:
-      - ./:/usr/local/src:cached
+      - ./:/usr/local/src
+      - conda-dev:/opt/conda
       - pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
 volumes:
+  conda-dev:
   pipeline-data:
