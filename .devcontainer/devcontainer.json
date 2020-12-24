@@ -2,7 +2,7 @@
 	"name": "NASA Hyperspectral",
 	"dockerComposeFile": ["../docker-compose.yml", "docker-compose.extend.yml"],
 	"service": "dev",
-	"workspaceFolder": "/workspace",
+	"workspaceFolder": "/usr/local/src",
 
 	// Use this environment variable if you need to bind mount your local source code into a new container.
 	"remoteEnv": {

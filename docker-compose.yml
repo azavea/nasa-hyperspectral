@@ -20,24 +20,38 @@ services:
       - AWS_REGION
     ports:
       - "9090:9090"
-  app:
+  catalogs-aviris:
     build:
-      context: .
-      dockerfile: Dockerfile
-      target: app
+      context: ./src/catalogs/aviris
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
-    image: nasa-hyperspectral_app
+    image: nasa-hsi-catalogs-aviris
     volumes:
-      - .:/workspace:cached
+      - ./src/catalogs/aviris:/usr/local/src
+      - $HOME/.aws:/root/.aws:ro
+  activator-aviris-l2:
+    build:
+      context: ./src/pipeline/activator/aviris-l2
+    environment:
+      - AAL2_FRANKLIN_URL=http://franklin:9090
+      - AAL2_S3_BUCKET=aviris-data-dev-${USER}
+      - AWS_PROFILE=${AWS_PROFILE:-nasa}
+    image: nasa-hsi-activator-aviris-l2
+    volumes:
+      - ./src/pipeline/activator/aviris-l2:/usr/local/src
+      - ./pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
   dev:
     build:
       context: .
-      dockerfile: Dockerfile
-      target: dev
+      dockerfile: Dockerfile.dev
     volumes:
-      - .:/workspace:cached
+      - ./:/usr/local/src
+      - conda-dev:/opt/conda
+      - pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
+volumes:
+  conda-dev:
+  pipeline-data:

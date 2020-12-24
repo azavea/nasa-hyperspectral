@@ -2,12 +2,10 @@
 
 This folder contains a series of scripts used to generate STAC Catalogs for this project.
 
+See subfolders for how to run a specific catalog. 
+
 ## The Catalogs
 
 | Catalog Name | Folder | Published Location |
 |--------------|--------|--------------------|
 | AVIRIS       | aviris | `s3://aviris-data/stac-catalog/catalog.json` |
-
-## Generating Catalogs
-
-Build the dev container with `docker-compose build dev`. See individual catalog folders for how to run a specific catalog.
