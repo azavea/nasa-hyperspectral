@@ -23,7 +23,6 @@ services:
   catalogs-aviris:
     build:
       context: ./src/catalogs/aviris
-      dockerfile: Dockerfile
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
     image: nasa-hsi-catalogs-aviris
@@ -33,7 +32,6 @@ services:
   activator-aviris-l2:
     build:
       context: ./src/pipeline/activator/aviris-l2
-      dockerfile: Dockerfile
     environment:
       - AAL2_FRANKLIN_URL=http://franklin:9090
       - AAL2_S3_BUCKET=aviris-data-dev-${USER}
