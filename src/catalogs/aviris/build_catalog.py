@@ -37,54 +37,20 @@ def kml_poly_to_geom(kml_poly):
     return next(next(kml.features()).features()).geometry
 
 
-def find_s2_scenes():
-    print("Finding scenes with atmo corrected data...")
-    JPL_FTP_HOSTNAME = "popo.jpl.nasa.gov"
-    JPL_FTP_USERNAME = "avoil"
-    JPL_FTP_PASSWORD = "Gulf0il$pill"
-
-    ftp = FTP(JPL_FTP_HOSTNAME)
-    ftp.login(JPL_FTP_USERNAME, JPL_FTP_PASSWORD)
-
-    s2_scenes = {}
-
-    aviris_dir_list = ftp.nlst()
-    for aviris_dir in aviris_dir_list:
-        print("\tSearching FTP dir {}...".format(aviris_dir))
-        aviris_files = set(ftp.nlst(aviris_dir))
-        aviris_scenes = set(
-            map(
-                lambda x: Path(x).name.replace(".tar.gz", ""),
-                filter(
-                    lambda x: x.endswith(".tar.gz") and "_" not in Path(x).name,
-                    aviris_files,
-                ),
-            )
-        )
-
-        for scene in aviris_scenes:
-            s2_file = "{}/{}_refl.tar.gz".format(aviris_dir, scene)
-            if s2_file in aviris_files:
-                s2_scenes[scene] = "ftp://{}:{}@{}/{}".format(
-                    JPL_FTP_USERNAME, JPL_FTP_PASSWORD, JPL_FTP_HOSTNAME, s2_file
-                )
-    print("Found {} scenes with refl data".format(len(s2_scenes.keys())))
-    return s2_scenes
-
-
 def map_series_to_item(s2_scenes_map, series):
     year = int(series["Year"])
-    hour = max(int(series.get("UTC Hour", 0)), 0)
-    minute = max(int(series.get("UTC Minute", 0)), 0)
-    flight_dt = (
-        datetime(
-            int(year),
-            int(series["Month"]),
-            int(series["Day"]),
-            tzinfo=timezone.utc,
-        )
-        + timedelta(hours=hour, minutes=minute)
-    )
+    hour = min(max(int(series.get("UTC Hour", 0)), 0), 23)
+    minute = min(max(int(series.get("UTC Minute", 0)), 0), 59)
+    try:
+        flight_dt = datetime(
+            int(year), int(series["Month"]), int(series["Day"]), tzinfo=timezone.utc
+        ) + timedelta(hours=hour, minutes=minute)
+    except (ValueError, OverflowError):
+        [month, day, year] = series["Date"].split("/")
+        flight_dt = datetime(
+            int(year), int(month), int(day), tzinfo=timezone.utc
+        ) + timedelta(hours=hour, minutes=minute)
+
     item_id = "aviris_{}".format(series["Flight Scene"])
 
     lons = [float(series["Lon{}".format(n)]) for n in range(1, 5)]
@@ -189,6 +155,39 @@ def map_series_to_item(s2_scenes_map, series):
 
 
 def aviris_to_dataframe(aviris_csv):
+    def find_s2_scenes():
+        print("Finding AVIRIS Classic scenes with atmo corrected data...")
+        JPL_FTP_HOSTNAME = "popo.jpl.nasa.gov"
+        JPL_FTP_USERNAME = "avoil"
+        JPL_FTP_PASSWORD = "Gulf0il$pill"
+
+        ftp = FTP(JPL_FTP_HOSTNAME)
+        ftp.login(JPL_FTP_USERNAME, JPL_FTP_PASSWORD)
+
+        s2_scenes = {}
+
+        aviris_dir_list = ftp.nlst()
+        for aviris_dir in aviris_dir_list:
+            print("\tSearching FTP dir {}...".format(aviris_dir))
+            aviris_files = set(ftp.nlst(aviris_dir))
+            aviris_scenes = set(
+                map(
+                    lambda x: Path(x).name.replace(".tar.gz", ""),
+                    filter(
+                        lambda x: x.endswith(".tar.gz") and "_" not in Path(x).name,
+                        aviris_files,
+                    ),
+                )
+            )
+
+            for scene in aviris_scenes:
+                s2_file = "{}/{}_refl.tar.gz".format(aviris_dir, scene)
+                if s2_file in aviris_files:
+                    s2_scenes[scene] = "ftp://{}:{}@{}/{}".format(
+                        JPL_FTP_USERNAME, JPL_FTP_PASSWORD, JPL_FTP_HOSTNAME, s2_file
+                    )
+        print("Found {} scenes with refl data".format(len(s2_scenes.keys())))
+        return s2_scenes
 
     print("Loading AVIRIS data...")
     df = pd.read_csv(aviris_csv)
@@ -215,11 +214,59 @@ def aviris_to_dataframe(aviris_csv):
     return GeoDataFrame(df.apply(map_series_to_item_partial, axis=1)).set_crs(epsg=4326)
 
 
+def aviris_ng_to_dataframe(aviris_ng_csv):
+    def find_s2_scenes():
+        print("Finding AVIRIS NG scenes with atmo corrected data...")
+        JPL_FTP_HOSTNAME = "avng.jpl.nasa.gov"
+        JPL_FTP_USERNAME = "avng_dp"
+        JPL_FTP_PASSWORD = "P73axIvP"
+
+        ftp = FTP(JPL_FTP_HOSTNAME)
+        ftp.login(JPL_FTP_USERNAME, JPL_FTP_PASSWORD)
+
+        s2_scenes = {}
+
+        aviris_dir_list = ftp.nlst()
+        for aviris_dir in aviris_dir_list:
+            print("\tSearching FTP dir {}...".format(aviris_dir))
+            aviris_files = set(ftp.nlst(aviris_dir))
+            aviris_scenes = set(
+                map(
+                    lambda x: Path(x).name.replace(".tar.gz", ""),
+                    filter(
+                        lambda x: x.endswith(".tar.gz") and "rfl" not in Path(x).name,
+                        aviris_files,
+                    ),
+                )
+            )
+
+            for scene in aviris_scenes:
+                s2_file = "{}rfl.tar.gz".format(scene)
+                if s2_file in aviris_files:
+                    s2_scenes[scene] = "ftp://{}:{}@{}/{}".format(
+                        JPL_FTP_USERNAME, JPL_FTP_PASSWORD, JPL_FTP_HOSTNAME, s2_file
+                    )
+        print("Found {} scenes with refl data".format(len(s2_scenes.keys())))
+        return s2_scenes
+
+    print("Loading AVIRIS NG data...")
+    df = pd.read_csv(aviris_ng_csv)
+    df = df.fillna("")
+    # Skip entries with no geometry
+    df = df[df["kml_poly"] != ""]
+    df = df.drop_duplicates(subset="Flight Scene", keep="last")
+
+    s2_scenes_map = find_s2_scenes()
+
+    print("Converting AVIRIS NG to DataFrame...")
+    map_series_to_item_partial = partial(map_series_to_item, s2_scenes_map)
+    return GeoDataFrame(df.apply(map_series_to_item_partial, axis=1)).set_crs(epsg=4326)
+
+
 def main():
     df = aviris_to_dataframe("aviris-flight-lines.csv")
-
     collection = pystac.Collection(
-        "aviris-collection",
+        "aviris-classic",
         AVIRIS_DESCRIPTION,
         pystac.Extent(
             spatial=pystac.SpatialExtent([[None, None, None, None]]),
@@ -229,10 +276,24 @@ def main():
         ),
     )
     stacframes.df_to(collection, df)
-    catalog = pystac.Catalog("aviris", AVIRIS_DESCRIPTION)
-    catalog.add_child(collection)
+
+    df_ng = aviris_ng_to_dataframe("aviris-ng-flight-lines.csv")
+    collection_ng = pystac.Collection(
+        "aviris-ng",
+        AVIRIS_DESCRIPTION,
+        pystac.Extent(
+            spatial=pystac.SpatialExtent([[None, None, None, None]]),
+            temporal=pystac.TemporalExtent(
+                [[datetime(1970, 1, 1, tzinfo=timezone.utc), None]]
+            ),
+        ),
+    )
+    stacframes.df_to(collection_ng, df_ng)
 
     # Normalize before validation to set all the required object links
+    catalog = pystac.Catalog("aviris", AVIRIS_DESCRIPTION)
+    catalog.add_child(collection)
+    catalog.add_child(collection_ng)
     catalog_path = "./data/catalog"
     catalog.normalize_hrefs(catalog_path)
     print("Validating catalog...")
