@@ -40,7 +40,8 @@ variable "vpc_cidr_block" {
 }
 
 variable "external_access_cidr_block" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "vpc_private_subnet_cidr_blocks" {
@@ -101,11 +102,13 @@ variable "rds_database_name" {
 }
 
 variable "rds_database_username" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "rds_database_password" {
-  type = string
+  type      = string
+  sensitive = true
 }
 
 variable "rds_backup_retention_period" {

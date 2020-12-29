@@ -7,6 +7,7 @@ services:
       - POSTGRES_USER=franklin
       - POSTGRES_PASSWORD=franklin
       - POSTGRES_DB=franklin
+
   franklin:
     image: quay.io/azavea/franklin:c93f2ff
     command: ["serve", "--with-transactions"]
@@ -20,38 +21,51 @@ services:
       - AWS_REGION
     ports:
       - "9090:9090"
+
   catalogs-aviris:
+    image: nasa-hsi-catalogs-aviris
     build:
       context: ./src/catalogs/aviris
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
-    image: nasa-hsi-catalogs-aviris
     volumes:
       - ./src/catalogs/aviris:/usr/local/src
       - $HOME/.aws:/root/.aws:ro
+
   activator-aviris-l2:
+    image: activator-aviris-l2
     build:
       context: ./src/pipeline/activator/aviris-l2
     environment:
       - AAL2_FRANKLIN_URL=http://franklin:9090
       - AAL2_S3_BUCKET=aviris-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
-    image: nasa-hsi-activator-aviris-l2
     volumes:
       - ./src/pipeline/activator/aviris-l2:/usr/local/src
       - ./pipeline-data:/data
+      - /opt/conda/pkgs:/opt/conda/pkgs
       - $HOME/.aws:/root/.aws:ro
+
+  shellcheck:
+    image: koalaman/shellcheck:stable
+    volumes:
+      - ./:/usr/local/src
+    working_dir: /usr/local/src
+  
+  black:
+    image: cytopia/black
+    volumes:
+      - ./:/usr/local/src
+    working_dir: /usr/local/src
+
   dev:
     build:
       context: .
       dockerfile: Dockerfile.dev
     volumes:
       - ./:/usr/local/src
-      - conda-dev:/opt/conda
-      - pipeline-data:/data
+      - ./pipeline-data:/data
+      - /opt/conda/pkgs:/opt/conda/pkgs
       - $HOME/.aws:/root/.aws:ro
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
-volumes:
-  conda-dev:
-  pipeline-data:

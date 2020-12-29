@@ -20,6 +20,9 @@ then
             usage
             ;;
         *)
+            docker-compose up -d database
+            ./scripts/migrate
+            
             docker-compose build
             ;;
     esac
