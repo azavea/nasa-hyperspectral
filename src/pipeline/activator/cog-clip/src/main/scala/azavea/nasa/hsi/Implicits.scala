@@ -36,8 +36,7 @@ trait Implicits {
     def defaultMetavar = "minlon,minlat,maxlon,maxlat"
   }
 
-  implicit def featureCollectionArgument
-      : Argument[JsonFeatureCollection] = new Argument[JsonFeatureCollection] {
+  implicit def featureCollectionArgument: Argument[JsonFeatureCollection] = new Argument[JsonFeatureCollection] {
 
     def read(string: String) = {
       try {

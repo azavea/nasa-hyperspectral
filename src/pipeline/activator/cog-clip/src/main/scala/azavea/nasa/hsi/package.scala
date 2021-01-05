@@ -11,9 +11,9 @@ package object hsi extends Implicits {
 
   val HsiStacVersion = "1.0.0-beta.2"
 
-  private val cogCollectionId = "nasa-hsi-activator-cog-clip"
-  private val JAN_1_2006_EPOCH = 1136073600
-  private val JAN_1_2020_EPOCH = 1577836800
+  private val cogCollectionId            = "nasa-hsi-activator-cog-clip"
+  private val JAN_1_2006_EPOCH           = 1136073600
+  private val JAN_1_2020_EPOCH           = 1577836800
   private val initialCogCollectionExtent = StacExtent(
     SpatialExtent(
       List(
@@ -34,7 +34,7 @@ package object hsi extends Implicits {
       )
     )
   )
-  val CogClipCollection = StacCollection(
+  val CogClipCollection                  = StacCollection(
     HsiStacVersion,
     List.empty[String],
     cogCollectionId,

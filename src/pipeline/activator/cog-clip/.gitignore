@@ -1,17 +1,83 @@
-# Simple Build Tool
-# http://www.scala-sbt.org/release/docs/Getting-Started/Directories.html#configuring-version-control
+# Docs
 
-dist/*
-target/
-lib_managed/
-src_managed/
-project/boot/
-project/plugins/project/
-.history
-.cache
-.lib/
+index.html
+index.js
+package.html
+lib
+site/
+docs/_build/
+
+# Build Files
+
+bin
+target
+build/
+.gradle
+cmake-build-debug
+
+# Eclipse Project Files
+
+.classpath
+.project
+.settings
+
+# IntelliJ IDEA Files
+
+*.iml
+*.ipr
+*.iws
+*.idea
+
+# Spring Bootstrap artifacts
+
+dependency-reduced-pom.xml
+README.html
+
+# Sublime files
+
+*.sublime-workspace
 
 # Metals
-project/metals.sbt
-project/project/metals.sbt
 
+.metals
+.bloop
+metals.sbt
+
+# SBT
+
+.bsp
+
+# Terraform
+
+.terraform
+scripts/emr/terraform/variables.tf*
+scripts/emr/terraform/terraform.tfstate*
+
+# Vagrant
+
+.vagrant
+
+# Test files
+
+spark/src/test/resources/vlm/*catalog*
+
+# Other
+
+.#*
+.lib
+*.aux.xml
+*.jar
+*.crc
+
+_SUCCESS
+
+*.pyc
+.cache
+.settings
+*.swp
+*.swo
+
+nohup.out
+derby.log
+metastore_db/
+*.log

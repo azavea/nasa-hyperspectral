@@ -32,25 +32,25 @@ trait ClipCogOptions {
   private val itemId = Opts.argument[NonEmptyString]("stac-item-id")
 
   private val stacApiUrlHelp = ""
-  private val stacApiUrl = (Opts
+  private val stacApiUrl     = (Opts
     .option[Url](
       "stac-api-url",
       help = stacApiUrlHelp
     )
     orElse
-      Opts
-        .env[Url](
-          "STAC_API_URL",
-          help = stacApiUrlHelp
-        )
-        .withDefault(Url.parse("http://localhost:9090")))
+    Opts
+      .env[Url](
+        "STAC_API_URL",
+        help = stacApiUrlHelp
+      )
+      .withDefault(Url.parse("http://localhost:9090")))
 
   private val targetS3Bucket = (Opts
     .option[NonEmptyString]("target-s3-bucket", help = "")
     orElse
-      Opts
-        .env[NonEmptyString]("ACC_TARGET_S3_BUCKET", help = "")
-        .withDefault(NonEmptyString("nasa-hsi-activator-clip-cogs")))
+    Opts
+      .env[NonEmptyString]("ACC_TARGET_S3_BUCKET", help = "")
+      .withDefault(NonEmptyString("nasa-hsi-activator-clip-cogs")))
 
   val clipCogConfig: Opts[ClipCogConfig] =
     (
