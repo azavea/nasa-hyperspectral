@@ -1,15 +1,15 @@
 package com.azavea.nasa.hsi
 
 import cats.syntax.try_._
-import cats.syntax.traverse._
 import cats.data.{NonEmptyList, Validated}
 import com.azavea.stac4s._
 import com.monovore.decline.Argument
-import geotrellis.vector.{io => _, _}
+import geotrellis.store.s3.AmazonS3URI
+import geotrellis.vector._
 import geotrellis.vector.io.json.JsonFeatureCollection
-import io.lemonlabs.uri.{Uri, Url}
 
-import scala.util.{Success, Try}
+import java.net.{URI, URISyntaxException}
+import scala.util.Try
 
 package object commands {
 
@@ -20,31 +20,25 @@ package object commands {
     }
   }
 
-  implicit class UriOps(val self: Uri) extends AnyVal {
+  implicit class URIOps(val self: URI) extends AnyVal {
     import sttp.client3.UriContext
-    def toSttpUri: sttp.model.Uri = uri"${self.toStringRaw}"
+    def toSttpUri: sttp.model.Uri = uri"$self"
   }
-
-  implicit val extentArgument: Argument[Extent] =
-    Argument.from("minlon, minlat, maxlon, maxlat // xmin, ymin, xmax, ymax") { string =>
-      string
-        .split(",")
-        .map(_.trim)
-        .toList
-        .traverse(d => Try(d.toDouble)) match {
-        case Success(List(xmin, ymin, xmax, ymax)) =>
-          Validated.valid(Extent(xmin, ymin, xmax, ymax))
-        case _ => Validated.invalidNel(s"Invalid extent: $string")
-      }
-    }
 
   implicit val featureCollectionArgument: Argument[JsonFeatureCollection] =
     Argument.from("""{ "type": "FeatureCollection", "features": [<features>] }""") { string =>
-      Try(string.stripMargin.parseGeoJson[JsonFeatureCollection]).toValidated.leftMap(e => NonEmptyList.one(e.getMessage))
+      Try(string.stripMargin.parseGeoJson[JsonFeatureCollection]).toValidated
+        .leftMap(e => NonEmptyList.one(e.getMessage))
     }
 
-  implicit val urlArgument: Argument[Url] =
-    Argument.from("url") { string =>
-      Url.parseTry(string).toValidated.leftMap(e => NonEmptyList.one(e.getMessage))
+  implicit val readAmazonS3URI: Argument[AmazonS3URI] =
+    Argument.from("Amazon S3 URI") { string =>
+      try Validated.valid(new AmazonS3URI(new URI(string)))
+      catch {
+        case use: URISyntaxException =>
+          Validated.invalidNel(s"Invalid AmazonS3URI: $string (${use.getReason})")
+        case use: IllegalArgumentException =>
+          Validated.invalidNel(s"Invalid AmazonS3URI: $string (${use.getMessage})")
+      }
     }
 }

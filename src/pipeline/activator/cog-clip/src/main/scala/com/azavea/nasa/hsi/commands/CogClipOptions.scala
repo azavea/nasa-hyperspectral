@@ -4,8 +4,10 @@ import com.monovore.decline.Opts
 import com.monovore.decline.refined._
 import cats.syntax.apply._
 import eu.timepit.refined.types.string.NonEmptyString
+import geotrellis.store.s3.AmazonS3URI
 import geotrellis.vector.io.json.JsonFeatureCollection
-import io.lemonlabs.uri.Url
+
+import java.net.URI
 
 trait CogClipOptions {
 
@@ -23,31 +25,31 @@ trait CogClipOptions {
 
   private val itemId = Opts.argument[NonEmptyString]("stac-item-id")
 
-  private val stacApiUrl =
+  private val stacApiURI =
     Opts
-      .option[Url](long = "stac-api-url", help = "")
+      .option[URI](long = "stac-api-uri", help = "")
       .orElse(
         Opts
-          .env[Url](name = "STAC_API_URL", help = "")
-          .withDefault(Url.parse("http://localhost:9090"))
+          .env[URI](name = "STAC_API_URI", help = "")
+          .withDefault(new URI("http://localhost:9090"))
       )
 
-  private val targetS3Bucket =
+  private val targetS3URI =
     Opts
-      .option[NonEmptyString](long = "target-s3-bucket", help = "")
+      .option[AmazonS3URI](long = "target-s3-uri", help = "")
       .orElse(
         Opts
-          .env[NonEmptyString]("ACC_TARGET_S3_BUCKET", help = "")
-          .withDefault(NonEmptyString("nasa-hsi-activator-clip-cogs"))
+          .env[AmazonS3URI]("ACC_TARGET_S3_URI", help = "")
+          .withDefault(new AmazonS3URI("s3://nasahyperspectral-test/activator-clip-cogs/"))
       )
 
   val clipCogConfig: Opts[CogClipConfig] =
     (
       assetId,
       collectionId,
-      features,
       itemId,
-      stacApiUrl,
-      targetS3Bucket
+      features,
+      stacApiURI,
+      targetS3URI
     ) mapN CogClipConfig
 }

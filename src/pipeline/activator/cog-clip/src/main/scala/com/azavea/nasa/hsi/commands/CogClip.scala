@@ -2,7 +2,9 @@ package com.azavea.nasa.hsi.commands
 
 import cats.Parallel
 import com.azavea.stac4s.api.client._
-import cats.effect.{Concurrent, ContextShift, ExitCode, Sync}
+import cats.effect.{Concurrent, ContextShift, ExitCode}
+import cats.syntax.try_._
+import cats.syntax.option._
 import cats.syntax.applicative._
 import cats.syntax.parallel._
 import cats.syntax.either._
@@ -24,7 +26,7 @@ object CogClip {
   def apply[F[_]: Concurrent: ContextShift: Parallel: Logger](clipConfig: CogClipConfig, backend: SttpBackend[F, Any]): F[ExitCode] =
     for {
       _ <- Logger[F].info(s"${clipConfig.itemId}: ${clipConfig.collectionId}")
-      client = SttpStacClient(backend, clipConfig.stacApiUrl.toSttpUri)
+      client = SttpStacClient(backend, clipConfig.stacApiURI.toSttpUri)
       item <- client.item(clipConfig.collectionId, clipConfig.itemId)
       result <- item match {
         case Some(item) if item.assets.isDefinedAt(clipConfig.assetId.value) =>
@@ -35,17 +37,18 @@ object CogClip {
             .getAllFeatures[Feature[Geometry, Json]]
             .toList
             .parTraverse { feature =>
-              Sync[F]
-                .fromTry(Try(feature.geom.extent))
+              Try(feature.geom.extent)
+                .liftTo[F]
                 .flatMap { extent =>
-                  Sync[F].fromOption(rs.read(extent), new IOException(s"Could not read the requested window: $extent"))
+                  rs.read(extent)
+                    .liftTo[F](new IOException(s"Could not read the requested window: $extent"))
                 }
                 .map(MultibandGeoTiff(_, rs.crs, GeoTiffOptions.DEFAULT.copy(compression = Deflate)))
                 .flatMap { geotiff =>
                   geotiff.write(clipConfig.cogAssetHref, optimizedOrder = true)
                   val cogItem = DefaultCollection.from(clipConfig, item.id, geotiff)
 
-                  Logger[F].trace(s"POST ${cogItem.id} to ${clipConfig.stacApiUrl}") >>
+                  Logger[F].trace(s"POST ${cogItem.id} to ${clipConfig.stacApiURI}") >>
                   client.itemCreate(clipConfig.collectionId, cogItem)
                 }
             }
