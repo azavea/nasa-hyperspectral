@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "org.typelevel"                 %% "cats-effect"                    % "2.3.1",
   "io.chrisdavenport"             %% "log4cats-slf4j"                 % "1.1.1",
   "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.0.0-RC13",
-  "ch.qos.logback"                 % "logback-classic"                % "1.2.3"
+  "ch.qos.logback"                 % "logback-classic"                % "1.2.3",
+  "org.scalatest"                 %% "scalatest"                      % "3.2.3" % Test
 )
 
 assembly / test := {}

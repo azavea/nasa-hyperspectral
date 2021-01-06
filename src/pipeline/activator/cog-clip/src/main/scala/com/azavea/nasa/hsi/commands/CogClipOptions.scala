@@ -3,6 +3,7 @@ package com.azavea.nasa.hsi.commands
 import com.monovore.decline.Opts
 import com.monovore.decline.refined._
 import cats.syntax.apply._
+import eu.timepit.refined.types.all.PosInt
 import eu.timepit.refined.types.string.NonEmptyString
 import geotrellis.store.s3.AmazonS3URI
 import geotrellis.vector.io.json.JsonFeatureCollection
@@ -18,30 +19,27 @@ trait CogClipOptions {
   private val features =
     Opts
       .option[JsonFeatureCollection](long = "features", help = "Feature Collection of features to clip from COG")
-      .orElse(
-        Opts
-          .env[JsonFeatureCollection](name = "ACC_FEATURES", help = "Feature Collection of features to clip from COG")
-      )
+      .orElse(Opts.env[JsonFeatureCollection](name = "ACC_FEATURES", help = "Feature Collection of features to clip from COG"))
 
   private val itemId = Opts.argument[NonEmptyString]("stac-item-id")
 
   private val stacApiURI =
     Opts
       .option[URI](long = "stac-api-uri", help = "")
-      .orElse(
-        Opts
-          .env[URI](name = "STAC_API_URI", help = "")
-          .withDefault(new URI("http://localhost:9090"))
-      )
+      .orElse(Opts.env[URI](name = "STAC_API_URI", help = ""))
+      .withDefault(new URI("http://localhost:9090"))
 
   private val targetS3URI =
     Opts
       .option[AmazonS3URI](long = "target-s3-uri", help = "")
-      .orElse(
-        Opts
-          .env[AmazonS3URI]("ACC_TARGET_S3_URI", help = "")
-          .withDefault(new AmazonS3URI("s3://nasahyperspectral-test/activator-clip-cogs/"))
-      )
+      .orElse(Opts.env[AmazonS3URI](name = "ACC_TARGET_S3_URI", help = ""))
+      .withDefault(new AmazonS3URI("s3://nasahyperspectral-test/activator-clip-cogs/"))
+
+  private val threads =
+    Opts
+      .option[PosInt](long = "threads", help = "Number of threads")
+      .orElse(Opts.env[PosInt](name = "ACC_THREADS", help = "Number of threads"))
+      .withDefault(PosInt.unsafeFrom(Runtime.getRuntime.availableProcessors))
 
   val clipCogConfig: Opts[CogClipConfig] =
     (
@@ -50,6 +48,7 @@ trait CogClipOptions {
       itemId,
       features,
       stacApiURI,
-      targetS3URI
+      targetS3URI,
+      threads
     ) mapN CogClipConfig
 }
