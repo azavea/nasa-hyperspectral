@@ -13,9 +13,6 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     env:
-      # Set this to an empty string to avoid a ProfileNotFound exception from
-      # the AWS CLI
-      AWS_PROFILE: ""
       DOCKER_BUILDKIT: 1
     steps:
       - uses: actions/checkout@v2
@@ -30,10 +27,13 @@ jobs:
 
       - run: ./scripts/cipublish
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/jrb/ci'
-        env:
-          NASA_HSI_AWS_ECR_ENDPOINT: ${{ secrets.NASA_HSI_AWS_ECR_ENDPOINT }}
 
       - run: |
-          docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra plan
-          docker-compose -f docker-compose.ci.yml run --rm terraform ./scripts/infra apply
+          docker-compose -f docker-compose.ci.yml run --rm terraform -c "
+            # Unset this to avoid a ProfileNotFound exception from the AWS CLI.
+            unset AWS_PROFILE
+
+            ./scripts/infra plan
+            ./scripts/infra apply
+          "
         if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/jrb/ci'
