@@ -9,6 +9,7 @@ services:
       - ./:/usr/local/src
       - $HOME/.aws:/root/.aws:ro
     environment:
+      - AWS_PROFILE=${AWS_PROFILE:-nasa}
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
       - NASA_HSI_DEBUG=1

@@ -13,6 +13,9 @@ jobs:
     name: build
     runs-on: ubuntu-latest
     env:
+      # Set this to an empty string to avoid a ProfileNotFound exception from
+      # the AWS CLI
+      AWS_PROFILE: ""
       DOCKER_BUILDKIT: 1
     steps:
       - uses: actions/checkout@v2
