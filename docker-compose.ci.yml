@@ -12,6 +12,8 @@ services:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY
+      - AWS_DEFAULT_REGION
+      - AWS_REGION
       - NASA_HSI_DEBUG=1
       - NASA_HSI_SETTINGS_BUCKET=${NASA_HSI_SETTINGS_BUCKET:-nasahyperspectral-staging-config-us-east-1}
     working_dir: /usr/local/src
