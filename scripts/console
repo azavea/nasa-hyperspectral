@@ -10,10 +10,11 @@ function usage() {
     echo -n \
         "Usage: $(basename "$0") SERVICE [COMMAND]...
 Run an interactive shell or command inside an application container.
-Example: ./scripts/console dev
+Example: ./scripts/console app
+
 Services:
-    app         App container
-    dev         Dev container
+    app App container
+    dev Dev container
 "
 }
 

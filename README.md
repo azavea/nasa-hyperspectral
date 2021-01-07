@@ -1,33 +1,46 @@
-# NASA SBIR - Hyperspectral Imagery Processing
+# NASA SBIR — Hyperspectral Imagery Processing
 
-An event-driven image processing pipeline for developing our foundational capability to work with HSI data sources.
+An event-driven image processing pipeline for developing our foundational
+capability to work with HSI data sources.
 
-- [STAC Catalogs](#stac-catalogs)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
 - [Scripts](#scripts)
 
 ## Requirements
 
-- Docker
-- Docker Compose
+- [Docker Engine](https://docs.docker.com/install/) 19.03+
+- [Docker Compose](https://docs.docker.com/compose/install/) 1.27+
 
-## Setup
+## Getting Started
 
-Run `./scripts/setup`.
+The following script will provision the development environment.
 
-## Development
+```bash
+$ ./scripts/setup
+```
 
-Run the local Franklin instance with `./scripts/server`. It is available at http://localhost:9090.
+Then, you can bring up the local Franklin instance, which will be accessible at
+http://localhost:9090.
 
-See READMEs in src directories for instructions on how to run individual services in this application.
+
+```bash
+$ ./scripts/server
+```
+
+See READMEs in the `src/` directories for instructions on how to run individual
+services in this application.
 
 ## Scripts
 
-| Name    | Description                                                 |
-|---------|-------------------------------------------------------------|
-| `console` | Open a shell in the `dev` container |
-| `db-console` | Open a psql shell on the `database` container |
-| `infra` | Execute Terraform subcommands with remote state management. |
-| `migrate` | Run database migrations |
-| `server` | Start application servers, including Franklin |
-| `setup` | Run project setup after checkout |
-| `update` | Update project dependencies and rebuild containers |
+| Name         | Description                                                                        |
+|--------------|------------------------------------------------------------------------------------|
+| `cibuild`    | Build application for staging or a release.                                        |
+| `cipublish`  | Publish container images to Elastic Container Registry (ECR).                      |
+| `console`    | Run an interactive shell or command inside an application container.               |
+| `db-console` | Enter a database shell.                                                            |
+| `infra`      | Execute Terraform subcommands with remote state management.                        |
+| `migrate`    | Run database migrations.                                                           |
+| `server`     | Start application servers, including Franklin.                                     |
+| `setup`      | Set up the project's development environment.                                      |
+| `update`     | Update project runtime dependencies (e.g. run migrations, build container images). |
