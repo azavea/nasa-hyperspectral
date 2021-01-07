@@ -32,11 +32,12 @@ function amazon_ecr_login() {
     AUTHORIZATION_TOKEN="$(echo "${AUTHORIZATION_TOKEN}" | base64 -d)"
     ECR_REGISTRY="${ECR_REGISTRY##*://}"
 
-    # Authenticate to the ECR registry.
-    docker login \
-        --username "${AUTHORIZATION_TOKEN%%:*}" \
-        --password "${AUTHORIZATION_TOKEN##*:}" \
-        "${ECR_REGISTRY}"
+    # Authenticate to the ECR registry. The authorization token is presented in
+    # the format user:password.
+    echo "${AUTHORIZATION_TOKEN##*:}" |
+        docker login \
+            --username "${AUTHORIZATION_TOKEN%%:*}" \
+            --password-stdin "${ECR_REGISTRY}"
 }
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
