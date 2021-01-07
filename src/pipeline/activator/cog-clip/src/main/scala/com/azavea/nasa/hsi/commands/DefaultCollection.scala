@@ -3,17 +3,18 @@ package com.azavea.nasa.hsi.commands
 import com.azavea.stac4s._
 import com.azavea.stac4s.types.TemporalExtent
 import cats.syntax.option._
-import geotrellis.raster.io.geotiff.MultibandGeoTiff
+import eu.timepit.refined.types.string.NonEmptyString
+import geotrellis.vector.{io => _, _}
 import io.circe.JsonObject
 import io.circe.syntax._
 
 import java.time.{LocalDate, ZoneOffset}
 
 object DefaultCollection {
-  val Collection: StacCollection = StacCollection(
+  def collection(id: String): StacCollection = StacCollection(
     stacVersion = "1.0.0-beta.2",
     stacExtensions = Nil,
-    id = "nasa-hsi-activator-cog-clip",
+    id = id,
     title = "".some,
     description = "A STAC Collection containing COGs created by the nasa-hsi cog-clip activator",
     keywords = Nil,
@@ -45,31 +46,31 @@ object DefaultCollection {
     extensionFields = JsonObject.empty
   )
 
-  def from(clipConfig: CogClipConfig, sourceItemId: String, geotiff: MultibandGeoTiff): StacItem =
+  def item(clipConfig: CogClipConfig, featureId: NonEmptyString, sourceItemId: String, geometry: Geometry): StacItem = {
+    val defaultTargetCollection = collection(clipConfig.targetCollectionId.value)
     StacItem(
-      id = clipConfig.resultId,
-      stacVersion = DefaultCollection.stacVersion,
+      id = clipConfig.resultId(featureId).value,
+      stacVersion = defaultTargetCollection.stacVersion,
       stacExtensions = Nil,
       _type = "Feature",
-      geometry = geotiff.extent.toPolygon,
-      bbox = geotiff.extent.toTwoDimBbox,
+      geometry = geometry,
+      bbox = geometry.extent.toTwoDimBbox,
       links = Nil,
       assets = Map(
         "cog" -> StacItemAsset(
-          href = clipConfig.cogAssetHref,
+          href = clipConfig.cogAssetHref(featureId).value,
           title = "cog".some,
           description = None,
           roles = Set(StacAssetRole.Data),
           _type = `image/cog`.some
         )
       ),
-      collection = DefaultCollection.id.some,
+      collection = defaultTargetCollection.id.some,
       properties = Map(
-        "collection"    -> DefaultCollection.id,
-        "sourceItemId"  -> sourceItemId,
-        "sourceAssetId" -> clipConfig.assetId.value
+        "sourceCollection" -> clipConfig.sourceCollectionId.value,
+        "sourceItemId"     -> sourceItemId,
+        "sourceAssetId"    -> clipConfig.sourceAssetId.value
       ).asJsonObject
     )
-
-  implicit def objectToInstance(obj: DefaultCollection.type): StacCollection = Collection
+  }
 }

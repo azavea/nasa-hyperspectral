@@ -12,16 +12,18 @@ import java.net.URI
 
 trait CogClipOptions {
 
-  private val assetId = Opts.argument[NonEmptyString]("stac-asset-id")
+  private val sourceCollectionId = Opts.option[NonEmptyString](long = "source-collection-id", help = "Source collectionId")
 
-  private val collectionId = Opts.argument[NonEmptyString]("collection-id")
+  private val sourceItemId = Opts.option[NonEmptyString](long = "source-item-id", help = "Source itemId")
+
+  private val sourceAssetId = Opts.option[NonEmptyString](long = "source-asset-id", help = "Source assetIt")
+
+  private val targetCollectionId = Opts.option[NonEmptyString](long = "target-collection-id", help = "Target collectionId")
 
   private val features =
     Opts
       .option[JsonFeatureCollection](long = "features", help = "Feature Collection of features to clip from COG")
       .orElse(Opts.env[JsonFeatureCollection](name = "ACC_FEATURES", help = "Feature Collection of features to clip from COG"))
-
-  private val itemId = Opts.argument[NonEmptyString]("stac-item-id")
 
   private val stacApiURI =
     Opts
@@ -41,14 +43,18 @@ trait CogClipOptions {
       .orElse(Opts.env[PosInt](name = "ACC_THREADS", help = "Number of threads"))
       .withDefault(PosInt.unsafeFrom(Runtime.getRuntime.availableProcessors))
 
+  private val withGDAL = Opts.flag(long = "with-gdal", help = "Uses GDAL for raster reads").orFalse
+
   val clipCogConfig: Opts[CogClipConfig] =
     (
-      assetId,
-      collectionId,
-      itemId,
+      sourceCollectionId,
+      sourceItemId,
+      sourceAssetId,
+      targetCollectionId,
       features,
       stacApiURI,
       targetS3URI,
-      threads
+      threads,
+      withGDAL
     ) mapN CogClipConfig
 }
