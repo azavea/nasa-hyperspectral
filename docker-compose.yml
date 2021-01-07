@@ -31,6 +31,7 @@ services:
     volumes:
       - ./src/catalogs/aviris:/usr/local/src
       - $HOME/.aws:/root/.aws:ro
+      - conda-pkg-cache:/opt/conda/pkgs
 
   activator-aviris-l2:
     image: activator-aviris-l2
@@ -43,8 +44,8 @@ services:
     volumes:
       - ./src/pipeline/activator/aviris-l2:/usr/local/src
       - ./pipeline-data:/data
-      - /opt/conda/pkgs:/opt/conda/pkgs
       - $HOME/.aws:/root/.aws:ro
+      - conda-pkg-cache:/opt/conda/pkgs
 
   shellcheck:
     image: koalaman/shellcheck:stable
@@ -65,7 +66,12 @@ services:
     volumes:
       - ./:/usr/local/src
       - ./pipeline-data:/data
-      - /opt/conda/pkgs:/opt/conda/pkgs
       - $HOME/.aws:/root/.aws:ro
+      - conda-pkg-cache:/opt/conda/pkgs
     environment:
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
+
+volumes:
+  # Persist the Conda package cache as a named volume. This package cache will
+  # only be accessible when invoking Conda in-container.
+  conda-pkg-cache:
