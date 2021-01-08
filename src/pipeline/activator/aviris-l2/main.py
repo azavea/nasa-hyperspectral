@@ -15,7 +15,7 @@ from osgeo import gdal
 import pystac
 import requests
 
-from progress import ProgressPercentage, timing, translate_callback
+from progress import ProgressPercentage, timing, warp_callback
 from stac_client import STACClient
 
 
@@ -183,14 +183,15 @@ def main():
 
             # Convert HDR data to pixel interleaved COG with GDAL
             # NUM_THREADS only speeds up compression and overview generation
-            translate_opts = gdal.TranslateOptions(
-                callback=translate_callback,
-                creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE"],
+            # gdal.Warp is used to fix rasters rotation
+            warp_opts = gdal.WarpOptions(
+                callback=warp_callback,
+                creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE", "BIGTIFF=YES"],
                 format="COG",
             )
             print("Converting {} to {}...".format(hdr_path, cog_path))
-            with timing("GDAL Translate"):
-                gdal.Translate(str(cog_path), str(hdr_path), options=translate_opts)
+            with timing("GDAL Warp"):
+                gdal.Warp(str(cog_path), str(hdr_path), options=warp_opts)
 
             # Upload  COG and metadata, if written, to S3 bucket + key
             key = Path(
