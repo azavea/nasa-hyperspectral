@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - jrb/ci
   pull_request:
   workflow_dispatch:
 
@@ -26,7 +25,7 @@ jobs:
       - run: ./scripts/cibuild
 
       - run: ./scripts/cipublish
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/jrb/ci'
+        if: github.ref == 'refs/heads/master'
 
       - run: |
           docker-compose -f docker-compose.ci.yml run --rm terraform -c "
@@ -36,4 +35,4 @@ jobs:
             ./scripts/infra plan
             ./scripts/infra apply
           "
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/jrb/ci'
+        if: github.ref == 'refs/heads/master'
