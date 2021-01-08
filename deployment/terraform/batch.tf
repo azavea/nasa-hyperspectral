@@ -14,7 +14,7 @@ resource "aws_security_group" "batch" {
 
 # Pull the image ID for the latest Amazon ECS optimized AMI
 # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html
-data "aws_ssm_parameter" batch_ami_id {
+data "aws_ssm_parameter" "batch_ami_id" {
   name = "/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id"
 }
 

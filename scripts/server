@@ -8,7 +8,7 @@ fi
 function usage() {
     echo -n \
 "Usage: $(basename "$0")
-Use Docker Compose to start the app services
+Start application servers, including Franklin.
 Example: ./scripts/console
 "
 }
