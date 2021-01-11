@@ -34,7 +34,9 @@ object CogClip {
       _ <- Logger[F].info(s"Retrieving item ${config.sourceItemId} from the catalog ${config.sourceCollectionId}")
       client = SttpStacClient(backend, config.stacApiURI.toSttpUri)
       // request an item
-      item <- client.item(config.sourceCollectionId, config.sourceItemId)
+      item <- client
+        .item(config.sourceCollectionId, config.sourceItemId)
+        .redeem({ case e: HttpError[_] if e.statusCode == StatusCode.NotFound => None }, _.some)
       result <- item match {
         // if such item is present in the catalog
         case Some(item) if item.assets.isDefinedAt(config.sourceAssetId.value) =>
@@ -52,27 +54,24 @@ object CogClip {
                 .flatMap { featureId =>
                   client
                     .item(config.targetCollectionId, config.resultId(featureId))
-                    .recoverWith {
-                      case e: HttpError[_] if e.statusCode == StatusCode.NotFound =>
-                        Logger[F]
-                          .trace(s"Item ${config.resultId(featureId)} doesn't exist in the collection ${config.targetCollectionId}")
-                          .as(None)
-                    }
+                    .redeem({ case e: HttpError[_] if e.statusCode == StatusCode.NotFound => None }, _.some)
                 }
                 .flatMap {
                   // if the target item is already present in the target collection, than do nothing
                   case Some(oldItem) =>
                     Logger[F]
-                      .info(s"Item ${oldItem.id} is already present in the collection ${config.targetCollectionId}")
+                      .trace(s"Item ${oldItem.id} is already present in the collection ${config.targetCollectionId}")
                       .as(oldItem)
                   // if it is new, read and write tiff
                   case _ =>
                     Try(feature.geom.extent.reproject(LatLng, rs.crs))
                       .liftTo[F]
                       .flatMap { extent =>
+                        Logger[F].trace(s"Reading the window: $extent") >>
                         rs.read(extent)
                           .liftTo[F](new IOException(s"Could not read the requested window: $extent"))
                       }
+                      .flatTap(_ => Logger[F].trace("Building TIFF..."))
                       .map(MultibandGeoTiff(_, rs.crs, GeoTiffOptions(Deflate)))
                       .flatMap(tiffWrite(config, feature, item, _, client))
                 }
