@@ -1,13 +1,7 @@
 {
-    "image": "amazon/aws-cli",
-    "vcpus": 1,
-    "memory": 1024,
-    "command": [
-        "s3",
-        "cp",
-        "s3://aviris-data/test/f130329t01p00r06_corr_v1.tiff",
-        "/tmp"
-    ],
+    "image": "${image}",
+    "vcpus": ${vcpus},
+    "memory": ${memory},
     "volumes": [
         {
             "host": {
