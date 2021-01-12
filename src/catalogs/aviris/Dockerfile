@@ -13,4 +13,4 @@ RUN set -ex \
 
 COPY . /usr/local/src
 
-ENTRYPOINT [ "python", "build_catalog.py" ]
+ENTRYPOINT [ "python", "main.py" ]
