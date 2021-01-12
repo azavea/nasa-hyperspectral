@@ -26,5 +26,10 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         # docker-compose \
         #     run --rm --no-deps \
         #     black --check --diff .
+
+        # build and test cog-clip assembly
+        # we don't need bloop, sbt uses .bsp
+        cd src/pipeline/activator/cog-clip/; ./sbt ";test; assembly"; cd ~- 
+
     fi
 fi
