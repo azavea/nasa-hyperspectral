@@ -55,6 +55,7 @@ services:
     environment:
       - СС_STAC_API_URI=http://franklin:9090
       - CC_TARGET_S3_URI=s3://nasahyperspectral-test/activator-clip-cogs/
+      - CC_LOG_LEVEL=TRACING
     volumes:
       - $HOME/.aws:/root/.aws:ro
 

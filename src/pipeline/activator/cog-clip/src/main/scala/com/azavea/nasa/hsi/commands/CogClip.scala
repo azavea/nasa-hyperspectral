@@ -47,7 +47,7 @@ object CogClip {
             .getAllFeatures[Feature[Geometry, Json]]
             .toList
             .parTraverseN(config.threads.value) { feature =>
-              // check if features is already present in the target collection
+              // check if feature is already present in the target collection
               feature.data
                 .randomIdF[F]
                 .flatMap { featureId =>
@@ -70,7 +70,7 @@ object CogClip {
                         rs.read(extent)
                           .liftTo[F](new IOException(s"Could not read the requested window: $extent"))
                       }
-                      .flatTap(_ => Logger[F].trace("Building TIFF..."))
+                      .flatTap(_ => Logger[F].trace("Building GeoTIFF..."))
                       .map(MultibandGeoTiff(_, rs.crs, GeoTiffOptions(Deflate)))
                       .flatMap(tiffWrite(config, feature, item, _, client))
                 }
