@@ -33,19 +33,19 @@ trait CogClipOptions {
   private val stacApiURI =
     Opts
       .option[URI](long = "stac-api-uri", help = "")
-      .orElse(Opts.env[URI](name = "STAC_API_URI", help = ""))
+      .orElse(Opts.env[URI](name = "СС_STAC_API_URI", help = ""))
       .withDefault(new URI("http://localhost:9090"))
 
   private val targetS3URI =
     Opts
       .option[AmazonS3URI](long = "target-s3-uri", help = "")
-      .orElse(Opts.env[AmazonS3URI](name = "ACC_TARGET_S3_URI", help = ""))
+      .orElse(Opts.env[AmazonS3URI](name = "CC_TARGET_S3_URI", help = ""))
       .withDefault(new AmazonS3URI("s3://nasahyperspectral-test/activator-clip-cogs/"))
 
   private val threads =
     Opts
       .option[PosInt](long = "threads", help = "Number of threads")
-      .orElse(Opts.env[PosInt](name = "ACC_THREADS", help = "Number of threads"))
+      .orElse(Opts.env[PosInt](name = "CC_THREADS", help = "Number of threads"))
       .withDefault(PosInt.unsafeFrom(Runtime.getRuntime.availableProcessors))
 
   private val withGDAL = Opts.flag(long = "with-gdal", help = "Uses GDAL for raster reads").orFalse
