@@ -32,5 +32,12 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
             build activator-aviris-l2
 
         ./scripts/test
+
+        # Build of the Scala projects is possible only after the assembly build
+        # Assembly build happens after the test phase
+        GIT_COMMIT="${GIT_COMMIT}" docker-compose \
+            -f docker-compose.yml \
+            -f docker-compose.ci.yml \
+            build cog-clip
     fi
 fi

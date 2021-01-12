@@ -52,5 +52,11 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
             "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
 
         docker push "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
+
+        # Tag and publish the COG Clip module.
+        docker tag "cog-clip:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
+
+        docker push "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
     fi
 fi

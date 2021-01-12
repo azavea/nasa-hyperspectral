@@ -48,6 +48,16 @@ services:
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
 
+  cog-clip:
+    image: cog-clip
+    build:
+      context: ./src/pipeline/activator/cog-clip
+    environment:
+      - STAC_API_URI=http://franklin:9090
+      - ACC_TARGET_S3_URI=s3://nasahyperspectral-test/activator-clip-cogs/
+    volumes:
+      - $HOME/.aws:/root/.aws:ro
+
   shellcheck:
     image: koalaman/shellcheck:stable
     volumes:

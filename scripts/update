@@ -23,7 +23,7 @@ then
             docker-compose up -d database
             ./scripts/migrate
             
-            docker-compose build
+            docker-compose build database franklin catalogs-aviris activator-aviris-l2 shellcheck black dev
             ;;
     esac
 fi

@@ -27,6 +27,8 @@ libraryDependencies ++= Seq(
   "org.scalatest"                 %% "scalatest"                      % "3.2.3" % Test
 )
 
+assembly / assemblyJarName := "cog-clip-assembly.jar"
+
 assembly / test := {}
 
 assembly / assemblyMergeStrategy := {
