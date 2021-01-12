@@ -9,7 +9,7 @@ from aviris_df import AvirisClassic, AvirisNg, AVIRIS_DESCRIPTION
 def main():
     df = AvirisClassic.as_df("aviris-flight-lines.csv")
     collection = pystac.Collection(
-        "aviris-classic",
+        AvirisClassic.COLLECTION_NAME,
         AVIRIS_DESCRIPTION,
         pystac.Extent(
             spatial=pystac.SpatialExtent([[None, None, None, None]]),
@@ -22,7 +22,7 @@ def main():
 
     df_ng = AvirisNg.as_df("aviris-ng-flight-lines.csv")
     collection_ng = pystac.Collection(
-        "aviris-ng",
+        AvirisNg.COLLECTION_NAME,
         AVIRIS_DESCRIPTION,
         pystac.Extent(
             spatial=pystac.SpatialExtent([[None, None, None, None]]),

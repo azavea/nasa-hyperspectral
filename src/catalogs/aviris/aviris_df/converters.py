@@ -93,6 +93,8 @@ def aviris_series_to_item(s2_scenes_map, series):
             "Gzip File Size (Bytes)",
         )
     }
+    # Add any layer ids of interest
+    properties["layer:ids"] = [series["collection"]]
 
     assets = {
         "ftp": pystac.Asset(

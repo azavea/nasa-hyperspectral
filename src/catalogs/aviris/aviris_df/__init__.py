@@ -18,6 +18,8 @@ class AvirisClassic:
 
     """
 
+    COLLECTION_NAME = "aviris-classic"
+
     @classmethod
     def as_df(cls, aviris_classic_csv):
 
@@ -32,6 +34,9 @@ class AvirisClassic:
 
         # Ensure all empty values in columns aren't NaN so we write valid STAC
         df = df.fillna("")
+
+        # Add collection name
+        df.loc[:, "collection"] = cls.COLLECTION_NAME
 
         # With the filters above applied to the aviris-flight-lines.csv checked into the repo,
         # we should see exactly this many results. This number may need to be changed if the csv
@@ -90,6 +95,8 @@ class AvirisNg:
 
     """
 
+    COLLECTION_NAME = "aviris-ng"
+
     @classmethod
     def as_df(cls, aviris_ng_csv):
 
@@ -99,6 +106,9 @@ class AvirisNg:
         # Skip entries with no geometry
         df = df[df["kml_poly"] != ""]
         df = df.drop_duplicates(subset="Flight Scene", keep="last")
+
+        # Add collection name
+        df.loc[:, "collection"] = cls.COLLECTION_NAME
 
         s2_scenes_map = cls._find_s2_scenes()
 
