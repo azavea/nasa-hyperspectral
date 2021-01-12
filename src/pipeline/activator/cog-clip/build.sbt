@@ -7,9 +7,14 @@ scalaVersion := "2.12.12"
 addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.11.2" cross CrossVersion.full)
 addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
 
+resolvers ++= Seq(
+  "eclipse-releases" at "https://repo.eclipse.org/content/groups/releases",
+  "eclipse-snapshots" at "https://repo.eclipse.org/content/groups/snapshots"
+)
+
 libraryDependencies ++= Seq(
-  "org.locationtech.geotrellis"   %% "geotrellis-s3"                  % "3.5.1",
-  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                % "3.5.1",
+  "org.locationtech.geotrellis"   %% "geotrellis-s3"                  % "3.5.2-SNAPSHOT",
+  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                % "3.5.2-SNAPSHOT",
   "com.azavea.stac4s"             %% "client"                         % "0.0.21",
   "com.monovore"                  %% "decline"                        % "1.3.0",
   "com.monovore"                  %% "decline-effect"                 % "1.3.0",
@@ -19,8 +24,6 @@ libraryDependencies ++= Seq(
   "io.chrisdavenport"             %% "log4cats-slf4j"                 % "1.1.1",
   "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.0.0-RC15",
   "ch.qos.logback"                 % "logback-classic"                % "1.2.3",
-  "org.apache.hadoop"              % "hadoop-client"                  % "2.8.5",
-  "org.apache.hadoop"              % "hadoop-aws"                     % "2.8.5",
   "org.scalatest"                 %% "scalatest"                      % "3.2.3" % Test
 )
 

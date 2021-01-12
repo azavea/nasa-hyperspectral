@@ -6,6 +6,7 @@ import cats.data.{NonEmptyList, Validated}
 import com.azavea.stac4s._
 import com.monovore.decline.Argument
 import eu.timepit.refined.types.string.NonEmptyString
+import geotrellis.raster.geotiff.GeoTiffPath
 import geotrellis.store.s3.AmazonS3URI
 import geotrellis.vector.{io => _, _}
 import geotrellis.vector.io.json.JsonFeatureCollection
@@ -39,7 +40,7 @@ package object commands {
   }
 
   implicit class StacItemAssetOps(val self: StacItemAsset) extends AnyVal {
-    def hrefGDAL(withGDAL: Boolean): String = if (withGDAL) s"gdal+${self.href}" else self.href
+    def hrefGDAL(withGDAL: Boolean): String = if (withGDAL) s"gdal+${self.href}" else s"${GeoTiffPath.PREFIX}${self.href}"
   }
 
   implicit val featureCollectionArgument: Argument[JsonFeatureCollection] =

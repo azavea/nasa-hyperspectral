@@ -1,5 +1,6 @@
 package com.azavea.nasa.hsi.commands
 
+import com.azavea.nasa.hsi.s3.utils._
 import cats.Parallel
 import com.azavea.stac4s.api.client._
 import cats.effect.{Concurrent, ContextShift, ExitCode, Sync}
@@ -11,13 +12,11 @@ import cats.syntax.applicative._
 import cats.syntax.functor._
 import cats.syntax.flatMap._
 import cats.effect.syntax.paralleln._
-import com.azavea.nasa.hsi.s3.S3Configuration
 import com.azavea.stac4s.StacItem
 import geotrellis.proj4.LatLng
 import geotrellis.raster.RasterSource
 import geotrellis.raster.io.geotiff._
 import geotrellis.vector.{io => _, _}
-import geotrellis.store.hadoop._
 import io.chrisdavenport.log4cats.Logger
 import io.circe.Json
 import sttp.client3.{HttpError, SttpBackend}
@@ -31,7 +30,7 @@ object CogClip {
 
   def apply[F[_]: Concurrent: ContextShift: Parallel: Logger](config: CogClipConfig, backend: SttpBackend[F, Any]): F[ExitCode] =
     for {
-      _ <- Logger[F].info(s"Retrieving item ${config.sourceItemId} from the catalog ${config.sourceCollectionId}")
+      _ <- Logger[F].info(s"Retrieving item ${config.sourceItemId} from the catalog ${config.sourceCollectionId}...")
       client = SttpStacClient(backend, config.stacApiURI.toSttpUri)
       // request an item
       item <- client
@@ -92,8 +91,8 @@ object CogClip {
   ): F[StacItem] =
     feature.data.randomIdF[F].flatMap { featureId =>
       // write tiff
-      Logger[F].trace(s"Writing tiff to ${config.cogAssetHrefLocal(featureId)}") >>
-      S3Configuration.defaultSync[F].map(geotiff.write(config.cogAssetHrefLocal(featureId), _)) >>
+      Logger[F].trace(s"Writing tiff to ${config.cogAssetHrefPath(featureId)}") >>
+      geotiff.writeF(config.cogAssetHrefPath(featureId)) >>
       // create [[StacItem]] and insert it into the target collection
       // it creates the target collection if it's missing
       DefaultCollection
