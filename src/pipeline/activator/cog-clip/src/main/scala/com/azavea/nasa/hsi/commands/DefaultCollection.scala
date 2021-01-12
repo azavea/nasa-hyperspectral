@@ -7,6 +7,8 @@ import eu.timepit.refined.types.string.NonEmptyString
 import geotrellis.vector.{io => _, _}
 import io.circe.JsonObject
 import io.circe.syntax._
+import io.circe.refined._
+import cats.syntax.functor._
 
 import java.time.{LocalDate, ZoneOffset}
 
@@ -48,10 +50,11 @@ object DefaultCollection {
 
   def item(clipConfig: CogClipConfig, featureId: NonEmptyString, sourceItemId: String, geometry: Geometry): StacItem = {
     val defaultTargetCollection = collection(clipConfig.targetCollectionId.value)
+    val layerIds                = clipConfig.targetLayerId.getOrElse(clipConfig.targetCollectionId) :: Nil
     StacItem(
       id = clipConfig.resultId(featureId).value,
       stacVersion = defaultTargetCollection.stacVersion,
-      stacExtensions = Nil,
+      stacExtensions = layerIds.as("layer"),
       _type = "Feature",
       geometry = geometry,
       bbox = geometry.extent.toTwoDimBbox,
@@ -66,11 +69,12 @@ object DefaultCollection {
         )
       ),
       collection = defaultTargetCollection.id.some,
-      properties = Map(
-        "sourceCollection" -> clipConfig.sourceCollectionId.value,
-        "sourceItemId"     -> sourceItemId,
-        "sourceAssetId"    -> clipConfig.sourceAssetId.value
-      ).asJsonObject
+      properties = JsonObject(
+        "layer:ids"        -> layerIds.asJson,
+        "sourceCollection" -> clipConfig.sourceCollectionId.asJson,
+        "sourceItemId"     -> sourceItemId.asJson,
+        "sourceAssetId"    -> clipConfig.sourceAssetId.asJson
+      )
     )
   }
 }

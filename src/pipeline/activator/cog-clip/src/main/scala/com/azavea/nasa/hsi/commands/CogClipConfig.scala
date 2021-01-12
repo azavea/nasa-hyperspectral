@@ -12,6 +12,7 @@ case class CogClipConfig(
   sourceItemId: NonEmptyString,
   sourceAssetId: NonEmptyString,
   targetCollectionId: NonEmptyString,
+  targetLayerId: Option[NonEmptyString],
   features: JsonFeatureCollection,
   stacApiURI: URI,
   targetS3URI: AmazonS3URI,

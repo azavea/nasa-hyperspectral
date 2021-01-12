@@ -20,6 +20,11 @@ trait CogClipOptions {
 
   private val targetCollectionId = Opts.option[NonEmptyString](long = "target-collection-id", help = "Target collectionId")
 
+  private val targetLayerId: Opts[Option[NonEmptyString]] =
+    Opts
+      .option[NonEmptyString](long = "target-layer-id", help = "Target layerId")
+      .orNone
+
   private val features =
     Opts
       .option[JsonFeatureCollection](long = "features", help = "Feature Collection of features to clip from COG")
@@ -51,6 +56,7 @@ trait CogClipOptions {
       sourceItemId,
       sourceAssetId,
       targetCollectionId,
+      targetLayerId,
       features,
       stacApiURI,
       targetS3URI,
