@@ -1,0 +1,46 @@
+{
+    "StartAt": "Run all tasks in sequence",
+    "States": {
+        "Run all tasks in sequence": {
+            "Type": "Map",
+            "ItemsPath": "$.tasks",
+            "MaxConcurrency": 1,
+            "Parameters": {
+                "name.$": "$$.Map.Item.Value",
+                "queue": "${queue}",
+                "command.$": "States.Array($.scene_id)",
+                "environment.$": "$.environment"
+            },
+            "Iterator": {
+                "StartAt": "Run task",
+                "States": {
+                    "Run task": {
+                        "Type": "Task",
+                        "ResultPath": "$.status",
+                        "Resource": "arn:aws:states:::batch:submitJob.sync",
+                        "Parameters": {
+                            "JobDefinition.$": "$.name",
+                            "JobName": "TaskInPipeline",
+                            "JobQueue.$": "$.queue",
+                            "ContainerOverrides": {
+                                "Command.$": "$.command"
+                            }
+                        },
+                        "Environment": [
+                            {
+                                "Name": "S3_BUCKET",
+                                "Value.$": "$.environment.S3_BUCKET"
+                            },
+                            {
+                                "Name": "S3_PREFIX",
+                                "Value.$": "$.environment.S3_PREFIX"
+                            }
+                        ],
+                        "End": true
+                    }
+                }
+            },
+            "End": true
+        }
+    }
+}

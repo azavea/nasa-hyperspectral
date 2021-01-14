@@ -137,3 +137,65 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
   role       = aws_iam_role.ecs_task_execution_role.name
   policy_arn = var.aws_ecs_task_execution_role_policy_arn
 }
+
+#
+# Step Functions IAM resources
+#
+data "aws_iam_policy_document" "step_functions_assume_role" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["states.amazonaws.com"]
+    }
+
+    actions = [
+      "sts:AssumeRole",
+    ]
+  }
+}
+
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "step_functions_service_role_policy" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "batch:SubmitJob",
+      "batch:DescribeJobs",
+      "batch:TerminateJobs"
+    ]
+
+    # Despite the "*" wildcard, only allow these actions for Batch jobs that were
+    # started by Step Functions.
+    # See: https://github.com/awsdocs/aws-step-functions-developer-guide/blob/master/doc_source/batch-iam.md
+    resources = ["*"]
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "events:PutTargets",
+      "events:PutRule",
+      "events:DescribeRule",
+    ]
+
+    resources = [
+      "arn:aws:events:${var.aws_region}:${data.aws_caller_identity.current.account_id}:rule/StepFunctionsGetEventsForBatchJobsRule",
+    ]
+  }
+}
+
+resource "aws_iam_role" "step_functions_service_role" {
+  name               = "sfn${local.short}ServiceRole"
+  assume_role_policy = data.aws_iam_policy_document.step_functions_assume_role.json
+}
+
+resource "aws_iam_role_policy" "step_functions_service_role_policy" {
+  name   = "sfn${local.short}ServiceRolePolicy"
+  role   = aws_iam_role.step_functions_service_role.name
+  policy = data.aws_iam_policy_document.step_functions_service_role_policy.json
+}
