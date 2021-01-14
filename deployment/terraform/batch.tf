@@ -87,12 +87,14 @@ resource "aws_batch_job_queue" "default" {
 }
 
 resource "aws_batch_job_definition" "activator_aviris_l2" {
-  name = "job${local.short}ActivatorAvirisL2"
+  name = "jobActivatorAvirisL2"
   type = "container"
 
   container_properties = templatefile("${path.module}/job-definitions/module.json.tmpl", {
     image  = "${module.activator_aviris_l2.repository_url}:${var.image_tag}"
     vcpus  = 1
     memory = 1024
+
+    franklin_url = "https://${aws_route53_record.franklin.name}"
   })
 }
