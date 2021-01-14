@@ -2,6 +2,12 @@
     "image": "${image}",
     "vcpus": ${vcpus},
     "memory": ${memory},
+    "environment": [
+        {
+            "name": "FRANKLIN_URL",
+            "value": "${franklin_url}"
+        }
+    ],
     "volumes": [
         {
             "host": {
