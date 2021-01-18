@@ -84,7 +84,7 @@ def main():
     args, unknown = parser.parse_known_args()
 
     if unknown is not None:
-        print(f"WARN: Uknown arguments passed: {unknown}")
+        print(f"WARN: Unknown arguments passed: {unknown}")
 
     s3 = boto3.client("s3")
     stac_client = STACClient(args.franklin_url)
