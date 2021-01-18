@@ -2,9 +2,15 @@ from datetime import datetime, timezone
 
 import pystac
 import stacframes
+import logging
+import os
 
 from aviris_df import AvirisClassic, AvirisNg, AVIRIS_DESCRIPTION
 
+# set a configurable logging level for the entire app
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(format='[%(asctime)s|%(levelname)s|%(name)s|%(lineno)d] %(message)s', level=LOG_LEVEL)
+logger = logging.getLogger(__name__)
 
 def main():
     df = AvirisClassic.as_df("aviris-flight-lines.csv")
@@ -39,11 +45,11 @@ def main():
     catalog.add_child(collection_ng)
     catalog_path = "./data/catalog"
     catalog.normalize_hrefs(catalog_path)
-    print("Validating catalog...")
+    logger.info("Validating catalog...")
     catalog.validate_all()
-    print("Saving catalog to {}...".format(catalog_path))
+    logger.info("Saving catalog to {}...".format(catalog_path))
     catalog.save(catalog_type=pystac.CatalogType.SELF_CONTAINED)
-    print("Done!")
+    logger.info("Done!")
 
 
 if __name__ == "__main__":

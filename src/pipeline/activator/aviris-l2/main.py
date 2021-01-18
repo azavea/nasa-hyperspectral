@@ -8,6 +8,7 @@ import shutil
 import tarfile
 from tempfile import mkdtemp
 from urllib.parse import urlparse
+import logging
 
 import boto3
 from boto3.s3.transfer import TransferConfig
@@ -18,6 +19,10 @@ import requests
 from progress import ProgressPercentage, timing, warp_callback
 from stac_client import STACClient
 
+# set a configurable logging level for the entire app
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(format='[%(asctime)s|%(levelname)s|%(name)s|%(lineno)d] %(message)s', level=LOG_LEVEL)
+logger = logging.getLogger(__name__)
 
 GB = 1024 ** 3
 
@@ -84,7 +89,7 @@ def main():
     args, unknown = parser.parse_known_args()
 
     if unknown is not None:
-        print(f"WARN: Unknown arguments passed: {unknown}")
+        logger.info(f"WARN: Unknown arguments passed: {unknown}")
 
     s3 = boto3.client("s3")
     stac_client = STACClient(args.franklin_url)
@@ -124,7 +129,7 @@ def main():
     # Exit early if COG STAC Item already exists
     try:
         stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
-        print("STAC Item {} already exists. Exiting.".format(cog_item_id))
+        logger.info("STAC Item {} already exists. Exiting.".format(cog_item_id))
         return
     except requests.exceptions.HTTPError:
         pass
@@ -136,14 +141,14 @@ def main():
         # Retrieve AVIRIS GZIP for matching scene name
         local_archive = Path(temp_dir, Path(l2_asset.href).name)
         if local_archive.exists():
-            print("Using existing archive: {}".format(local_archive))
+            logger.info("Using existing archive: {}".format(local_archive))
         else:
             with open(local_archive, "wb") as fp:
                 gzip_ftp_url = urlparse(l2_asset.href)
                 username_password, ftp_hostname = gzip_ftp_url.netloc.split("@")
                 ftp_username, ftp_password = username_password.split(":")
                 ftp_path = gzip_ftp_url.path.lstrip("/")
-                print("FTP RETR {}".format(ftp_path))
+                logger.info("FTP RETR {}".format(ftp_path))
                 with timing("FTP RETR"):
                     with ftplib.FTP(ftp_hostname) as ftp:
                         ftp.login(ftp_username, ftp_password)
@@ -152,21 +157,21 @@ def main():
         # Retrieve file names from archive and extract if not already extracted to temp_dir
         extract_path = Path(temp_dir, scene_name)
         with tarfile.open(local_archive, mode="r") as tar_gz_fp:
-            print("Retrieving filenames from {}".format(local_archive))
+            logger.info("Retrieving filenames from {}".format(local_archive))
             with timing("Query archive"):
                 tar_files = tar_gz_fp.getnames()
-            # print("Files: {}".format(tar_files))
+            # logger.info("Files: {}".format(tar_files))
 
             if extract_path.exists():
-                print("Skipping extract, exists at {}".format(extract_path))
+                logger.info("Skipping extract, exists at {}".format(extract_path))
             else:
-                print("Extracting {} to {}".format(local_archive, extract_path))
+                logger.info("Extracting {} to {}".format(local_archive, extract_path))
                 with timing("Extract"):
                     tar_gz_fp.extractall(extract_path)
 
         # Find HDR data files in unzipped package
         hdr_files = list(filter(lambda x: x.endswith(".hdr"), tar_files))
-        print("HDR Files: {}".format(hdr_files))
+        logger.info("HDR Files: {}".format(hdr_files))
         for idx, hdr_file_w_ext in enumerate(hdr_files):
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
             hdr_path = Path(extract_path, hdr_file_w_ext_path.with_suffix(""))
@@ -174,7 +179,7 @@ def main():
 
             if args.skip_large and os.path.getsize(hdr_path) > 0.2 * GB:
                 file_mb = floor(os.path.getsize(hdr_path) / 1024 / 1024)
-                print(
+                logger.info(
                     "--skip-large provided. Skipping {} with size {}mb".format(
                         hdr_path, file_mb
                     )
@@ -189,7 +194,7 @@ def main():
                 creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE", "BIGTIFF=YES"],
                 format="COG",
             )
-            print("Converting {} to {}...".format(hdr_path, cog_path))
+            logger.info("Converting {} to {}...".format(hdr_path, cog_path))
             with timing("GDAL Warp"):
                 gdal.Warp(str(cog_path), str(hdr_path), options=warp_opts)
 
@@ -201,7 +206,7 @@ def main():
                 cog_path.name,
             )
             s3_uri = "s3://{}/{}".format(args.s3_bucket, key)
-            print("Uploading {} to {}".format(cog_path, s3_uri))
+            logger.info("Uploading {} to {}".format(cog_path, s3_uri))
             s3.upload_file(
                 str(cog_path),
                 args.s3_bucket,
@@ -213,7 +218,7 @@ def main():
             if cog_metadata_path.exists():
                 metadata_key = Path(args.s3_prefix, cog_metadata_path.name)
                 metadata_s3_uri = "s3://{}/{}".format(args.s3_bucket, metadata_key)
-                print("Uploading {} to {}".format(cog_metadata_path, metadata_s3_uri))
+                logger.info("Uploading {} to {}".format(cog_metadata_path, metadata_s3_uri))
                 s3.upload_file(
                     str(cog_metadata_path), args.s3_bucket, str(metadata_key)
                 )
@@ -234,13 +239,13 @@ def main():
                 )
     finally:
         if not args.keep_temp_dir:
-            print("Removing temp dir: {}".format(temp_dir))
+            logger.info("Removing temp dir: {}".format(temp_dir))
             shutil.rmtree(temp_dir, ignore_errors=True)
 
     # Add COG Item to AVIRIS L2 STAC Collection
-    print("POST Item {} to {}".format(cog_item.id, args.franklin_url))
+    logger.info("POST Item {} to {}".format(cog_item.id, args.franklin_url))
     item_data = stac_client.post_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item)
-    print("Success: {}".format(item_data["id"]))
+    logger.info("Success: {}".format(item_data["id"]))
 
 
 if __name__ == "__main__":

@@ -41,6 +41,7 @@ services:
       - FRANKLIN_URL=${FRANKLIN_URL:-http://franklin:9090}
       - S3_BUCKET=aviris-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
       - ./src/pipeline/activator/aviris-l2:/usr/local/src
       - ./pipeline-data:/data
