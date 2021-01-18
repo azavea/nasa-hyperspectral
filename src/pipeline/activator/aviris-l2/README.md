@@ -10,7 +10,7 @@ If you don't have one already, create a development S3 bucket to store your outp
 
 ```shell
 ./scripts/console activator-aviris-l2
-aws s3api create-bucket --bucket "${AAL2_S3_BUCKET}"
+aws s3api create-bucket --bucket "${S3_BUCKET}"
 ```
 
 ### Run Locally

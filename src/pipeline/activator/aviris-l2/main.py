@@ -56,16 +56,16 @@ def main():
         "--franklin-url",
         type=str,
         default=os.environ.get(
-            "AAL2_FRANKLIN_URL", "http://franklin:9090"
+            "FRANKLIN_URL", "http://franklin:9090"
         ),
     )
     parser.add_argument(
-        "--s3-bucket", type=str, default=os.environ.get("AAL2_S3_BUCKET", "aviris-data")
+        "--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "aviris-data")
     )
     parser.add_argument(
         "--s3-prefix",
         type=str,
-        default=os.environ.get("AAL2_S3_PREFIX", "aviris-scene-cogs-l2"),
+        default=os.environ.get("S3_PREFIX", "aviris-scene-cogs-l2"),
     )
     parser.add_argument(
         "--temp-dir", type=str, default=os.environ.get("TEMP_DIR", None)
