@@ -1,3 +1,18 @@
+# Operating System Files
+
+*.DS_Store
+Thumbs.db
+
+# VSCode files
+
+.vscode
+.history
+.metals
+
+# Other
+
+pipeline-data/
+test-data/
 __pycache__
 *.egg-info
 .ipynb_checkpoints

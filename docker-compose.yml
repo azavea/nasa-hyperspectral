@@ -38,8 +38,8 @@ services:
     build:
       context: ./src/pipeline/activator/aviris-l2
     environment:
-      - AAL2_FRANKLIN_URL=http://franklin:9090
-      - AAL2_S3_BUCKET=aviris-data-dev-${USER}
+      - FRANKLIN_URL=${FRANKLIN_URL:-http://franklin:9090}
+      - S3_BUCKET=aviris-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
     volumes:
       - ./src/pipeline/activator/aviris-l2:/usr/local/src

@@ -21,7 +21,7 @@ from stac_client import STACClient
 
 GB = 1024 ** 3
 
-AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-collection"
+AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-classic"
 AVIRIS_L2_COG_COLLECTION = pystac.Collection(
     "aviris-l2-cogs",
     "AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
@@ -45,24 +45,27 @@ def main():
     parser.add_argument(
         "aviris_stac_id",
         type=str,
-        help="STAC Item ID to process from the {} STAC collection".format(
-            AVIRIS_ARCHIVE_COLLECTION_ID
-        ),
+        help="STAC Item ID to process from the STAC collection"
+    )
+    parser.add_argument(
+        "--aviris_collection_id",
+        type=str,
+        default=AVIRIS_ARCHIVE_COLLECTION_ID,
     )
     parser.add_argument(
         "--franklin-url",
         type=str,
         default=os.environ.get(
-            "AAL2_FRANKLIN_URL", "http://franklin:9090"
+            "FRANKLIN_URL", "http://franklin:9090"
         ),
     )
     parser.add_argument(
-        "--s3-bucket", type=str, default=os.environ.get("AAL2_S3_BUCKET", "aviris-data")
+        "--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "aviris-data")
     )
     parser.add_argument(
         "--s3-prefix",
         type=str,
-        default=os.environ.get("AAL2_S3_PREFIX", "aviris-scene-cogs-l2"),
+        default=os.environ.get("S3_PREFIX", "aviris-scene-cogs-l2"),
     )
     parser.add_argument(
         "--temp-dir", type=str, default=os.environ.get("TEMP_DIR", None)
@@ -77,14 +80,18 @@ def main():
         action="store_true",
         help="If provided, script will not process any COG > 200 MB to keep processing times reasonable. Useful for debugging.",
     )
-    args = parser.parse_args()
+    # TODO: replace it with parser.parse_args() later
+    args, unknown = parser.parse_known_args()
+
+    if unknown is not None:
+        print(f"WARN: Unknown arguments passed: {unknown}")
 
     s3 = boto3.client("s3")
     stac_client = STACClient(args.franklin_url)
 
     # GET STAC Item from AVIRIS Catalog
     item = stac_client.get_collection_item(
-        AVIRIS_ARCHIVE_COLLECTION_ID, args.aviris_stac_id
+        args.aviris_collection_id, args.aviris_stac_id
     )
     l2_asset = item.assets.get("ftp_refl", None)
     if l2_asset is None:
