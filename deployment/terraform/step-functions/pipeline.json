@@ -23,19 +23,19 @@
                             "JobName": "TaskInPipeline",
                             "JobQueue.$": "$.queue",
                             "ContainerOverrides": {
+                                "Environment": [
+                                    {
+                                        "Name": "S3_BUCKET",
+                                        "Value.$": "$.environment.S3_BUCKET"
+                                    },
+                                    {
+                                        "Name": "S3_PREFIX",
+                                        "Value.$": "$.environment.S3_PREFIX"
+                                    }
+                                ],
                                 "Command.$": "$.command"
                             }
                         },
-                        "Environment": [
-                            {
-                                "Name": "S3_BUCKET",
-                                "Value.$": "$.environment.S3_BUCKET"
-                            },
-                            {
-                                "Name": "S3_PREFIX",
-                                "Value.$": "$.environment.S3_PREFIX"
-                            }
-                        ],
                         "End": true
                     }
                 }
