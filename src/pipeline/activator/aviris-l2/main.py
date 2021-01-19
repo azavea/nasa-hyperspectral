@@ -85,6 +85,12 @@ def main():
         action="store_true",
         help="If provided, script will not process any COG > 200 MB to keep processing times reasonable. Useful for debugging.",
     )
+    parser.add_argument(
+        "--force", 
+        action="store_true",
+        help="If provided, force reingest StacItem even though this it is already present in the catalog.",
+    )
+
     # TODO: replace it with parser.parse_args() later
     args, unknown = parser.parse_known_args()
 
@@ -126,13 +132,14 @@ def main():
     if not stac_client.has_collection(AVIRIS_L2_COG_COLLECTION.id):
         stac_client.post_collection(AVIRIS_L2_COG_COLLECTION)
 
-    # Exit early if COG STAC Item already exists
-    try:
-        stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
-        logger.info("STAC Item {} already exists. Exiting.".format(cog_item_id))
-        return
-    except requests.exceptions.HTTPError:
-        pass
+    if args.force:
+        # Exit early if COG STAC Item already exists
+        try:
+            stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
+            logger.info("STAC Item {} already exists. Exiting.".format(cog_item_id))
+            return
+        except requests.exceptions.HTTPError:
+            pass
 
     # Create tmpdir
     temp_dir = Path(args.temp_dir if args.temp_dir is not None else mkdtemp())
