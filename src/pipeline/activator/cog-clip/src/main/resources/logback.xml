@@ -4,7 +4,7 @@
             <pattern>[%thread] %highlight(%-5level) %cyan(%logger{15}) - %msg %n</pattern>
         </encoder>
     </appender>
-    <logger name="com.azavea.nasa.hsi" level="{CC_LOG_LEVEL:-TRACING}"/>
+    <logger name="com.azavea.nasa.hsi" level="{LOG_LEVEL:-TRACING}"/>
     <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>
