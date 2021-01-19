@@ -58,10 +58,10 @@ def main():
         default=AVIRIS_ARCHIVE_COLLECTION_ID,
     )
     parser.add_argument(
-        "--franklin-url",
+        "--stac-api-uri",
         type=str,
         default=os.environ.get(
-            "FRANKLIN_URL", "http://franklin:9090"
+            "STAC_API_URI", "http://franklin:9090"
         ),
     )
     parser.add_argument(
@@ -98,7 +98,7 @@ def main():
         logger.info(f"WARN: Unknown arguments passed: {unknown}")
 
     s3 = boto3.client("s3")
-    stac_client = STACClient(args.franklin_url)
+    stac_client = STACClient(args.stac_api_uri)
 
     # GET STAC Item from AVIRIS Catalog
     item = stac_client.get_collection_item(
@@ -108,7 +108,7 @@ def main():
     if l2_asset is None:
         raise ValueError(
             "STAC Item {} from {} has no asset 'ftp_refl'!".format(
-                args.aviris_stac_id, args.franklin_url
+                args.aviris_stac_id, args.stac_api_uri
             )
         )
     scene_name = item.properties.get("Name")
@@ -250,7 +250,7 @@ def main():
             shutil.rmtree(temp_dir, ignore_errors=True)
 
     # Add COG Item to AVIRIS L2 STAC Collection
-    logger.info("POST Item {} to {}".format(cog_item.id, args.franklin_url))
+    logger.info("POST Item {} to {}".format(cog_item.id, args.stac_api_uri))
     item_data = stac_client.post_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item)
     logger.info("Success: {}".format(item_data["id"]))
 
