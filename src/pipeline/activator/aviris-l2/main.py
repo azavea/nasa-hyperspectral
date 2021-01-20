@@ -132,7 +132,7 @@ def main():
     if not stac_client.has_collection(AVIRIS_L2_COG_COLLECTION.id):
         stac_client.post_collection(AVIRIS_L2_COG_COLLECTION)
 
-    if args.force:
+    if not args.force:
         # Exit early if COG STAC Item already exists
         try:
             stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
@@ -254,7 +254,11 @@ def main():
     # Add COG Item to AVIRIS L2 STAC Collection
     logger.info("POST Item {} to {}".format(cog_item.id, args.stac_api_uri))
     item_data = stac_client.post_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item)
-    logger.info("Success: {}".format(item_data["id"]))
+    if item_data.get('id', None):
+        logger.info("Success: {}".format(item_data["id"]))
+    else:
+        logger.error("Failure: {}".format(item_data))
+        return -1
 
 
 if __name__ == "__main__":
