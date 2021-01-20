@@ -13,7 +13,7 @@ RUN set -ex \
 
 COPY ./target/scala-2.12/cog-clip-assembly.jar /var/lib/nasa-hyperspectral/
 
-USER video-annotation
-WORKDIR /var/lib/video-annotation
+USER nasa-hyperspectral
+WORKDIR /var/lib/nasa-hyperspectral
 
 ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-jar", "cog-clip-assembly.jar"]
