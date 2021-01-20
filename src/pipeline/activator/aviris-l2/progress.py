@@ -39,8 +39,8 @@ def timing(description: str) -> None:
     print("{}: {:.4f}s".format(description, elapsed))
 
 
-def translate_callback(progress, *args):
-    """ Report progress for GDALTranslate callback argument """
+def warp_callback(progress, *args):
+    """ Report progress for GDALWarp callback argument """
     progress_pct = floor(progress * 100)
     if progress_pct % 10 == 0 > progress_pct > 0:
-        print("GDAL Translate: {}%".format(progress_pct))
+        print("GDAL Warp: {}%".format(progress_pct))
