@@ -21,7 +21,7 @@ from stac_client import STACClient
 
 # set a configurable logging level for the entire app
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
-logging.basicConfig(format='[%(asctime)s|%(levelname)s|%(name)s|%(lineno)d] %(message)s', level=LOG_LEVEL)
+logging.basicConfig(format='[%(relativeCreated)d|%(levelname)s|%(name)s|%(lineno)d] %(message)s', level=LOG_LEVEL)
 logger = logging.getLogger(__name__)
 
 GB = 1024 ** 3
