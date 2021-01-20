@@ -9,9 +9,8 @@ A picture of the original scene and two clipped out polygons.
 <img width="502" alt="image" src="https://user-images.githubusercontent.com/4929546/104251306-6f2eac00-543d-11eb-9ad3-794aae05b7bc.png">
 
 ```bash
-run clip --help
 [info] running com.azavea.nasa.hsi.Main clip --help
-[ioapp-compute-0] ERROR c.a.n.hsi.Main - Usage:  clip --source-collection-id <string> --source-item-id <string> --source-asset-id <string> --target-collection-id <string> [--target-layer-id <string>] [--features <{ "type": "FeatureCollection", "features": [<features>] }>] [--stac-api-uri <uri>] [--target-s3-uri <Amazon S3 URI>] [--threads <integer>] [--with-gdal]
+[ioapp-compute-0] ERROR c.a.n.hsi.Main - Usage:  clip --source-collection-id <string> --source-item-id <string> --source-asset-id <string> --target-collection-id <string> [--target-layer-id <string>] [--features <{ "type": "FeatureCollection", "features": [<features>] }>] [--stac-api-uri <uri>] [--target-s3-uri <Amazon S3 URI>] [--threads <integer>] [--with-gdal] [--force]
 
 Clip extents from COG as provided by GeoJSON Feature Collection
 
@@ -19,15 +18,15 @@ Options and flags:
     --help
         Display this help text.
     --source-collection-id <string>
-        Source collectionId
+        Source collectionId.
     --source-item-id <string>
-        Source itemId
+        Source itemId.
     --source-asset-id <string>
-        Source assetIt
+        Source assetIt.
     --target-collection-id <string>
-        Target collectionId
+        Target collectionId.
     --target-layer-id <string>
-        Target layerId
+        Target layerId.
     --features <{ "type": "FeatureCollection", "features": [<features>] }>
         Feature Collection of features to clip from COG
     --stac-api-uri <uri>
@@ -37,16 +36,18 @@ Options and flags:
     --threads <integer>
         Number of threads
     --with-gdal
-        Uses GDAL for raster reads
+        Uses GDAL for raster reads.
+    --force
+        Force reingest StacItem even though this it is already present in the catalog.
 
 Environment Variables:
-    ACC_FEATURES=<{ "type": "FeatureCollection", "features": [<features>] }>
-        Feature Collection of features to clip from COG
-    СС_STAC_API_URI=<uri>
+    FEATURES=<{ "type": "FeatureCollection", "features": [<features>] }>
+        Feature Collection of features to clip from COG.
+    STAC_API_URI=<uri>
     
-    CC_TARGET_S3_URI=<Amazon S3 URI>
-    CC_THREADS=<integer>
-        Number of threads 
+    TARGET_S3_URI=<Amazon S3 URI>
+    THREADS=<integer>
+        Number of threads.
 ```
 
 ## Testing Instructions
@@ -290,7 +291,7 @@ Environment Variables:
 
 * `s3://aviris-data/test/f130329t01p00r06_corr_v1_warp.tif` is the test tiff.
 * FeatureCollection to test this module: [test.json.zip](https://github.com/azavea/nasa-hyperspectral/files/5798939/test.json.zip)
-* Set FeatureCollections as env variable (to simplify testing): `export ACC_FEATURES=`cat test-data/test.json`
+* Set FeatureCollections as env variable (to simplify testing): `export FEATURES=`cat test-data/test.json`
 * Run clipping: `./sbt run clip --source-collection-id aviris-l2-cogs --source-item-id aviris_f130329t01p00r06_sc01 --source-asset-id cog --target-collection-id aviris-l2-chips`
 
 Result imagery lives here: `s3://nasahyperspectral-test/activator-clip-cogs`
