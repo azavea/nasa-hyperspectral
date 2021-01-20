@@ -198,8 +198,10 @@ def main():
             # gdal.Warp is used to fix rasters rotation
             warp_opts = gdal.WarpOptions(
                 callback=warp_callback,
+                warpOptions=["NUM_THREADS=ALL_CPUS"],
                 creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE", "BIGTIFF=YES"],
-                format="COG",
+                multithread=True,
+                format="COG"
             )
             logger.info("Converting {} to {}...".format(hdr_path, cog_path))
             with timing("GDAL Warp"):
