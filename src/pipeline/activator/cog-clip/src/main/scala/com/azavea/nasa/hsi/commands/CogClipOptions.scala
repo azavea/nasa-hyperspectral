@@ -12,23 +12,23 @@ import java.net.URI
 
 trait CogClipOptions {
 
-  private val sourceCollectionId = Opts.option[NonEmptyString](long = "source-collection-id", help = "Source collectionId")
+  private val sourceCollectionId = Opts.option[NonEmptyString](long = "source-collection-id", help = "Source collectionId.")
 
-  private val sourceItemId = Opts.option[NonEmptyString](long = "source-item-id", help = "Source itemId")
+  private val sourceItemId = Opts.option[NonEmptyString](long = "source-item-id", help = "Source itemId.")
 
-  private val sourceAssetId = Opts.option[NonEmptyString](long = "source-asset-id", help = "Source assetIt")
+  private val sourceAssetId = Opts.option[NonEmptyString](long = "source-asset-id", help = "Source assetIt.")
 
-  private val targetCollectionId = Opts.option[NonEmptyString](long = "target-collection-id", help = "Target collectionId")
+  private val targetCollectionId = Opts.option[NonEmptyString](long = "target-collection-id", help = "Target collectionId.")
 
   private val targetLayerId: Opts[Option[NonEmptyString]] =
     Opts
-      .option[NonEmptyString](long = "target-layer-id", help = "Target layerId")
+      .option[NonEmptyString](long = "target-layer-id", help = "Target layerId.")
       .orNone
 
   private val features =
     Opts
       .option[JsonFeatureCollection](long = "features", help = "Feature Collection of features to clip from COG")
-      .orElse(Opts.env[JsonFeatureCollection](name = "FEATURES", help = "Feature Collection of features to clip from COG"))
+      .orElse(Opts.env[JsonFeatureCollection](name = "FEATURES", help = "Feature Collection of features to clip from COG."))
 
   private val stacApiURI =
     Opts
@@ -45,10 +45,12 @@ trait CogClipOptions {
   private val threads =
     Opts
       .option[PosInt](long = "threads", help = "Number of threads")
-      .orElse(Opts.env[PosInt](name = "THREADS", help = "Number of threads"))
+      .orElse(Opts.env[PosInt](name = "THREADS", help = "Number of threads."))
       .withDefault(PosInt.unsafeFrom(Runtime.getRuntime.availableProcessors))
 
-  private val withGDAL = Opts.flag(long = "with-gdal", help = "Uses GDAL for raster reads").orFalse
+  private val withGDAL = Opts.flag(long = "with-gdal", help = "Uses GDAL for raster reads.").orFalse
+
+  private val force = Opts.flag(long = "force", help = "Force reingest StacItem even though this it is already present in the catalog.").orFalse
 
   val clipCogConfig: Opts[CogClipConfig] =
     (
@@ -61,6 +63,7 @@ trait CogClipOptions {
       stacApiURI,
       targetS3URI,
       threads,
-      withGDAL
+      withGDAL,
+      force
     ) mapN CogClipConfig
 }

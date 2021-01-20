@@ -17,7 +17,8 @@ case class CogClipConfig(
   stacApiURI: URI,
   targetS3URI: AmazonS3URI,
   threads: PosInt,
-  withGDAL: Boolean
+  withGDAL: Boolean,
+  force: Boolean
 ) {
   def resultId(featureId: NonEmptyString): NonEmptyString =
     NonEmptyString.unsafeFrom(s"$sourceCollectionId-$targetCollectionId-$sourceItemId-$featureId")

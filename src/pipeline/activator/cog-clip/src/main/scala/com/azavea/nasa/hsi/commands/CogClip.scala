@@ -57,7 +57,7 @@ object CogClip {
                 }
                 .flatMap {
                   // if the target item is already present in the target collection, than do nothing
-                  case Some(oldItem) =>
+                  case Some(oldItem) if !config.force =>
                     Logger[F]
                       .trace(s"Item ${oldItem.id} is already present in the collection ${config.targetCollectionId}")
                       .as(oldItem)
