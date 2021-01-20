@@ -77,8 +77,12 @@ object CogClip {
             }
             .map(_.asRight)
 
-        case Some(item) => s"No assets found for the requested item: $item".asLeft.pure
-        case _          => s"No requested item found: ${(config.sourceCollectionId, config.sourceItemId)}".asLeft.pure
+        case Some(item) =>
+          val msg = s"No assets found for the requested item: $item"
+          Logger[F].info(msg).as(msg.asLeft)
+        case _ =>
+          val msg = s"No requested item found with collectionId ${config.sourceCollectionId} and Id: ${config.sourceItemId}"
+          Logger[F].info(msg).as(msg.asLeft)
       }
     } yield result.fold(_ => ExitCode.Error, _ => ExitCode.Success)
 
