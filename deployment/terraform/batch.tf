@@ -95,6 +95,6 @@ resource "aws_batch_job_definition" "activator_aviris_l2" {
     vcpus  = 1
     memory = 1024
 
-    franklin_url = "https://${aws_route53_record.franklin.name}"
+    stac_api_uri = "https://${aws_route53_record.franklin.name}"
   })
 }

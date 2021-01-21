@@ -159,10 +159,22 @@ resource "aws_security_group_rule" "batch_https_egress" {
   security_group_id = aws_security_group.batch.id
 }
 
+// FTP ports explanation:
+// https://knowledgebase.paloaltonetworks.com/KCSArticleDetail?id=kA10g000000ClFeCAK
 resource "aws_security_group_rule" "batch_ftp_egress" {
   type        = "egress"
   from_port   = 20
   to_port     = 21
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+
+  security_group_id = aws_security_group.batch.id
+}
+
+resource "aws_security_group_rule" "batch_ftp_dynamic_egress" {
+  type        = "egress"
+  from_port   = 1024
+  to_port     = 65535
   protocol    = "tcp"
   cidr_blocks = ["0.0.0.0/0"]
 
