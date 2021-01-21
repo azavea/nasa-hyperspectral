@@ -8,6 +8,7 @@ import shutil
 import tarfile
 from tempfile import mkdtemp
 from urllib.parse import urlparse
+import logging
 
 import boto3
 from boto3.s3.transfer import TransferConfig
@@ -15,9 +16,13 @@ from osgeo import gdal
 import pystac
 import requests
 
-from progress import ProgressPercentage, timing, translate_callback
+from progress import ProgressPercentage, timing, warp_callback
 from stac_client import STACClient
 
+# set a configurable logging level for the entire app
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(format='[%(relativeCreated)d|%(levelname)s|%(name)s|%(lineno)d] %(message)s', level=LOG_LEVEL)
+logger = logging.getLogger(__name__)
 
 GB = 1024 ** 3
 
@@ -53,10 +58,10 @@ def main():
         default=AVIRIS_ARCHIVE_COLLECTION_ID,
     )
     parser.add_argument(
-        "--franklin-url",
+        "--stac-api-uri",
         type=str,
         default=os.environ.get(
-            "FRANKLIN_URL", "http://franklin:9090"
+            "STAC_API_URI", "http://franklin:9090"
         ),
     )
     parser.add_argument(
@@ -80,14 +85,20 @@ def main():
         action="store_true",
         help="If provided, script will not process any COG > 200 MB to keep processing times reasonable. Useful for debugging.",
     )
+    parser.add_argument(
+        "--force", 
+        action="store_true",
+        help="If provided, force reingest StacItem even though this it is already present in the catalog.",
+    )
+
     # TODO: replace it with parser.parse_args() later
     args, unknown = parser.parse_known_args()
 
     if unknown is not None:
-        print(f"WARN: Unknown arguments passed: {unknown}")
+        logger.info(f"WARN: Unknown arguments passed: {unknown}")
 
     s3 = boto3.client("s3")
-    stac_client = STACClient(args.franklin_url)
+    stac_client = STACClient(args.stac_api_uri)
 
     # GET STAC Item from AVIRIS Catalog
     item = stac_client.get_collection_item(
@@ -97,7 +108,7 @@ def main():
     if l2_asset is None:
         raise ValueError(
             "STAC Item {} from {} has no asset 'ftp_refl'!".format(
-                args.aviris_stac_id, args.franklin_url
+                args.aviris_stac_id, args.stac_api_uri
             )
         )
     scene_name = item.properties.get("Name")
@@ -121,13 +132,14 @@ def main():
     if not stac_client.has_collection(AVIRIS_L2_COG_COLLECTION.id):
         stac_client.post_collection(AVIRIS_L2_COG_COLLECTION)
 
-    # Exit early if COG STAC Item already exists
-    try:
-        stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
-        print("STAC Item {} already exists. Exiting.".format(cog_item_id))
-        return
-    except requests.exceptions.HTTPError:
-        pass
+    if not args.force:
+        # Exit early if COG STAC Item already exists
+        try:
+            stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
+            logger.info("STAC Item {} already exists. Exiting.".format(cog_item_id))
+            return
+        except requests.exceptions.HTTPError:
+            pass
 
     # Create tmpdir
     temp_dir = Path(args.temp_dir if args.temp_dir is not None else mkdtemp())
@@ -136,14 +148,14 @@ def main():
         # Retrieve AVIRIS GZIP for matching scene name
         local_archive = Path(temp_dir, Path(l2_asset.href).name)
         if local_archive.exists():
-            print("Using existing archive: {}".format(local_archive))
+            logger.info("Using existing archive: {}".format(local_archive))
         else:
             with open(local_archive, "wb") as fp:
                 gzip_ftp_url = urlparse(l2_asset.href)
                 username_password, ftp_hostname = gzip_ftp_url.netloc.split("@")
                 ftp_username, ftp_password = username_password.split(":")
                 ftp_path = gzip_ftp_url.path.lstrip("/")
-                print("FTP RETR {}".format(ftp_path))
+                logger.info("FTP RETR {}".format(ftp_path))
                 with timing("FTP RETR"):
                     with ftplib.FTP(ftp_hostname) as ftp:
                         ftp.login(ftp_username, ftp_password)
@@ -152,21 +164,21 @@ def main():
         # Retrieve file names from archive and extract if not already extracted to temp_dir
         extract_path = Path(temp_dir, scene_name)
         with tarfile.open(local_archive, mode="r") as tar_gz_fp:
-            print("Retrieving filenames from {}".format(local_archive))
+            logger.info("Retrieving filenames from {}".format(local_archive))
             with timing("Query archive"):
                 tar_files = tar_gz_fp.getnames()
-            # print("Files: {}".format(tar_files))
+            # logger.info("Files: {}".format(tar_files))
 
             if extract_path.exists():
-                print("Skipping extract, exists at {}".format(extract_path))
+                logger.info("Skipping extract, exists at {}".format(extract_path))
             else:
-                print("Extracting {} to {}".format(local_archive, extract_path))
+                logger.info("Extracting {} to {}".format(local_archive, extract_path))
                 with timing("Extract"):
                     tar_gz_fp.extractall(extract_path)
 
         # Find HDR data files in unzipped package
         hdr_files = list(filter(lambda x: x.endswith(".hdr"), tar_files))
-        print("HDR Files: {}".format(hdr_files))
+        logger.info("HDR Files: {}".format(hdr_files))
         for idx, hdr_file_w_ext in enumerate(hdr_files):
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
             hdr_path = Path(extract_path, hdr_file_w_ext_path.with_suffix(""))
@@ -174,7 +186,7 @@ def main():
 
             if args.skip_large and os.path.getsize(hdr_path) > 0.2 * GB:
                 file_mb = floor(os.path.getsize(hdr_path) / 1024 / 1024)
-                print(
+                logger.info(
                     "--skip-large provided. Skipping {} with size {}mb".format(
                         hdr_path, file_mb
                     )
@@ -183,14 +195,17 @@ def main():
 
             # Convert HDR data to pixel interleaved COG with GDAL
             # NUM_THREADS only speeds up compression and overview generation
-            translate_opts = gdal.TranslateOptions(
-                callback=translate_callback,
-                creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE"],
-                format="COG",
+            # gdal.Warp is used to fix rasters rotation
+            warp_opts = gdal.WarpOptions(
+                callback=warp_callback,
+                warpOptions=["NUM_THREADS=ALL_CPUS"],
+                creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE", "BIGTIFF=YES"],
+                multithread=True,
+                format="COG"
             )
-            print("Converting {} to {}...".format(hdr_path, cog_path))
-            with timing("GDAL Translate"):
-                gdal.Translate(str(cog_path), str(hdr_path), options=translate_opts)
+            logger.info("Converting {} to {}...".format(hdr_path, cog_path))
+            with timing("GDAL Warp"):
+                gdal.Warp(str(cog_path), str(hdr_path), options=warp_opts)
 
             # Upload  COG and metadata, if written, to S3 bucket + key
             key = Path(
@@ -200,7 +215,7 @@ def main():
                 cog_path.name,
             )
             s3_uri = "s3://{}/{}".format(args.s3_bucket, key)
-            print("Uploading {} to {}".format(cog_path, s3_uri))
+            logger.info("Uploading {} to {}".format(cog_path, s3_uri))
             s3.upload_file(
                 str(cog_path),
                 args.s3_bucket,
@@ -212,7 +227,7 @@ def main():
             if cog_metadata_path.exists():
                 metadata_key = Path(args.s3_prefix, cog_metadata_path.name)
                 metadata_s3_uri = "s3://{}/{}".format(args.s3_bucket, metadata_key)
-                print("Uploading {} to {}".format(cog_metadata_path, metadata_s3_uri))
+                logger.info("Uploading {} to {}".format(cog_metadata_path, metadata_s3_uri))
                 s3.upload_file(
                     str(cog_metadata_path), args.s3_bucket, str(metadata_key)
                 )
@@ -233,13 +248,17 @@ def main():
                 )
     finally:
         if not args.keep_temp_dir:
-            print("Removing temp dir: {}".format(temp_dir))
+            logger.info("Removing temp dir: {}".format(temp_dir))
             shutil.rmtree(temp_dir, ignore_errors=True)
 
     # Add COG Item to AVIRIS L2 STAC Collection
-    print("POST Item {} to {}".format(cog_item.id, args.franklin_url))
+    logger.info("POST Item {} to {}".format(cog_item.id, args.stac_api_uri))
     item_data = stac_client.post_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item)
-    print("Success: {}".format(item_data["id"]))
+    if item_data.get('id', None):
+        logger.info("Success: {}".format(item_data["id"]))
+    else:
+        logger.error("Failure: {}".format(item_data))
+        return -1
 
 
 if __name__ == "__main__":
