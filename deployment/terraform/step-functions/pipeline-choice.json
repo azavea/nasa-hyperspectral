@@ -1,0 +1,106 @@
+{
+    "StartAt": "RunStatesInSequence",
+    "States": {
+        "RunStatesInSequence": {
+            "Type": "Map",
+            "ItemsPath": "$.tasks",
+            "MaxConcurrency": 1,
+            "Parameters": {
+                "name.$": "$$.Map.Item.Value",
+                "queue": "${queue}",
+                "commands.$": "$.commands",
+                "environment.$": "$.environment"
+            },
+            "Iterator": {
+                "StartAt": "ChoiceState",
+                "States": {
+                    "ChoiceState":{
+                        "Type":"Choice",
+                        "Choices":[
+                            {
+                                "Variable":"$.name",
+                                "StringEquals":"${activator_name}",
+                                "Next":"ActivatorState"
+                            },
+                            {
+                                "Variable":"$.name",
+                                "StringEquals":"${cog_clip_name}",
+                                "Next":"CogClipState"
+                            }
+                        ],
+                        "Default":"FailureState"
+                    },
+                    "ActivatorState": {
+                        "Type": "Task",
+                        "ResultPath": "$.status",
+                        "Resource": "${batch_arn}",
+                        "Parameters": {
+                            "JobDefinition.$": "$.name",
+                            "JobName": "ActivatorTask",
+                            "JobQueue.$": "$.queue",
+                            "ContainerOverrides": {
+                                "Command.$": "$.commands.${activator_name}",
+                                "Environment": [ 
+                                    {
+                                        "Name": "S3_BUCKET",
+                                        "Value.$": "$.environment.S3_BUCKET"
+                                    },
+                                    {
+                                        "Name": "S3_PREFIX",
+                                        "Value.$": "$.environment.S3_PREFIX"
+                                    },
+                                    {
+                                        "Name": "STAC_API_URI",
+                                        "Value.$": "$.environment.STAC_API_URI"
+                                    }
+                                ]
+                            }
+                        },
+                        "Next":"SuccessState"
+                    },
+                    "CogClipState": {
+                        "Type": "Task",
+                        "ResultPath": "$.status",
+                        "Resource": "${batch_arn}",
+                        "Parameters": {
+                            "JobDefinition.$": "$.name",
+                            "JobName": "CogClipTask",
+                            "JobQueue.$": "$.queue",
+                            "ContainerOverrides": {
+                                "Command.$": "$.commands.${cog_clip_name}",
+                                "Environment": [ 
+                                    {
+                                        "Name": "STAC_API_URI",
+                                        "Value.$": "$.environment.STAC_API_URI"
+                                    },
+                                    {
+                                        "Name": "TARGET_S3_URI",
+                                        "Value.$": "$.environment.TARGET_S3_URI"
+                                    },
+                                    {
+                                        "Name": "FEATURES",
+                                        "Value.$": "$.environment.FEATURES"
+                                    },
+                                    {
+                                        "Name": "LOG_LEVEL",
+                                        "Value.$": "$.environment.LOG_LEVEL"
+                                    }
+                                ]
+                            }
+                        },
+                        "Next":"SuccessState"
+                    },
+                    "FailureState":{
+                        "Type":"Fail",
+                        "Error":"DefaultStateError",
+                        "Cause":"No module with the provided arn!"
+                    },
+                    "SuccessState":{
+                        "Type":"Succeed"
+                    }
+                }
+            },
+            "End": true
+        }
+    }
+}
