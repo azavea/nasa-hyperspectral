@@ -29,7 +29,9 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
 
         # build and test cog-clip assembly
         # we don't need bloop, sbt uses .bsp
-        cd src/pipeline/activator/cog-clip/; ./sbt ";test; assembly"; cd ~- 
+        pushd ./src/pipeline/activator/cog-clip
+        ./sbt test
+        popd
 
     fi
 fi

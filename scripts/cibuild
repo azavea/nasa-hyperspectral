@@ -31,8 +31,13 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
             -f docker-compose.ci.yml \
             build activator-aviris-l2
 
+        # COG Clip module tests
         ./scripts/test
 
+        # Build the COG Clip module fat assembly jar
+        pushd ./src/pipeline/activator/cog-clip
+        ./sbt assembly
+        popd
         # Build of the Scala projects is possible only after the assembly build
         # Assembly build happens after the test phase
         GIT_COMMIT="${GIT_COMMIT}" docker-compose \

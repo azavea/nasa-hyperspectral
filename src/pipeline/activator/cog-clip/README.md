@@ -56,6 +56,8 @@ Environment Variables:
 * <details> 
      <summary>Create `aviris-l2-cogs` collection.</summary>
 
+     It is possible to create it via sending a `POST` request to the following endpoint: `http://localhost:9090/collections/`
+
      ```javascript
      {
         "stac_version":"1.0.0-beta.2",
@@ -119,11 +121,80 @@ Environment Variables:
            }
         ]
      }
-      ```
+     ```
+
+    The same via CLI:
+
+    ```bash
+    curl -d '{
+        "stac_version":"1.0.0-beta.2",
+        "stac_extensions":[
+           
+        ],
+        "id":"aviris-l2-cogs",
+        "title":null,
+        "description":"AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
+        "keywords":[
+           
+        ],
+        "license":"proprietary",
+        "providers":[
+           
+        ],
+        "extent":{
+           "spatial":{
+              "bbox":[
+                 [
+                    -180,
+                    -90,
+                    180,
+                    90
+                 ]
+              ]
+           },
+           "temporal":{
+              "interval":[
+                 [
+                    "2014-01-01T00:00:00Z",
+                    "2019-12-31T00:00:00Z"
+                 ]
+              ]
+           }
+        },
+        "summaries":{
+           
+        },
+        "properties":{
+           
+        },
+        "links":[
+           {
+              "href":"https://franklin.nasa-hsi.azavea.com/collections/aviris-l2-cogs/tiles",
+              "rel":"tiles",
+              "type":"application/json",
+              "title":"Tile URLs for Collection"
+           },
+           {
+              "href":"https://franklin.nasa-hsi.azavea.com/collections/aviris-l2-cogs",
+              "rel":"self",
+              "type":"application/json",
+              "title":null
+           },
+           {
+              "href":"https://franklin.nasa-hsi.azavea.com",
+              "rel":"root",
+              "type":"application/json",
+              "title":null
+           }
+        ]
+     }' -H 'Content-Type: application/json' http://localhost:9090/collections/
+     ```
 </details>
 
 * <details>
      <summary>Insert item into the collection.</summary>
+
+     It is possible to create it via sending a `POST` request to the following endpoint: `http://localhost:9090/collections/aviris-l2-cogs/items/`
 
      ```javascript
      {
@@ -286,12 +357,18 @@ Environment Variables:
            "Gzip File Size (Bytes)":3659283368
         }
      }
-      ```
+     ```
+
+     The same via CLI (assuming we put the JSON above into the `test-item.json` file):
+    
+     ```bash
+     curl -d '@test-item.json' -H 'Content-Type: application/json' http://localhost:9090/collections/aviris-l2-cogs/items/
+     ```
 </details>
 
 * `s3://aviris-data/test/f130329t01p00r06_corr_v1_warp.tif` is the test tiff.
 * FeatureCollection to test this module: [test.json.zip](https://github.com/azavea/nasa-hyperspectral/files/5798939/test.json.zip)
 * Set FeatureCollections as env variable (to simplify testing): `export FEATURES=`cat test-data/test.json`
-* Run clipping: `./sbt run clip --source-collection-id aviris-l2-cogs --source-item-id aviris_f130329t01p00r06_sc01 --source-asset-id cog --target-collection-id aviris-l2-chips`
+* Run clipping: `./sbt "run clip --source-collection-id aviris-l2-cogs --source-item-id aviris_f130329t01p00r06_sc01 --source-asset-id cog --target-collection-id aviris-l2-chips"`
 
 Result imagery lives here: `s3://nasahyperspectral-test/activator-clip-cogs`
