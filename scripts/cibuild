@@ -25,12 +25,6 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     else
         ./scripts/update
 
-        # Build tagged container images
-        GIT_COMMIT="${GIT_COMMIT}" docker-compose \
-            -f docker-compose.yml \
-            -f docker-compose.ci.yml \
-            build activator-aviris-l2
-
         # COG Clip module tests
         ./scripts/test
 
@@ -38,11 +32,12 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         pushd ./src/pipeline/activator/cog-clip
         ./sbt assembly
         popd
-        # Build of the Scala projects is possible only after the assembly build
-        # Assembly build happens after the test phase
+        
+        # Build tagged container images
         GIT_COMMIT="${GIT_COMMIT}" docker-compose \
             -f docker-compose.yml \
             -f docker-compose.ci.yml \
-            build cog-clip
+            build
+
     fi
 fi
