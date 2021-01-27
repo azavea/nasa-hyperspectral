@@ -16,7 +16,7 @@ aws s3api create-bucket --bucket "${S3_BUCKET}"
 ### Run Locally
 
 ```shell
-docker-compose run --rm activator-aviris-l2 <stac-item-id>
+docker-compose run --rm activator-aviris-l2 --aviris-stac-id <stac-item-id>
 # or for usage instructions
 docker-compose run --rm activator-aviris-l2 --help
 ```
@@ -24,8 +24,11 @@ docker-compose run --rm activator-aviris-l2 --help
 A common set of arguments to use in development, to re-use the same temp dir and skip large files, is:
 
 ```shell
-docker-compose run --rm activator-aviris-l2 <stac-item-id> \
-  --temp-dir /data --skip-large --keep-temp-dir 
+docker-compose run --rm activator-aviris-l2 \
+  --aviris-stac-id <stac-item-id> \
+  --temp-dir /data \
+  --skip-large \
+  --keep-temp-dir 
 ```
 
 `/data` is a mounted Docker volume that can be reused across container executions for development.

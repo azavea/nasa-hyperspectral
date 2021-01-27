@@ -1,19 +1,7 @@
-# Docs
-
-index.html
-index.js
-package.html
-lib
-site/
-docs/_build/
-
 # Build Files
 
-bin
 target
 build/
-.gradle
-cmake-build-debug
 
 # Eclipse Project Files
 
@@ -47,20 +35,6 @@ metals.sbt
 
 .bsp
 
-# Terraform
-
-.terraform
-scripts/emr/terraform/variables.tf*
-scripts/emr/terraform/terraform.tfstate*
-
-# Vagrant
-
-.vagrant
-
-# Test files
-
-spark/src/test/resources/vlm/*catalog*
-
 # Other
 
 .#*
@@ -69,9 +43,6 @@ spark/src/test/resources/vlm/*catalog*
 *.jar
 *.crc
 
-_SUCCESS
-
-*.pyc
 .cache
 .settings
 *.swp

@@ -9,6 +9,7 @@ import tarfile
 from tempfile import mkdtemp
 from urllib.parse import urlparse
 import logging
+from config import CliConfig
 
 import boto3
 from boto3.s3.transfer import TransferConfig
@@ -44,16 +45,20 @@ AVIRIS_L2_COG_COLLECTION = pystac.Collection(
 )
 AVIRIS_L2_COG_COLLECTION.links = []
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "aviris_stac_id",
+        "--pipeline",
+        type=str,
+        help="JSON with instructions"
+    )
+    parser.add_argument(
+        "--aviris-stac-id",
         type=str,
         help="STAC Item ID to process from the STAC collection"
     )
     parser.add_argument(
-        "--aviris_collection_id",
+        "--aviris-collection-id",
         type=str,
         default=AVIRIS_ARCHIVE_COLLECTION_ID,
     )
@@ -92,10 +97,10 @@ def main():
     )
 
     # TODO: replace it with parser.parse_args() later
-    args, unknown = parser.parse_known_args()
+    cli_args, cli_unknown = parser.parse_known_args()
 
-    if unknown is not None:
-        logger.info(f"WARN: Unknown arguments passed: {unknown}")
+    # parse all cli arguments
+    args = CliConfig(cli_args, cli_unknown)
 
     s3 = boto3.client("s3")
     stac_client = STACClient(args.stac_api_uri)
