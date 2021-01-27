@@ -25,12 +25,19 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     else
         ./scripts/update
 
+        # COG Clip module tests
+        ./scripts/test
+
+        # Build the COG Clip module fat assembly jar
+        pushd ./src/pipeline/activator/cog-clip
+        ./sbt assembly
+        popd
+        
         # Build tagged container images
         GIT_COMMIT="${GIT_COMMIT}" docker-compose \
             -f docker-compose.yml \
             -f docker-compose.ci.yml \
-            build activator-aviris-l2
+            build
 
-        ./scripts/test
     fi
 fi

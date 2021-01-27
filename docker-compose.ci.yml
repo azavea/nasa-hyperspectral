@@ -3,6 +3,9 @@ services:
   activator-aviris-l2:
     image: "activator-aviris-l2:${GIT_COMMIT:-latest}"
 
+  cog-clip:
+    image: "cog-clip:${GIT_COMMIT:-latest}"
+
   terraform:
     image: quay.io/azavea/terraform:0.14.3
     volumes:

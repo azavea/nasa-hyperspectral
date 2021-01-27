@@ -13,6 +13,7 @@ Thumbs.db
 
 pipeline-data/
 test-data/
+
 __pycache__
 *.egg-info
 .ipynb_checkpoints

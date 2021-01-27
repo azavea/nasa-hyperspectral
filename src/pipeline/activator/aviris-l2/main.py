@@ -260,6 +260,5 @@ def main():
         logger.error("Failure: {}".format(item_data))
         return -1
 
-
 if __name__ == "__main__":
     main()
