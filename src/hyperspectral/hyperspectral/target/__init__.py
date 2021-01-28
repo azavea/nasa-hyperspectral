@@ -1,0 +1,1 @@
+from .matched_filter import normalized_matched_filter

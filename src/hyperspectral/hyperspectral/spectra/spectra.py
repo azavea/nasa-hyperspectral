@@ -50,6 +50,10 @@ class Spectrum:
         self.x = np.array(x)
         self.y = np.array(y)
 
+    @property
+    def xy(self):
+        return list(zip(self.x, self.y))
+
     def plot(self, rnga=None, rngb=None, ax=None):
         """
         Produce a matplotlib plot of the sampled spectrum
@@ -110,6 +114,20 @@ class Spectrum:
         ixs = list(sorted(set(range(0, self.n_samples)) - set(bands)))
         x = [self.x[i] for i in ixs]
         y = [self.y[i] for i in ixs]
+        return Spectrum(self.name, self.type_, self.class_, min(x), max(x), len(x), deepcopy(self.info), x ,y)
+
+    def filter_bands(self, fn):
+        """
+        Select bands to keep based on (wavelength, value) → boolean function
+
+        In case one wishes to remove bands based on wavelength or sampled value (or some
+        combination), this function can do so.  Provide a function taking a float × float
+        pair that returns a boolean.  True responses are kept, false responses are
+        omitted.
+        """
+        cutdown = list(filter(fn, zip(self.x, self.y)))
+        x = [xy[0] for xy in cutdown]
+        y = [xy[1] for xy in cutdown]
         return Spectrum(self.name, self.type_, self.class_, min(x), max(x), len(x), deepcopy(self.info), x ,y)
 
     def __getitem__(self, ix):
