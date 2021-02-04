@@ -11,6 +11,36 @@ def mad(M):
 
 
 def rpca_grid(data, max_dim=None, n_c=5, n_g=11, S=mad, sufficient=None):
+    """
+    Produce a reduced basis for provided data using robust PCA
+
+    This routine calculates robust PCA basis vectors for provided data using a grid
+    search strategy.  This method effectively computes a PCA-like solution where mean
+    and variance from a conventional PCA have been substituted with median and median
+    absolute deviation.  This is in the class of projection pursuit algorithms.  See
+    references for details.
+
+    Arguments:
+        data (np.array): a p×n matrix giving n, p-dimensional samples as column vectors
+        max_dim (optional int): The largest number of basis vectors to compute
+        n_c (int): the number of refinement passes (higher values give more digits
+            of precision)
+        n_g (int): Number of grid divisions to use on each search pass
+        S (np.array ⇒ np.array): Function from matrix to vector; each column of
+            argument matrix is the projection of data onto a candidate direction;
+            this function returns a row vector with each position scoring the
+            data dispersion of each column of the argument; see mad above for an
+            illustration
+        sufficient (np.array ⇒ bool): An optional function to determine if the
+            basis so far is sufficient for the user's needs; argument is matrix
+            of column vectors in the current basis
+
+    References:
+
+      Croux, C., Filzmoser, P., & Oliveira, M. R. (2007).
+      Algorithms for projection–pursuit robust principal component analysis.
+      Chemometrics and Intelligent Laboratory Systems, 87(2), 218-225.
+    """
     assert len(data.shape)==2, "Provide data as matrix of column vectors"
     if n_g % 2 == 0:
         # The search seems to fail when n_g is even
@@ -59,12 +89,8 @@ def rpca_grid(data, max_dim=None, n_c=5, n_g=11, S=mad, sufficient=None):
     return result
 
 
-def projection(basis):
-    return np.linalg.solve(np.matmul(basis.transpose(), basis), basis.transpose())
-
-
 def goodness_of_fit(basis, target, ax=None):
-    proj = projection(basis)
+    proj = np.linalg.pinv(basis)
     fitted = np.matmul(basis, np.matmul(proj, target))
 
     if ax is not None:
@@ -97,7 +123,7 @@ def project_data(data, basis=None, proj=None):
     assert (basis is not None and proj is None) or (basis is None and proj is not None), "Must provide either a basis or a projection matrix"
 
     if proj is None:
-        proj = projection(basis)
+        proj = np.linalg.pinv(basis)
 
     if len(data.shape)==3:
         return np.einsum('ij,rcj->rci', proj, data)
