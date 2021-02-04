@@ -21,8 +21,8 @@ def normalized_matched_filter(image, target, clutter_cov, center=False):
 
     References:
 
-      Manolakis, D. G., Lockwood, R. B., & Cooley, T. W. (2016).
-      Hyperspectral imaging remote sensing: physics, sensors, and algorithms.
+      Manolakis, D. G., Lockwood, R. B., & Cooley, T. W. (2016).  Hyperspectral
+      imaging remote sensing: Physics, sensors, and algorithms (pp. 494–576).
       Cambridge University Press.
 
     """
