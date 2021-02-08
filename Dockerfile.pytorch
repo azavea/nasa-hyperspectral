@@ -1,0 +1,10 @@
+FROM quay.io/jmcclain/raster-vision-pytorch:Mon_Feb_8_05_00_26_UTC_2021
+
+RUN conda install -y notebook
+
+RUN pip install fastkml==0.11 geopandas==0.8.2 jsonschema parsec==3.7 lxml==4.6.2 descartes==1.1.0 Rtree==0.9.7
+
+COPY ./src/hyperspectral/hyperspectral/ /opt/src/hyperspectral/
+COPY ./src/hyperspectral/notebooks/ /opt/src/notebooks/
+
+CMD jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root --no-browser --notebook-dir /opt/src/notebooks
