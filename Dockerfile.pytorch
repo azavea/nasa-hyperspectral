@@ -8,3 +8,6 @@ COPY ./src/hyperspectral/hyperspectral/ /opt/src/hyperspectral/
 COPY ./src/hyperspectral/notebooks/ /opt/src/notebooks/
 
 CMD jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root --no-browser --notebook-dir /opt/src/notebooks
+
+# docker build -f Dockerfile.pytorch -t jupyter .
+# docker run -it --rm -p 8888:8888 jupyter
