@@ -11,3 +11,11 @@ CMD jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root --no-browser --notebo
 
 # docker build -f Dockerfile.pytorch -t jupyter .
 # docker run -it --rm -p 8888:8888 jupyter
+
+# Note: The image produced by this file is NOT meant for deployment or
+# remote use.  The purpose of this file is to codify repeatable setup
+# that is known to support the notebooks in this repository.  It is
+# meant to be built and used locally.  Inclusion of files in the data
+# directory is intentional.  Please do not attempt to use the image
+# produced by this file for deployment.  Please do not upload the
+# image produced by this file to DockerHub, Quay, ECR, &c.
