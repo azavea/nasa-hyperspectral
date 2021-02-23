@@ -11,6 +11,7 @@ def fokker_planck_kernel():
     # https://github.com/Acicone/Iterative-Filtering-IF/blob/master/prefixed_double_filter.mat
     return scipy.io.loadmat(resource_filename('hyperspectral.resources', 'prefixed_double_filter.mat'))['MM'].flatten()
 
+
 def get_mask(k, kernel=None):
     assert isinstance(k, int), "Must provide integer-valued mask support width"
 
@@ -85,10 +86,11 @@ def count_extrema(signal, axis=None):
 
 def spherical_radius(signal, χ):
     assert len(signal.shape) == 2
-    l_row = 2 * np.mean(np.floor(χ * signal.shape[1] / count_extrema(signal, axis=0)))
-    l_col = 2 * np.mean(np.floor(χ * signal.shape[0] / count_extrema(signal, axis=0)))
+    l_row = 2 * np.mean(np.floor(χ * signal.shape[0] / count_extrema(signal, axis=0)))
+    l_col = 2 * np.mean(np.floor(χ * signal.shape[1] / count_extrema(signal, axis=1)))
 
     return int((l_row + l_col) / 2)
+
 
 def imf(f, kernel, τ, max_iters):
     """
@@ -124,6 +126,7 @@ def imf(f, kernel, τ, max_iters):
             break
 
     return f, err
+
 
 def mif(signal, χ=1.6, τ=0.001, max_iters=1000, max_imfs=25):
     f = signal - np.mean(signal)
