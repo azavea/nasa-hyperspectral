@@ -49,10 +49,10 @@ def argsort(model: torch.nn.Module,
         this will be a PyTorch representation of a match-filter target
         detection model.
     ps : torch.tensor
-        An n⨯c⨯1 tensor containing n hyperspectral pixels, each of c
+        An n×c×1 tensor containing n hyperspectral pixels, each of c
         channels.
     v : torch.tensor
-        A 1⨯c⨯1 tensor containing the target spectrum.
+        A 1×c×1 tensor containing the target spectrum.
     inds : List[int]
         A list of indices (relative to the first dimension of ps)
         containing "positive" pixels.

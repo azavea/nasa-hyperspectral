@@ -33,38 +33,6 @@ import torch as torch
 import torch.nn.functional as F
 
 
-def whitening_matrix(m: np.array):
-    """Given an n⨯c matrix containing pixel data, construct a whitening
-    (or sphereing or decorrelation matrix).
-
-    The method in use here is ZCA whitening (see
-    https://en.wikipedia.org/wiki/Whitening_transformation for more).
-
-    Parameters
-    ----------
-    m : np.array
-        An w⨯h⨯c numpy array containing n hyperspectral pixels of c
-        channels.  In typical use, it is presumed that the pixels are
-        "background" or "non-target" pixels.
-
-    Returns
-    -------
-    np.array
-        A c⨯c matrix containing the computed whitening operator.
-    np.array
-        A column vector with c rows containing the means of each
-        channel (used for centering data).
-
-    """
-    old_shape = m.shape
-    m = m.reshape(-1, old_shape[-1])
-    mean = np.mean(m, axis=0)
-    cov = np.cov(m - mean, rowvar=False)
-    w, v = np.linalg.eig(cov)
-    W = np.matmul(np.matmul(v, np.diag(1 / np.sqrt(1e-6 + w))), v.T)
-    return W, mean
-
-
 class MatchedFilter(torch.nn.Module):
 
     def __init__(self, W: np.array, bias: float):
@@ -76,7 +44,7 @@ class MatchedFilter(torch.nn.Module):
         Parameters
         ----------
         W : np.array
-            A c⨯c numpy array representing the initial whitening
+            A c×c numpy array representing the initial whitening
             (sphering) matrix.  c is the number of channels in the
             imagery.
         bias : float
@@ -99,7 +67,7 @@ class MatchedFilter(torch.nn.Module):
         self.relu = torch.nn.ReLU()
 
     def forward(self, x: torch.tensor, y: torch.tensor):
-        """Given an n⨯c tensor representing n pixels of c channels and a c⨯1
+        """Given an n×c tensor representing n pixels of c channels and a c×1
         tensor representing a spectrum, perform the matched-filter
         computation.
 
@@ -112,14 +80,14 @@ class MatchedFilter(torch.nn.Module):
         Parameters
         ----------
         x : torch.tensor
-            An n⨯c⨯1 tensor containing the hyperspectral pixel data.
+            An n×c×1 tensor containing the hyperspectral pixel data.
         y : torch.tensor
-            A 1⨯c⨯1 tensor containing the spectrum of interest.
+            A 1×c×1 tensor containing the spectrum of interest.
 
         Returns
         -------
         torch.tensor
-            An n⨯1⨯1 tensor containing the correlation between each
+            An n×1×1 tensor containing the correlation between each
             transformed pixel and the transformed spectrum (minus the
             bias).
 

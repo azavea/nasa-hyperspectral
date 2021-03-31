@@ -54,13 +54,13 @@ def vanilla_train(model: torch.nn.Module,
         this will be a PyTorch representation of a match-filter target
         detection model.
     ps : torch.tensor
-        An n⨯c⨯1 tensor containing n hyperspectral pixels, each of c
+        An n×c×1 tensor containing n hyperspectral pixels, each of c
         channels.
     ls : torch.tensor
-        An n⨯1⨯1 tensor containing labels for the pixels ps.  0 is for
+        An n×1×1 tensor containing labels for the pixels ps.  0 is for
         background and 1 is for target.
     v : torch.tensor
-        A 1⨯c tensor containing the target spectrum.
+        A 1×c tensor containing the target spectrum.
     num_epochs : int
         The number of training epochs to use.
 

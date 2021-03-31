@@ -28,6 +28,6 @@
 # ANY WAY  OUT OF  THE USE OF  THIS SOFTWARE, EVEN  IF ADVISED  OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from .models import MatchedFilter, whitening_matrix
+from .models import MatchedFilter
 from .selection import argsort
 from .train import vanilla_train
