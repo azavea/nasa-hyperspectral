@@ -133,6 +133,38 @@ def project_data(data, basis=None, proj=None):
         raise ValueError("Data must be single vector, matrix of column vectors, or r × c × b image")
 
 
+def zca_whitening_matrix(m: np.array):
+    """Given an w×h×c matrix containing pixel data, construct a whitening
+    (or sphereing or decorrelation matrix).
+
+    The method in use here is ZCA whitening (see
+    https://en.wikipedia.org/wiki/Whitening_transformation for more).
+
+    Parameters
+    ----------
+    m : np.array
+        An w×h×c numpy array containing n hyperspectral pixels of c
+        channels.  In typical use, it is presumed that the pixels are
+        "background" or "non-target" pixels.
+
+    Returns
+    -------
+    np.array
+        A c×c matrix containing the computed whitening operator.
+    np.array
+        A column vector with c rows containing the means of each
+        channel (used for centering data).
+
+    """
+    old_shape = m.shape
+    m = m.reshape(-1, old_shape[-1])
+    mean = np.mean(m, axis=0)
+    cov = np.cov(m - mean, rowvar=False)
+    w, v = np.linalg.eig(cov)
+    W = np.matmul(np.matmul(v, np.diag(1 / np.sqrt(1e-6 + w))), v.T)
+    return W, mean
+
+
 def whitening_matrix(vcov):
     return scipy.linalg.sqrtm(scipy.linalg.inv(vcov))
 
