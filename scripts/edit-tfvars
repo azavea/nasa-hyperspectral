@@ -16,7 +16,7 @@ cp -f "${TO_EDIT_TMP_FILE}" "${TO_COMPARE_TMP_FILE}"
 
 if ! cmp --silent "${TO_EDIT_TMP_FILE}" "${TO_COMPARE_TMP_FILE}"; then
   echo
-  (diff -a "${TO_EDIT_TMP_FILE}" "${TO_COMPARE_TMP_FILE}") || true
+  (diff -u -a "${TO_EDIT_TMP_FILE}" "${TO_COMPARE_TMP_FILE}") || true
   echo
   read -p "Does that look reasonable? (y/n) " -n 1 -r
   echo
