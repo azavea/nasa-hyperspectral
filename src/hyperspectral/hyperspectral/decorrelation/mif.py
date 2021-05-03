@@ -6,6 +6,14 @@ import numpy as np
 import scipy.io
 from scipy.signal import correlate2d
 
+try:
+    import torch
+    import torch.nn
+    import torch.nn.functional as f
+    torch_available = True
+except:
+    torch_available = False
+
 def fokker_planck_kernel():
     # This function depends on the preprocessed kernel provided by
     # https://github.com/Acicone/Iterative-Filtering-IF/blob/master/prefixed_double_filter.mat
@@ -128,7 +136,150 @@ def imf(f, kernel, τ, max_iters):
     return f, err
 
 
+def imf_torch(base, kernel, τ=0.001, max_iters=1000):
+    err=[]
+
+    _,_,w,_ = kernel.shape
+    k = int((w - 1) / 2)
+
+    try:
+        from tqdm.autonotebook import tqdm
+        rng = tqdm(range(max_iters), leave=False)
+        use_tqdm = True
+    except:
+        rng = range(max_iters)
+        use_tqdm = False
+
+    for i in rng:
+        padded = f.pad(base, (k,k,k,k), mode='reflect')
+        smoothed = f.conv2d(padded, kernel, stride=1)
+        last = base
+        base = base - smoothed
+        err.append(torch.linalg.norm((base - last)[0,0,:,:], ord=2) / torch.linalg.norm(last[0,0,:,:], ord=2))
+        if err[-1] < τ or err[-1] > min(err):
+            if use_tqdm:
+                rng.update(max_iters)
+                rng.close()
+            break
+
+    return base, err
+
+
+def count_extrema_torch(m, axis):
+    assert axis==0 or axis==1
+    if axis == 0:
+        lead_cols = m[:,2:]
+        lag_cols = m[:,:-2]
+        cols = m[:,1:-1]
+        n_extrema = torch.sum(torch.logical_or(
+            torch.logical_and(cols < lead_cols, cols < lag_cols),
+            torch.logical_and(cols > lead_cols, cols > lag_cols)
+        ).int(), dim=1)
+    elif axis == 1:
+        lead_rows = m[2:,:]
+        lag_rows = m[:-2,:]
+        rows = m[1:-1,:]
+        n_extrema = torch.sum(torch.logical_or(
+            torch.logical_and(rows < lead_rows, rows < lag_rows),
+            torch.logical_and(rows > lead_rows, rows > lag_rows)
+        ).int(), dim=0)
+    return n_extrema
+
+
+def count_extrema(m, axis):
+    assert axis==0 or axis==1
+    if axis == 0:
+        lead_cols = m[:,2:]
+        lag_cols = m[:,:-2]
+        cols = m[:,1:-1]
+        n_extrema = np.sum(np.logical_or(
+            np.logical_and(cols < lead_cols, cols < lag_cols),
+            np.logical_and(cols > lead_cols, cols > lag_cols)
+        ).int(), dim=1)
+    elif axis == 1:
+        lead_rows = m[2:,:]
+        lag_rows = m[:-2,:]
+        rows = m[1:-1,:]
+        n_extrema = np.sum(np.logical_or(
+            np.logical_and(rows < lead_rows, rows < lag_rows),
+            np.logical_and(rows > lead_rows, rows > lag_rows)
+        ).int(), dim=0)
+    return n_extrema
+
+
+def terminated_torch(m):
+    return True if torch.logical_or(torch.min(count_extrema_torch(m, 0)) <= 1,
+                                    torch.min(count_extrema_torch(m, 1)) <= 1) else False
+
+
+def terminated(m):
+    return True if np.logical_or(np.min(count_extrema_torch(m, 0)) <= 1,
+                                 np.min(count_extrema_torch(m, 1)) <= 1) else False
+
+
+def spherical_radius_torch(signal, χ):
+    assert len(signal.shape) == 2
+    l_row = 2 * torch.mean(torch.floor(χ * signal.shape[0] / count_extrema_torch(signal, axis=0)))
+    l_col = 2 * torch.mean(torch.floor(χ * signal.shape[1] / count_extrema_torch(signal, axis=1)))
+
+    return int((l_row + l_col) / 2)
+
+
+def mif_torch(dev, signal, χ=1.6, τ=0.001, max_iters=1000, max_imfs=25):
+    centered = signal - np.mean(signal)
+    imfs = []
+
+    f = torch.from_numpy(np.array([[centered]])).to(dev)
+    base = torch.unsqueeze(f, 0)
+    base = torch.unsqueeze(f, 0)
+
+    try:
+        from tqdm.autonotebook import tqdm
+        rng = tqdm(range(max_imfs), leave=False)
+        use_tqdm = True
+    except:
+        rng = range(max_imfs)
+        use_tqdm = False
+
+    for i in rng:
+        k = spherical_radius_torch(f[0,0,:,:], χ)
+        if k >= min(list(f.shape)[2:]):
+            if use_tqdm:
+                rng.update(max_imfs)
+                rng.close()
+            break
+        kernel = get_mask_2d(k)
+        tkern = torch.from_numpy(np.array([kernel], dtype=np.float32)).to(dev)
+        kern = torch.unsqueeze(tkern, 0)
+        kern = torch.unsqueeze(tkern, 0)
+        imf_n, _ = imf_torch(f, kern, τ, max_iters)
+        imfs.append(imf_n)
+        f = f - imf_n
+        if terminated_torch(f[0,0,:,:]):
+            if use_tqdm:
+                rng.update(max_imfs)
+                rng.close()
+            break
+
+    return imfs, f
+
+
 def mif(signal, χ=1.6, τ=0.001, max_iters=1000, max_imfs=25):
+    """
+    Multidimensional iterative filter
+
+    Arguments:
+        signal (np.array): The image to decorrelate
+        χ: Spherical radius mutiplier
+        τ: The error threshhold for IMF generation
+        max_iters: Maximum allowable iterations for IMF generation
+        max_imfs: Maximum allowable number of IMFs to generate
+
+    References:
+        Cicone, A., & Zhou, H. (2017).  Multidimensional iterative filtering method
+        for the decomposition of high–dimensional non–stationary signals. Numerical
+        Mathematics: Theory, Methods and Applications, 10(2), 278-298.
+    """
     f = signal - np.mean(signal)
     imfs = []
 
@@ -144,5 +295,49 @@ def mif(signal, χ=1.6, τ=0.001, max_iters=1000, max_imfs=25):
         imf_n, _ = imf(f, kernel, τ, max_iters)
         imfs.append(imf_n)
         f = f - imf_n
+        if terminated(f[0,0,:,:]):
+            if use_tqdm:
+                rng.update(max_imfs)
+                rng.close()
+            break
 
     return imfs, f
+
+
+def mif_decorrelate(img, χ=1.6, τ=0.001, max_iters=1000, max_imfs=25, dev=None):
+    """
+    Decorrelate an image with MIF
+
+    Arguments:
+        img (np.array or torch.tensor): The image to decorrelate; if using torch, also set dev
+        χ: Spherical radius mutiplier
+        τ: The error threshhold for IMF generation
+        max_iters: Maximum allowable iterations for IMF generation
+        max_imfs: Maximum allowable number of IMFs to generate
+        dev: Torch device, if applicable
+
+    References:
+        Cicone, A., Liu, J., & Zhou, H. (2016). Hyperspectral chemical plume
+        detection algorithms based on multidimensional iterative filtering
+        decomposition. Philosophical Transactions of the Royal Society A:
+        Mathematical, Physical and Engineering Sciences, 374(2065), 20150196.
+    """
+    rng = range(img.shape[0])
+    try:
+        from tqdm.autonotebook import tqdm
+        rng = tqdm(rng)
+    except: pass
+
+    if torch_available and dev is not None:
+        do_mif = partial(mif_torch, dev)
+        use_torch = True
+    else:
+        do_mif = mif
+        use_torch = False
+
+  decorrelated = []
+  for i in rng:
+    _, r = do_mif(img[i,:,:], χ, τ, max_iters, max_imfs)
+    resid = r.detach().cpu().numpy() if use_torch else r
+    decorrelated.append(img[i,:,:] - resid[0,0,:,:])
+  return np.array(decorrelated)
