@@ -39,7 +39,7 @@ package object commands {
       MonadError[F, Throwable].pure(id.fold(_ => NonEmptyString.unsafeFrom(UUID.randomUUID().toString), identity))
   }
 
-  implicit class StacItemAssetOps(val self: StacItemAsset) extends AnyVal {
+  implicit class StacItemAssetOps(val self: StacAsset) extends AnyVal {
     def hrefGDAL(withGDAL: Boolean): String = if (withGDAL) s"gdal+${self.href}" else s"${GeoTiffPath.PREFIX}${self.href}"
   }
 

@@ -1,7 +1,7 @@
 package com.azavea.nasa.hsi.commands
 
 import com.azavea.stac4s._
-import com.azavea.stac4s.types.TemporalExtent
+import com.azavea.stac4s.jvmTypes.TemporalExtent
 import cats.syntax.option._
 import eu.timepit.refined.types.string.NonEmptyString
 import geotrellis.vector.{io => _, _}
@@ -9,11 +9,13 @@ import io.circe.JsonObject
 import io.circe.syntax._
 import io.circe.refined._
 import cats.syntax.functor._
+import eu.timepit.refined.refineMV
 
 import java.time.{LocalDate, ZoneOffset}
 
 object DefaultCollection {
   def collection(id: String): StacCollection = StacCollection(
+    _type = refineMV("Collection"),
     stacVersion = "1.0.0-beta.2",
     stacExtensions = Nil,
     id = id,
@@ -45,7 +47,8 @@ object DefaultCollection {
     summaries = JsonObject.empty,
     properties = JsonObject.empty,
     links = Nil,
-    extensionFields = JsonObject.empty
+    extensionFields = JsonObject.empty,
+    assets = None
   )
 
   def item(clipConfig: CogClipConfig, featureId: NonEmptyString, sourceItemId: String, geometry: Geometry): StacItem = {
@@ -60,7 +63,7 @@ object DefaultCollection {
       bbox = geometry.extent.toTwoDimBbox,
       links = Nil,
       assets = Map(
-        "cog" -> StacItemAsset(
+        "cog" -> StacAsset(
           href = clipConfig.cogAssetHref(featureId).value,
           title = "cog".some,
           description = None,
