@@ -73,23 +73,23 @@ def get_mask_2d(k, kernel_1d=None):
     return kernel / np.sum(kernel)
 
 
-def count_extrema(signal, axis=None):
-    def extrema1(sig):
-        lead = sig[2:]
-        lag = sig[:-2]
-        sig = sig[1:-1]
+# def count_extrema(signal, axis=None):
+#     def extrema1(sig):
+#         lead = sig[2:]
+#         lag = sig[:-2]
+#         sig = sig[1:-1]
 
-        return np.sum(
-            np.logical_or(
-                np.logical_and(sig < lead, sig < lag),
-                np.logical_and(sig > lead, sig > lag)
-            )
-        )
+#         return np.sum(
+#             np.logical_or(
+#                 np.logical_and(sig < lead, sig < lag),
+#                 np.logical_and(sig > lead, sig > lag)
+#             )
+#         )
 
-    if axis is None:
-        return extrema1(signal.flatten())
-    else:
-        return np.apply_along_axis(extrema1, axis, signal)
+#     if axis is None:
+#         return extrema1(signal.flatten())
+#     else:
+#         return np.apply_along_axis(extrema1, axis, signal)
 
 
 def spherical_radius(signal, χ):
