@@ -335,9 +335,9 @@ def mif_decorrelate(img, χ=1.6, τ=0.001, max_iters=1000, max_imfs=25, dev=None
         do_mif = mif
         use_torch = False
 
-  decorrelated = []
-  for i in rng:
-    _, r = do_mif(img[i,:,:], χ, τ, max_iters, max_imfs)
-    resid = r.detach().cpu().numpy() if use_torch else r
-    decorrelated.append(img[i,:,:] - resid[0,0,:,:])
-  return np.array(decorrelated)
+    decorrelated = []
+    for i in rng:
+        _, r = do_mif(img[i,:,:], χ, τ, max_iters, max_imfs)
+        resid = r.detach().cpu().numpy() if use_torch else r
+        decorrelated.append(img[i,:,:] - resid[0,0,:,:])
+    return np.array(decorrelated)
