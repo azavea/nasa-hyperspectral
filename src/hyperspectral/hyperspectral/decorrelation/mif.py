@@ -73,25 +73,6 @@ def get_mask_2d(k, kernel_1d=None):
     return kernel / np.sum(kernel)
 
 
-# def count_extrema(signal, axis=None):
-#     def extrema1(sig):
-#         lead = sig[2:]
-#         lag = sig[:-2]
-#         sig = sig[1:-1]
-
-#         return np.sum(
-#             np.logical_or(
-#                 np.logical_and(sig < lead, sig < lag),
-#                 np.logical_and(sig > lead, sig > lag)
-#             )
-#         )
-
-#     if axis is None:
-#         return extrema1(signal.flatten())
-#     else:
-#         return np.apply_along_axis(extrema1, axis, signal)
-
-
 def spherical_radius(signal, χ):
     assert len(signal.shape) == 2
     l_row = 2 * np.mean(np.floor(χ * signal.shape[0] / count_extrema(signal, axis=0)))
@@ -186,25 +167,44 @@ def count_extrema_torch(m, axis):
     return n_extrema
 
 
-def count_extrema(m, axis):
-    assert axis==0 or axis==1
-    if axis == 0:
-        lead_cols = m[:,2:]
-        lag_cols = m[:,:-2]
-        cols = m[:,1:-1]
-        n_extrema = np.sum(np.logical_or(
-            np.logical_and(cols < lead_cols, cols < lag_cols),
-            np.logical_and(cols > lead_cols, cols > lag_cols)
-        ).int(), dim=1)
-    elif axis == 1:
-        lead_rows = m[2:,:]
-        lag_rows = m[:-2,:]
-        rows = m[1:-1,:]
-        n_extrema = np.sum(np.logical_or(
-            np.logical_and(rows < lead_rows, rows < lag_rows),
-            np.logical_and(rows > lead_rows, rows > lag_rows)
-        ).int(), dim=0)
-    return n_extrema
+def count_extrema(signal, axis=None):
+    def extrema1(sig):
+        lead = sig[2:]
+        lag = sig[:-2]
+        sig = sig[1:-1]
+
+        return np.sum(
+            np.logical_or(
+                np.logical_and(sig < lead, sig < lag),
+                np.logical_and(sig > lead, sig > lag)
+            )
+        )
+
+    if axis is None:
+        return extrema1(signal.flatten())
+    else:
+        return np.apply_along_axis(extrema1, axis, signal)
+
+
+# def count_extrema(m, axis):
+#     assert axis==0 or axis==1
+#     if axis == 0:
+#         lead_cols = m[:,2:]
+#         lag_cols = m[:,:-2]
+#         cols = m[:,1:-1]
+#         n_extrema = np.sum(np.logical_or(
+#             np.logical_and(cols < lead_cols, cols < lag_cols),
+#             np.logical_and(cols > lead_cols, cols > lag_cols)
+#         ).int(), dim=1)
+#     elif axis == 1:
+#         lead_rows = m[2:,:]
+#         lag_rows = m[:-2,:]
+#         rows = m[1:-1,:]
+#         n_extrema = np.sum(np.logical_or(
+#             np.logical_and(rows < lead_rows, rows < lag_rows),
+#             np.logical_and(rows > lead_rows, rows > lag_rows)
+#         ).int(), dim=0)
+#     return n_extrema
 
 
 def terminated_torch(m):
