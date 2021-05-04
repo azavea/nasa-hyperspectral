@@ -44,3 +44,4 @@ services in this application.
 | `server`     | Start application servers, including Franklin.                                     |
 | `setup`      | Set up the project's development environment.                                      |
 | `update`     | Update project runtime dependencies (e.g. run migrations, build container images). |
+| `edit-tfvars`| Safely make changes to variables that affect deployment                            |

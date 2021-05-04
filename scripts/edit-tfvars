@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -ex
+
+TO_EDIT_TMP_FILE=$(mktemp)
+
+TFVARS_S3_PATH="s3://nasahyperspectral-staging-config-us-east-1/terraform/terraform.tfvars"
+
+TO_COMPARE_TMP_FILE=$(mktemp)
+
+aws --quiet s3 cp --sse AES256 "${TFVARS_S3_PATH}" "${TO_EDIT_TMP_FILE}"
+
+cp -f "${TO_EDIT_TMP_FILE}" "${TO_COMPARE_TMP_FILE}"
+
+"${EDITOR}" "${TO_EDIT_TMP_FILE}"
+
+if ! cmp --silent "${TO_EDIT_TMP_FILE}" "${TO_COMPARE_TMP_FILE}"; then
+  echo
+  (diff -u -a "${TO_EDIT_TMP_FILE}" "${TO_COMPARE_TMP_FILE}") || true
+  echo
+  read -p "Does that look reasonable? (y/n) " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    aws --quiet s3 cp --sse AES256 "${TO_EDIT_TMP_FILE}" "${TFVARS_S3_PATH}"
+  fi
+else
+  echo "No changes to upload"
+fi
