@@ -65,5 +65,5 @@ trait CogClipOptions {
       threads,
       withGDAL,
       force
-    ) mapN CogClipConfig
+    ) mapN CogClipConfig.apply
 }

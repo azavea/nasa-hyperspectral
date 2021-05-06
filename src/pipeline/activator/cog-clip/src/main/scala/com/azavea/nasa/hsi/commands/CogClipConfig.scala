@@ -1,12 +1,16 @@
 package com.azavea.nasa.hsi.commands
 
+import geotrellis.store.s3.AmazonS3URI
+import geotrellis.vector.{io => _}
+import geotrellis.vector.io.json.JsonFeatureCollection
+import io.circe.generic.JsonCodec
+import io.circe.refined._
 import eu.timepit.refined.types.all.PosInt
 import eu.timepit.refined.types.string.NonEmptyString
-import geotrellis.store.s3.AmazonS3URI
-import geotrellis.vector.io.json.JsonFeatureCollection
 
 import java.net.URI
 
+@JsonCodec
 case class CogClipConfig(
   sourceCollectionId: NonEmptyString,
   sourceItemId: NonEmptyString,
