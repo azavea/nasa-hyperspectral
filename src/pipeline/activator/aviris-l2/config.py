@@ -10,20 +10,20 @@ class CliConfig:
         if unknown is not None:
             logger.info(f"WARN: Unknown arguments passed: {unknown}")
 
+        self._type = 'activator-aviris-l2'
+
         if args.pipeline: 
             args_json = json.loads(args.pipeline)
-            self._type = args_json['_type']
-            self.aviris_stac_id = args_json['aviris-stac-id']
-            self.aviris_collection_id = args_json.get('aviris-collection-id', self.AVIRIS_ARCHIVE_COLLECTION_ID)
-            self.stac_api_uri = args_json.get('stac-api-uri', 'http://franklin:9090')
-            self.s3_bucket = args_json.get('s3-bucket', 'aviris-data')
-            self.s3_prefix = args_json.get('s3-prefix', 'aviris-scene-cogs-l2')
-            self.temp_dir = args_json.get('temp-dir', None)
-            self.keep_temp_dir = args_json.get('keep-temp-dir', False)
-            self.skip_large = args_json.get('skip-large', False)
+            self.aviris_stac_id = args_json['avirisStacId']
+            self.aviris_collection_id = args_json.get('avirisCollectionId', self.AVIRIS_ARCHIVE_COLLECTION_ID)
+            self.stac_api_uri = args_json.get('stacApiUri', 'http://franklin:9090')
+            self.s3_bucket = args_json.get('s3Bucket', 'aviris-data')
+            self.s3_prefix = args_json.get('s3Prefix', 'aviris-scene-cogs-l2')
+            self.temp_dir = args_json.get('tempDir', None)
+            self.keep_temp_dir = args_json.get('keepTempDir', False)
+            self.skip_large = args_json.get('skipLarge', False)
             self.force = args_json.get('force', False)
         else:
-            self._type = 'activator-aviris-l2'
             self.aviris_stac_id = args.aviris_stac_id
             self.aviris_collection_id = args.aviris_collection_id
             self.stac_api_uri = args.stac_api_uri

@@ -1,0 +1,53 @@
+{
+  "type": "Collection",
+  "stac_version":"1.0.0-rc.2",
+  "stac_extensions":[
+
+  ],
+  "id":"aviris-l2-cogs",
+  "title":null,
+  "description":"AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
+  "keywords":[
+
+  ],
+  "license":"proprietary",
+  "providers":[
+
+  ],
+  "extent":{
+    "spatial":{
+      "bbox":[
+        [
+          -180,
+          -90,
+          180,
+          90
+        ]
+      ]
+    },
+    "temporal":{
+      "interval":[
+        [
+          "2014-01-01T00:00:00Z",
+          "2019-12-31T00:00:00Z"
+        ]
+      ]
+    }
+  },
+  "summaries":{
+
+  },
+  "properties":{
+
+  },
+  "links" : [
+    {
+      "href" : "./collection.json",
+      "rel" : "root"
+    },
+    {
+      "href" : "./items/aviris_f130329t01p00r06_sc01.json",
+      "rel" : "item"
+    }
+  ]
+}
