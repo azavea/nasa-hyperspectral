@@ -35,6 +35,9 @@ def rpca_grid(data, max_dim=None, n_c=5, n_g=11, S=mad, sufficient=None):
             basis so far is sufficient for the user's needs; argument is matrix
             of column vectors in the current basis
 
+    Returns:
+        p × d matrix of basis columns; d is less than or equal max_dim
+
     References:
 
       Croux, C., Filzmoser, P., & Oliveira, M. R. (2007).

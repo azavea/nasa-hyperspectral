@@ -6,6 +6,8 @@ setup(
     description='Hyperspectral imaging and processing utilities',
     packages=find_packages(),
     python_requires='>=3.6',
+    package_data={'hyperspectral.resources': ['hyperspectral/resources/prefixed_double_filter.mat']},
+    include_package_data=True,
     install_requires=[
         'numpy',
         'scipy',
