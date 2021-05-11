@@ -58,6 +58,11 @@ def ftp_to_https(uri: str) -> str:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
+        "--pipeline-uri",
+        type=str,
+        help="A URI to JSON with instructions"
+    )
+    parser.add_argument(
         "--pipeline",
         type=str,
         help="JSON with instructions"

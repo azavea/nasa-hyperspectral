@@ -38,4 +38,11 @@ docker-compose run --rm activator-aviris-l2 \
   --pipeline "{\"avirisStacId\":\"aviris_f130329t01p00r06_sc01\",\"avirisCollectionId\":\"aviris-collection\",\"stacApiUri\":\"http:\/\/host.docker.internal:9090\",\"s3Bucket\":\"aviris-data\",\"s3Prefix\":\"aviris-scene-cogs-l2\",\"tempDir\":\"\/data\",\"keepTempDir\":true,\"skipLarge\":true,\"force\":false}"
 ```
 
+or 
+
+```shell
+docker-compose run --rm activator-aviris-l2 \
+  --pipeline-uri /usr/local/src/data/pipeline-test.json
+```
+
 `/data` is a mounted Docker volume that can be reused across container executions for development.
