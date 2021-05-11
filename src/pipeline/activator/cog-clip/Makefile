@@ -25,6 +25,21 @@ import-aviris-test-collection:
       --db-host database \
       --catalog-root /opt/data/collection.json
 
+# src/catalogs/aviris/data/catalog
+import-aviris-classic-catalog:
+	docker run --rm \
+      --network cog-clip_default \
+      -e AWS_REGION=us-east-1 \
+      -v ${PWD}/data/catalog:/opt/data/ \
+      -v ${PWD}/../../../catalogs/aviris/data/catalog:/opt/aviris-catalog \
+      quay.io/azavea/franklin:404f1c0 \
+      import-catalog \
+      --db-user franklin \
+      --db-name franklin \
+      --db-password franklin \
+      --db-host database \
+      --catalog-root /opt/aviris-catalog/catalog.json
+
 run-franklin:
 	docker run --rm \
       --network cog-clip_default \

@@ -31,4 +31,11 @@ docker-compose run --rm activator-aviris-l2 \
   --keep-temp-dir 
 ```
 
+Alternatively, activator can be launched via the following command:
+
+```shell
+docker-compose run --rm activator-aviris-l2 \
+  --pipeline "{\"avirisStacId\":\"aviris_f130329t01p00r06_sc01\",\"avirisCollectionId\":\"aviris-collection\",\"stacApiUri\":\"http:\/\/host.docker.internal:9090\",\"s3Bucket\":\"aviris-data\",\"s3Prefix\":\"aviris-scene-cogs-l2\",\"tempDir\":\"\/data\",\"keepTempDir\":true,\"skipLarge\":true,\"force\":false}"
+```
+
 `/data` is a mounted Docker volume that can be reused across container executions for development.

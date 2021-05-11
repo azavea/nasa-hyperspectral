@@ -1,5 +1,5 @@
 {
-  "id":"aviris_f130329t01p00r06_sc01",
+  "id":"aviris-l2-cogs_f130329t01p00r06_sc01",
   "stac_version":"1.0.0-rc.2",
   "stac_extensions":[
 
@@ -54,7 +54,7 @@
   ],
   "assets":{
     "ftp":{
-      "href":"ftp://avoil:Gulf0il$pill@popo.jpl.nasa.gov/y13_data/f130329t01p00r06.tar.gz",
+      "href":"https://popo.jpl.nasa.gov/avcl/y13_data/f130329t01p00r06.tar.gz",
       "title":"ftp",
       "description":"AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
       "roles":[

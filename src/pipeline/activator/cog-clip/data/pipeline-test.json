@@ -1,6 +1,6 @@
 {
   "sourceCollectionId" : "aviris-l2-cogs",
-  "sourceItemId" : "aviris_f130329t01p00r06_sc01",
+  "sourceItemId" : "aviris-l2-cogs_f130329t01p00r06_sc01",
   "sourceAssetId" : "cog",
   "targetCollectionId" : "aviris-l2-chips",
   "targetLayerId" : null,
