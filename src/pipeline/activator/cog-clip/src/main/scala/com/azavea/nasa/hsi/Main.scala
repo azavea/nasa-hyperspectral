@@ -10,8 +10,9 @@ object Main extends IOApp {
     implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
     import Commands._
-    applicationCommand.parse(args, env = sys.env) map { case RunClipCog(config) =>
-      Commands.runClipCog[IO](config)
+    applicationCommand.parse(args, env = sys.env) map {
+      case RunClipCog(config) => Commands.runClipCog[IO](config)
+      case RunClipCogUri(uri) => Commands.runClipCogUri[IO](uri)
     } match {
       case Left(e)  => logger.error(e.toString()).as(ExitCode.Error)
       case Right(s) => s

@@ -7,7 +7,7 @@ class CliConfig:
     AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-classic"
 
     def __init__(self, args, unknown):
-        if unknown is not None:
+        if unknown is not []:
             logger.info(f"WARN: Unknown arguments passed: {unknown}")
 
         self._type = 'activator-aviris-l2'
