@@ -88,6 +88,8 @@ data "aws_iam_policy_document" "scoped_read_write" {
     resources = [
       "arn:aws:s3:::aviris-data",
       "arn:aws:s3:::aviris-data/*",
+      "arn:aws:s3:::aviris-data-dev-azavea",
+      "arn:aws:s3:::aviris-data-dev-azavea/*",
     ]
 
     actions = [

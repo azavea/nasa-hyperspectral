@@ -91,9 +91,24 @@ resource "aws_batch_job_definition" "activator_aviris_l2" {
   type = "container"
 
   container_properties = templatefile("${path.module}/job-definitions/module.json.tmpl", {
-    image  = "${module.activator_aviris_l2.repository_url}:${var.image_tag}"
-    vcpus  = 1
-    memory = 1024
+    # image  = "${module.activator_aviris_l2.repository_url}:${var.image_tag}"
+    image  = "513167130603.dkr.ecr.us-east-1.amazonaws.com/aviris-l2-daunnc:latest"
+    vcpus  = 8
+    memory = 8192
+
+    stac_api_uri = "https://${aws_route53_record.franklin.name}"
+  })
+}
+
+resource "aws_batch_job_definition" "cog_clip" {
+  name = "jobCogClip"
+  type = "container"
+
+  container_properties = templatefile("${path.module}/job-definitions/module.json.tmpl", {
+    # image  = "${module.cog_clip.repository_url}:${var.image_tag}"
+    image  = "513167130603.dkr.ecr.us-east-1.amazonaws.com/cog-clip-daunnc:latest"
+    vcpus  = 8
+    memory = 8192
 
     stac_api_uri = "https://${aws_route53_record.franklin.name}"
   })
