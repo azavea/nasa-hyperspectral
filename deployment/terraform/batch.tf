@@ -91,8 +91,7 @@ resource "aws_batch_job_definition" "activator_aviris_l2" {
   type = "container"
 
   container_properties = templatefile("${path.module}/job-definitions/module.json.tmpl", {
-    # image  = "${module.activator_aviris_l2.repository_url}:${var.image_tag}"
-    image  = "513167130603.dkr.ecr.us-east-1.amazonaws.com/aviris-l2-daunnc:latest"
+    image  = "${module.activator_aviris_l2.repository_url}:${var.image_tag}"
     vcpus  = 8
     memory = 8192
 
@@ -105,8 +104,7 @@ resource "aws_batch_job_definition" "cog_clip" {
   type = "container"
 
   container_properties = templatefile("${path.module}/job-definitions/module.json.tmpl", {
-    # image  = "${module.cog_clip.repository_url}:${var.image_tag}"
-    image  = "513167130603.dkr.ecr.us-east-1.amazonaws.com/cog-clip-daunnc:latest"
+    image  = "${module.cog_clip.repository_url}:${var.image_tag}"
     vcpus  = 8
     memory = 8192
 
