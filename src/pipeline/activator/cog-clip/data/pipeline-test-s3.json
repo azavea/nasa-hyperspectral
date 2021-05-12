@@ -1,0 +1,89 @@
+{
+  "sourceCollectionId" : "aviris-l2-cogs",
+  "sourceItemId" : "aviris-l2-cogs_f130329t01p00r06_sc01",
+  "sourceAssetId" : "cog_1",
+  "targetCollectionId" : "aviris-l2-chips",
+  "targetLayerId" : null,
+  "features" : {
+    "type" : "FeatureCollection",
+    "bbox" : [
+      -116.59616231918336,
+      34.048179201421064,
+      -116.5848970413208,
+      34.05689052283076
+    ],
+    "features" : [
+      {
+        "type" : "Feature",
+        "properties" : {
+          "id" : "test-poly-1"
+        },
+        "geometry" : {
+          "type" : "Polygon",
+          "coordinates" : [
+            [
+              [
+                -116.59545421600342,
+                34.05296164991205
+              ],
+              [
+                -116.59616231918336,
+                34.048268096976194
+              ],
+              [
+                -116.58968210220337,
+                34.048179201421064
+              ],
+              [
+                -116.58933877944945,
+                34.05241052647845
+              ],
+              [
+                -116.59545421600342,
+                34.05296164991205
+              ]
+            ]
+          ]
+        }
+      },
+      {
+        "type" : "Feature",
+        "properties" : {
+          "id" : "test-poly-2"
+        },
+        "geometry" : {
+          "type" : "Polygon",
+          "coordinates" : [
+            [
+              [
+                -116.58989667892456,
+                34.05612609576202
+              ],
+              [
+                -116.58860921859741,
+                34.0527660903941
+              ],
+              [
+                -116.5848970413208,
+                34.05518388547134
+              ],
+              [
+                -116.5864634513855,
+                34.05689052283076
+              ],
+              [
+                -116.58989667892456,
+                34.05612609576202
+              ]
+            ]
+          ]
+        }
+      }
+    ]
+  },
+  "stacApiURI" : "https://franklin.nasa-hsi.azavea.com",
+  "targetS3URI" : "s3://aviris-data-dev-azavea/activator-clip-cogs/",
+  "threads" : 9,
+  "withGDAL" : false,
+  "force" : false
+}

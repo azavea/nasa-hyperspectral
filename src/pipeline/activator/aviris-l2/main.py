@@ -134,7 +134,7 @@ def main():
     scene_name = item.properties.get("Name")
 
     # Create new COG STAC Item
-    cog_item_id = "{}-{}_{}".format(
+    cog_item_id = "{}_{}_{}".format(
         AVIRIS_L2_COG_COLLECTION.id,
         item.properties.get("Name"),
         item.properties.get("Scene"),

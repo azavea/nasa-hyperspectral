@@ -1,6 +1,6 @@
 package com.azavea.nasa.hsi.commands
 
-import com.azavea.nasa.hsi.s3.utils._
+import com.azavea.nasa.hsi.util.s3._
 import cats.Parallel
 import com.azavea.stac4s.api.client._
 import cats.effect.{Concurrent, ContextShift, ExitCode, Sync}

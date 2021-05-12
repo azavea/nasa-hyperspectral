@@ -30,7 +30,7 @@ class CliConfig:
             # right now we support S3 and local FS only
             if args.pipeline_uri.startswith('s3'):
                 s3 = boto3.resource('s3')
-                uri = S3Uri(pipeline_uri)
+                uri = S3Uri(args.pipeline_uri)
                 obj = s3.Object(uri.bucket, uri.key)
                 args_json = obj.get()['Body'].read().decode('utf-8')
                 from_json(args_json)

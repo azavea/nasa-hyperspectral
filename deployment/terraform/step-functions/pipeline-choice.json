@@ -8,8 +8,7 @@
             "Parameters": {
                 "name.$": "$$.Map.Item.Value",
                 "queue": "${queue}",
-                "commands.$": "$.commands",
-                "environment.$": "$.environment"
+                "commands.$": "$.commands"
             },
             "Iterator": {
                 "StartAt": "ChoiceState",
@@ -39,21 +38,7 @@
                             "JobName": "ActivatorTask",
                             "JobQueue.$": "$.queue",
                             "ContainerOverrides": {
-                                "Command.$": "$.commands.${activator_name}",
-                                "Environment": [ 
-                                    {
-                                        "Name": "S3_BUCKET",
-                                        "Value.$": "$.environment.S3_BUCKET"
-                                    },
-                                    {
-                                        "Name": "S3_PREFIX",
-                                        "Value.$": "$.environment.S3_PREFIX"
-                                    },
-                                    {
-                                        "Name": "STAC_API_URI",
-                                        "Value.$": "$.environment.STAC_API_URI"
-                                    }
-                                ]
+                                "Command.$": "$.commands.${activator_name}"
                             }
                         },
                         "Next":"SuccessState"
@@ -67,25 +52,7 @@
                             "JobName": "CogClipTask",
                             "JobQueue.$": "$.queue",
                             "ContainerOverrides": {
-                                "Command.$": "$.commands.${cog_clip_name}",
-                                "Environment": [ 
-                                    {
-                                        "Name": "STAC_API_URI",
-                                        "Value.$": "$.environment.STAC_API_URI"
-                                    },
-                                    {
-                                        "Name": "TARGET_S3_URI",
-                                        "Value.$": "$.environment.TARGET_S3_URI"
-                                    },
-                                    {
-                                        "Name": "FEATURES",
-                                        "Value.$": "$.environment.FEATURES"
-                                    },
-                                    {
-                                        "Name": "LOG_LEVEL",
-                                        "Value.$": "$.environment.LOG_LEVEL"
-                                    }
-                                ]
+                                "Command.$": "$.commands.${cog_clip_name}"
                             }
                         },
                         "Next":"SuccessState"
