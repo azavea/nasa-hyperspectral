@@ -51,7 +51,7 @@ object DefaultCollection {
     assets = None
   )
 
-  def item(clipConfig: CogClipConfig, featureId: NonEmptyString, sourceItemId: String, geometry: Geometry): StacItem = {
+  def item(clipConfig: CogClipConfig, featureId: NonEmptyString, sourceItem: StacItem, geometry: Geometry): StacItem = {
     val defaultTargetCollection = collection(clipConfig.targetCollectionId.value)
     val layerIds                = clipConfig.targetLayerId.getOrElse(clipConfig.targetCollectionId) :: Nil
     StacItem(
@@ -63,21 +63,23 @@ object DefaultCollection {
       bbox = geometry.extent.toTwoDimBbox,
       links = Nil,
       assets = Map(
-        "cog" -> StacAsset(
+        clipConfig.sourceAssetId.value -> StacAsset(
           href = clipConfig.cogAssetHref(featureId).value,
-          title = "cog".some,
+          title = clipConfig.sourceAssetId.value.some,
           description = None,
           roles = Set(StacAssetRole.Data),
           _type = `image/cog`.some
         )
       ),
       collection = defaultTargetCollection.id.some,
-      properties = JsonObject(
-        "layer:ids"        -> layerIds.asJson,
-        "sourceCollection" -> clipConfig.sourceCollectionId.asJson,
-        "sourceItemId"     -> sourceItemId.asJson,
-        "sourceAssetId"    -> clipConfig.sourceAssetId.asJson
-      )
+      properties = LensItemPropertiesExtensionFields.set(
+        JsonObject(
+          "layer:ids"        -> layerIds.asJson,
+          "sourceCollection" -> clipConfig.sourceCollectionId.asJson,
+          "sourceItemId"     -> sourceItem.id.asJson,
+          "sourceAssetId"    -> clipConfig.sourceAssetId.asJson
+        )
+      )(sourceItem.properties)
     )
   }
 }

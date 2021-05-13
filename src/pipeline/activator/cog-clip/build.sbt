@@ -32,7 +32,7 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "org.locationtech.geotrellis"   %% "geotrellis-s3"                  % "3.6.0",
   "org.locationtech.geotrellis"   %% "geotrellis-gdal"                % "3.6.0",
-  "com.azavea.stac4s"             %% "client"                         % "0.3.0",
+  "com.azavea.stac4s"             %% "client"                         % "0.4.0",
   "com.monovore"                  %% "decline"                        % "1.4.0",
   "com.monovore"                  %% "decline-effect"                 % "1.4.0",
   "com.monovore"                  %% "decline-refined"                % "1.4.0",

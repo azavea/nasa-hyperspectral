@@ -101,7 +101,7 @@ object CogClip {
       // create [[StacItem]] and insert it into the target collection
       // it creates the target collection if it's missing
       DefaultCollection
-        .item(config, featureId, item.id, feature.geom)
+        .item(config, featureId, item, feature.geom)
         .pure
         .flatMap { cogItem =>
           for {

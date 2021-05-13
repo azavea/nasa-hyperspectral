@@ -12,8 +12,10 @@ import geotrellis.store.s3.AmazonS3URI
 import geotrellis.vector.{io => _, _}
 import geotrellis.vector.io.json.JsonFeatureCollection
 import io.circe.Decoder.Result
-import io.circe.{parser, Decoder, Encoder, Json}
+import io.circe.{parser, Decoder, Encoder, Json, JsonObject}
 import io.circe.refined._
+import monocle.Lens
+import monocle.macros.GenLens
 
 import java.net.URI
 import java.util.UUID
@@ -73,4 +75,6 @@ package object commands {
         .leftMap(_.getMessage)
         .toValidatedNel
     }
+
+  val LensItemPropertiesExtensionFields: Lens[ItemProperties, JsonObject] = GenLens[ItemProperties](_.extensionFields)
 }
