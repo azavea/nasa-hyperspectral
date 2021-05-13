@@ -54,7 +54,7 @@ package object commands {
 
   implicit val featureCollectionArgument: Argument[JsonFeatureCollection] =
     Argument.from("""{ "type": "FeatureCollection", "features": [<features>] }""") { string =>
-      Try(string.stripMargin.parseGeoJson[JsonFeatureCollection]).toValidated
+      Try(string.stripMargin.parseGeoJson[JsonFeatureCollection]()).toValidated
         .leftMap(e => NonEmptyList.one(e.getMessage))
     }
 

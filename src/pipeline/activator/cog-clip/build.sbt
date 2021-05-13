@@ -2,7 +2,8 @@ name := "cog-clip"
 organization := "com.azavea"
 version := "0.1.0"
 
-scalaVersion := "2.12.13"
+scalaVersion := "2.13.5"
+crossScalaVersions := Seq("2.12.13", "2.13.5")
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -20,18 +21,50 @@ scalacOptions ++= Seq(
   "-target:jvm-1.8"
 )
 
-addCompilerPlugin("org.scalamacros" %% "paradise"           % "2.1.1" cross CrossVersion.full)
-addCompilerPlugin("org.typelevel"   %% "kind-projector"     % "0.11.3" cross CrossVersion.full)
-addCompilerPlugin("com.olegpy"      %% "better-monadic-for" % "0.3.1")
+scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+  case Some((2, 13)) => Seq("-Ymacro-annotations") // replaces paradise in 2.13
+  case Some((2, 12)) => Seq("-Ypartial-unification") // required by Cats
+  case x => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+})
 
 resolvers ++= Seq(
   "eclipse-releases" at "https://repo.eclipse.org/content/groups/releases",
-  "eclipse-snapshots" at "https://repo.eclipse.org/content/groups/snapshots"
+  "eclipse-snapshots" at "https://repo.eclipse.org/content/groups/snapshots",
+  "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
+addCompilerPlugin("org.typelevel"   %% "kind-projector"     % "0.12.0" cross CrossVersion.full)
+addCompilerPlugin("com.olegpy"      %% "better-monadic-for" % "0.3.1")
+
+libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+  case Some((2, 13)) => Nil
+  case Some((2, 12)) => Seq(
+    compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
+    "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.2"
+  )
+  case x => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+})
+
+def ver(for212: String, for213: String) = Def.setting {
+  CrossVersion.partialVersion(scalaVersion.value) match {
+    case Some((2, 12)) => for212
+    case Some((2, 13)) => for213
+    case _ => sys.error("not good")
+  }
+}
+
+def geotrellis(module: String) = Def.setting {
+  "org.locationtech.geotrellis" %% s"geotrellis-$module" % ver("3.6.0", "3.6.1-SNAPSHOT").value
+}
+
+def stac4s(module: String) = Def.setting {
+  "com.azavea.stac4s" %% module % ver("0.4.0", "0.4.0-3-g69bacff-SNAPSHOT").value
+}
+
 libraryDependencies ++= Seq(
-  "org.locationtech.geotrellis"   %% "geotrellis-s3"                  % "3.6.0",
-  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                % "3.6.0",
+  geotrellis("s3").value,
+  geotrellis("gdal").value,
+  stac4s("client").value,
   "com.azavea.stac4s"             %% "client"                         % "0.4.0",
   "com.monovore"                  %% "decline"                        % "1.4.0",
   "com.monovore"                  %% "decline-effect"                 % "1.4.0",
