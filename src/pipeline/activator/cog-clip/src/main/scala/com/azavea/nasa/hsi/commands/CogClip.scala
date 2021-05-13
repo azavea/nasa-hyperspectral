@@ -1,6 +1,8 @@
 package com.azavea.nasa.hsi.commands
 
+import com.azavea.nasa.hsi.util._
 import com.azavea.nasa.hsi.util.s3._
+
 import cats.Parallel
 import com.azavea.stac4s.api.client._
 import cats.effect.{Concurrent, ContextShift, ExitCode, Sync}
@@ -31,7 +33,7 @@ object CogClip {
   def apply[F[_]: Concurrent: ContextShift: Parallel: Logger](config: CogClipConfig, backend: SttpBackend[F, Any]): F[ExitCode] =
     for {
       _ <- Logger[F].info(s"Retrieving item ${config.sourceItemId} from the catalog ${config.sourceCollectionId}...")
-      client = SttpStacClient(backend, config.stacApiURI.toSttpUri)
+      client = StacClientLoggingMid[F] attach SttpStacClient(backend, config.stacApiURI.toSttpUri)
       // request an item
       item <- client
         .item(config.sourceCollectionId, config.sourceItemId)
