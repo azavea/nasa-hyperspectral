@@ -41,6 +41,7 @@ libraryDependencies ++= Seq(
   "io.chrisdavenport"             %% "log4cats-slf4j"                 % "1.1.1",
   "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.2.0",
   "ch.qos.logback"                 % "logback-classic"                % "1.2.3",
+  "tf.tofu"                       %% "tofu-core"                      % "0.10.2",
   "org.scalatest"                 %% "scalatest"                      % "3.2.8" % Test
 )
 
