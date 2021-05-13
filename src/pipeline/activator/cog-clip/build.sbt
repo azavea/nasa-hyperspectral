@@ -2,10 +2,27 @@ name := "cog-clip"
 organization := "com.azavea"
 version := "0.1.0"
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.12.13"
 
-addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.11.2" cross CrossVersion.full)
-addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
+scalacOptions ++= Seq(
+  "-deprecation",
+  "-unchecked",
+  "-feature",
+  "-language:implicitConversions",
+  "-language:reflectiveCalls",
+  "-language:higherKinds",
+  "-language:postfixOps",
+  "-language:existentials",
+  "-language:experimental.macros",
+  "-feature",
+  // "-Yrangepos",            // required by SemanticDB compiler plugin
+  // "-Ywarn-unused-import",  // required by `RemoveUnused` rule
+  "-target:jvm-1.8"
+)
+
+addCompilerPlugin("org.scalamacros" %% "paradise"           % "2.1.1" cross CrossVersion.full)
+addCompilerPlugin("org.typelevel"   %% "kind-projector"     % "0.11.3" cross CrossVersion.full)
+addCompilerPlugin("com.olegpy"      %% "better-monadic-for" % "0.3.1")
 
 resolvers ++= Seq(
   "eclipse-releases" at "https://repo.eclipse.org/content/groups/releases",
@@ -13,18 +30,18 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "org.locationtech.geotrellis"   %% "geotrellis-s3"                  % "3.5.2-SNAPSHOT",
-  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                % "3.5.2-SNAPSHOT",
-  "com.azavea.stac4s"             %% "client"                         % "0.0.21",
-  "com.monovore"                  %% "decline"                        % "1.3.0",
-  "com.monovore"                  %% "decline-effect"                 % "1.3.0",
-  "com.monovore"                  %% "decline-refined"                % "1.3.0",
+  "org.locationtech.geotrellis"   %% "geotrellis-s3"                  % "3.6.0",
+  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                % "3.6.0",
+  "com.azavea.stac4s"             %% "client"                         % "0.4.0",
+  "com.monovore"                  %% "decline"                        % "1.4.0",
+  "com.monovore"                  %% "decline-effect"                 % "1.4.0",
+  "com.monovore"                  %% "decline-refined"                % "1.4.0",
   "io.circe"                      %% "circe-refined"                  % "0.13.0",
   "org.typelevel"                 %% "cats-effect"                    % "2.3.1",
   "io.chrisdavenport"             %% "log4cats-slf4j"                 % "1.1.1",
-  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.0.0-RC15",
+  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.2.0",
   "ch.qos.logback"                 % "logback-classic"                % "1.2.3",
-  "org.scalatest"                 %% "scalatest"                      % "3.2.3" % Test
+  "org.scalatest"                 %% "scalatest"                      % "3.2.8" % Test
 )
 
 assembly / assemblyJarName := "cog-clip-assembly.jar"

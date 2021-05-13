@@ -1,0 +1,73 @@
+{
+    "StartAt": "RunStatesInSequence",
+    "States": {
+        "RunStatesInSequence": {
+            "Type": "Map",
+            "ItemsPath": "$.tasks",
+            "MaxConcurrency": 1,
+            "Parameters": {
+                "name.$": "$$.Map.Item.Value",
+                "queue": "${queue}",
+                "commands.$": "$.commands"
+            },
+            "Iterator": {
+                "StartAt": "ChoiceState",
+                "States": {
+                    "ChoiceState":{
+                        "Type":"Choice",
+                        "Choices":[
+                            {
+                                "Variable":"$.name",
+                                "StringEquals":"${activator_name}",
+                                "Next":"ActivatorState"
+                            },
+                            {
+                                "Variable":"$.name",
+                                "StringEquals":"${cog_clip_name}",
+                                "Next":"CogClipState"
+                            }
+                        ],
+                        "Default":"FailureState"
+                    },
+                    "ActivatorState": {
+                        "Type": "Task",
+                        "ResultPath": "$.status",
+                        "Resource": "${batch_arn}",
+                        "Parameters": {
+                            "JobDefinition.$": "$.name",
+                            "JobName": "ActivatorTask",
+                            "JobQueue.$": "$.queue",
+                            "ContainerOverrides": {
+                                "Command.$": "$.commands.${activator_name}"
+                            }
+                        },
+                        "Next":"SuccessState"
+                    },
+                    "CogClipState": {
+                        "Type": "Task",
+                        "ResultPath": "$.status",
+                        "Resource": "${batch_arn}",
+                        "Parameters": {
+                            "JobDefinition.$": "$.name",
+                            "JobName": "CogClipTask",
+                            "JobQueue.$": "$.queue",
+                            "ContainerOverrides": {
+                                "Command.$": "$.commands.${cog_clip_name}"
+                            }
+                        },
+                        "Next":"SuccessState"
+                    },
+                    "FailureState":{
+                        "Type":"Fail",
+                        "Error":"DefaultStateError",
+                        "Cause":"No module with the provided arn!"
+                    },
+                    "SuccessState":{
+                        "Type":"Succeed"
+                    }
+                }
+            },
+            "End": true
+        }
+    }
+}

@@ -22,6 +22,5 @@ Optional. Ancillary topics, caveats, alternative strategies that didn't work out
 
 ## Checklist
 
-- [ ] `fixup!` commits have been squashed
 - [ ] CI passes after rebase
 - [ ] README.md updated if necessary to reflect the changes

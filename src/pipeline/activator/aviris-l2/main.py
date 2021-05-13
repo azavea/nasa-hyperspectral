@@ -9,14 +9,16 @@ import tarfile
 from tempfile import mkdtemp
 from urllib.parse import urlparse
 import logging
+from config import CliConfig
 
 import boto3
 from boto3.s3.transfer import TransferConfig
 from osgeo import gdal
 import pystac
 import requests
+import urllib.request
 
-from progress import ProgressPercentage, timing, warp_callback
+from progress import ProgressPercentage, timing, warp_callback, DownloadProgressBar
 from stac_client import STACClient
 
 # set a configurable logging level for the entire app
@@ -44,16 +46,34 @@ AVIRIS_L2_COG_COLLECTION = pystac.Collection(
 )
 AVIRIS_L2_COG_COLLECTION.links = []
 
+# TODO: remove ftp_to_https after the STAC Catalog update
+def ftp_to_https(uri: str) -> str:
+    if uri.startswith('ftp'):
+        gzip_ftp_url = urlparse(uri)
+        username_password, ftp_hostname = gzip_ftp_url.netloc.split("@")
+        return f'https://{ftp_hostname}/avcl{gzip_ftp_url.path}'
+    else:
+        return uri
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "aviris_stac_id",
+        "--pipeline-uri",
+        type=str,
+        help="A URI to JSON with instructions"
+    )
+    parser.add_argument(
+        "--pipeline",
+        type=str,
+        help="JSON with instructions"
+    )
+    parser.add_argument(
+        "--aviris-stac-id",
         type=str,
         help="STAC Item ID to process from the STAC collection"
     )
     parser.add_argument(
-        "--aviris_collection_id",
+        "--aviris-collection-id",
         type=str,
         default=AVIRIS_ARCHIVE_COLLECTION_ID,
     )
@@ -92,10 +112,10 @@ def main():
     )
 
     # TODO: replace it with parser.parse_args() later
-    args, unknown = parser.parse_known_args()
+    cli_args, cli_unknown = parser.parse_known_args()
 
-    if unknown is not None:
-        logger.info(f"WARN: Unknown arguments passed: {unknown}")
+    # parse all cli arguments
+    args = CliConfig(cli_args, cli_unknown)
 
     s3 = boto3.client("s3")
     stac_client = STACClient(args.stac_api_uri)
@@ -114,7 +134,7 @@ def main():
     scene_name = item.properties.get("Name")
 
     # Create new COG STAC Item
-    cog_item_id = "{}-{}_{}".format(
+    cog_item_id = "{}_{}_{}".format(
         AVIRIS_L2_COG_COLLECTION.id,
         item.properties.get("Name"),
         item.properties.get("Scene"),
@@ -150,16 +170,14 @@ def main():
         if local_archive.exists():
             logger.info("Using existing archive: {}".format(local_archive))
         else:
-            with open(local_archive, "wb") as fp:
-                gzip_ftp_url = urlparse(l2_asset.href)
-                username_password, ftp_hostname = gzip_ftp_url.netloc.split("@")
-                ftp_username, ftp_password = username_password.split(":")
-                ftp_path = gzip_ftp_url.path.lstrip("/")
-                logger.info("FTP RETR {}".format(ftp_path))
-                with timing("FTP RETR"):
-                    with ftplib.FTP(ftp_hostname) as ftp:
-                        ftp.login(ftp_username, ftp_password)
-                        ftp.retrbinary("RETR {}".format(ftp_path), fp.write)
+            # Historically AVIRIS distributed scenes via FTP.
+            # However, it's not the case anymore.
+            # This is a temporary function that converts old AVIRIS FTP links into HTTPs links
+            # TODO: remove ftp_to_https after the STAC Catalog update
+            logger.info(f'Downloading archive {local_archive}...')
+            gzip_https_url = ftp_to_https(l2_asset.href)
+            with DownloadProgressBar(unit='B', unit_scale=True, miniters=1, desc=gzip_https_url.split('/')[-1]) as t:
+                urllib.request.urlretrieve(gzip_https_url, filename=local_archive, reporthook=t.update_to)
 
         # Retrieve file names from archive and extract if not already extracted to temp_dir
         extract_path = Path(temp_dir, scene_name)

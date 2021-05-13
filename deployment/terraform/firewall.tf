@@ -159,16 +159,6 @@ resource "aws_security_group_rule" "batch_https_egress" {
   security_group_id = aws_security_group.batch.id
 }
 
-resource "aws_security_group_rule" "batch_ftp_egress" {
-  type        = "egress"
-  from_port   = 20
-  to_port     = 21
-  protocol    = "tcp"
-  cidr_blocks = ["0.0.0.0/0"]
-
-  security_group_id = aws_security_group.batch.id
-}
-
 resource "aws_security_group_rule" "batch_bastion_ingress" {
   type      = "ingress"
   from_port = 22

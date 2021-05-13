@@ -12,7 +12,6 @@ Thumbs.db
 # Other
 
 pipeline-data/
-test-data/
 
 __pycache__
 *.egg-info

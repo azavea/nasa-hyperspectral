@@ -86,9 +86,28 @@ resource "aws_batch_job_queue" "default" {
   compute_environments = [aws_batch_compute_environment.default.arn]
 }
 
-resource "aws_batch_job_definition" "download_test" {
-  name = "job${local.short}DownloadTest"
+resource "aws_batch_job_definition" "activator_aviris_l2" {
+  name = "jobActivatorAvirisL2"
   type = "container"
 
-  container_properties = templatefile("${path.module}/job-definitions/download-test.json.tmpl", {})
+  container_properties = templatefile("${path.module}/job-definitions/module.json.tmpl", {
+    image  = "${module.activator_aviris_l2.repository_url}:${var.image_tag}"
+    vcpus  = 8
+    memory = 8192
+
+    stac_api_uri = "https://${aws_route53_record.franklin.name}"
+  })
+}
+
+resource "aws_batch_job_definition" "cog_clip" {
+  name = "jobCogClip"
+  type = "container"
+
+  container_properties = templatefile("${path.module}/job-definitions/module.json.tmpl", {
+    image  = "${module.cog_clip.repository_url}:${var.image_tag}"
+    vcpus  = 8
+    memory = 8192
+
+    stac_api_uri = "https://${aws_route53_record.franklin.name}"
+  })
 }

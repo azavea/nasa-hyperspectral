@@ -257,6 +257,10 @@ variable "batch_instance_types" {
   type = list(string)
 }
 
+variable "image_tag" {
+  type = string
+}
+
 variable "fargate_platform_version" {
   default = "1.4.0"
 }
