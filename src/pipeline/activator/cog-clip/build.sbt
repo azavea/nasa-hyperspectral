@@ -2,8 +2,8 @@ name := "cog-clip"
 organization := "com.azavea"
 version := "0.1.0"
 
-scalaVersion := "2.13.5"
-crossScalaVersions := Seq("2.12.13", "2.13.5")
+scalaVersion := "2.13.6"
+crossScalaVersions := Seq("2.12.13", "2.13.6")
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -33,7 +33,7 @@ resolvers ++= Seq(
   "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
-addCompilerPlugin("org.typelevel"   %% "kind-projector"     % "0.12.0" cross CrossVersion.full)
+addCompilerPlugin("org.typelevel"   %% "kind-projector"     % "0.13.0" cross CrossVersion.full)
 addCompilerPlugin("com.olegpy"      %% "better-monadic-for" % "0.3.1")
 
 libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
@@ -70,12 +70,12 @@ libraryDependencies ++= Seq(
   "com.monovore"                  %% "decline-effect"                 % "1.4.0",
   "com.monovore"                  %% "decline-refined"                % "1.4.0",
   "io.circe"                      %% "circe-refined"                  % "0.13.0",
-  "org.typelevel"                 %% "cats-effect"                    % "2.3.1",
+  "org.typelevel"                 %% "cats-effect"                    % "2.5.1",
   "io.chrisdavenport"             %% "log4cats-slf4j"                 % "1.1.1",
-  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.2.0",
+  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.2.3",
   "ch.qos.logback"                 % "logback-classic"                % "1.2.3",
   "tf.tofu"                       %% "tofu-core"                      % "0.10.2",
-  "org.scalatest"                 %% "scalatest"                      % "3.2.8" % Test
+  "org.scalatest"                 %% "scalatest"                      % "3.2.9" % Test
 )
 
 assembly / assemblyJarName := "cog-clip-assembly.jar"
