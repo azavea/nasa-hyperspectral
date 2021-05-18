@@ -44,11 +44,14 @@ def shrinkage_covariance(data, regularizer='ridge', approx='mean-mahalanobis', t
     def LMM(α):
         β = (1 - α) / (n - 1)
         Gα = n * β * S + α * T
-        Ginv = np.linalg.inv(Gα)
-        detG = np.linalg.det(Gα)
-        r0 = np.trace(np.dot(Ginv, S))
-        return (p * math.log(2 * math.pi) + math.log(detG)
-                + math.log(1 - β * r0) + r0 / (1 - β * r0)) / 2
+        try:
+            Ginv = np.linalg.inv(Gα)
+            detG = np.linalg.det(Gα)
+            r0 = np.trace(np.matmul(Ginv, S))
+            return (p * math.log(2 * math.pi) + math.log(detG) +
+                    math.log(1 - β * r0) + r0 / (1 - β * r0)) / 2
+        except np.linalg.LinAlgError:
+            return np.inf
 
     def LHL(α):
         # TODO: implement Hoffbeck/Landgrebe approximation
