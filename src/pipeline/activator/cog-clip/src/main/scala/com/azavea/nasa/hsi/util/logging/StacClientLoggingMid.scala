@@ -1,10 +1,8 @@
 package com.azavea.nasa.hsi.util.logging
 
-import com.azavea.nasa.hsi.util._
-
 import cats.effect.Sync
 import cats.syntax.flatMap._
-import com.azavea.stac4s.api.client.{SearchFilters, StreamingStacClient, StreamingStacClientF, StreamingStacClientFS2}
+import com.azavea.stac4s.api.client.{SearchFilters, StreamingStacClient, StreamingStacClientF}
 import com.azavea.stac4s.{StacCollection, StacItem}
 import eu.timepit.refined.types.string.NonEmptyString
 import fs2.Stream
@@ -46,10 +44,4 @@ final class StacClientLoggingMid[F[_]: Sync] extends StreamingStacClientF[Mid[F,
 
 object StacClientLoggingMid {
   def apply[F[_]: Sync]: StreamingStacClient[Mid[F, *], Stream[F, *]] = new StacClientLoggingMid[F]
-
-  def attachAll[F[_]: Sync](client: StreamingStacClientFS2[F]): StreamingStacClientFS2[F] =
-    Mid
-      .attach[StreamingStacClient[*[_], fs2.Stream[F, *]], F](StacClientLoggingMid[F])(
-        Mid.attach(StreamingStacClientLoggingMid[F])(client)
-      )
 }
