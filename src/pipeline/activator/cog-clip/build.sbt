@@ -56,22 +56,22 @@ def ver(for212: String, for213: String) = Def.setting {
 
 val declineVersion    = "1.4.0"
 val geotrellisVersion = Def.setting(ver("3.6.0", "3.6.1-SNAPSHOT").value)
-val stac4sVersion     = Def.setting(ver("0.4.0", "0.4.0-3-g69bacff-SNAPSHOT").value)
+val stac4sVersion     = Def.setting(ver("0.4.0", "0.4.0-9-gb8eb735-SNAPSHOT").value)
 
 libraryDependencies ++= Seq(
-  "org.locationtech.geotrellis"   %% "geotrellis-s3"                  % geotrellisVersion.value,
-  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                % geotrellisVersion.value,
-  "com.azavea.stac4s"             %% "client"                         % stac4sVersion.value,
-  "com.monovore"                  %% "decline"                        % declineVersion,
-  "com.monovore"                  %% "decline-effect"                 % declineVersion,
-  "com.monovore"                  %% "decline-refined"                % declineVersion,
-  "io.circe"                      %% "circe-refined"                  % "0.13.0",
-  "org.typelevel"                 %% "cats-effect"                    % "2.5.1",
-  "io.chrisdavenport"             %% "log4cats-slf4j"                 % "1.1.1",
-  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats" % "3.2.3",
-  "ch.qos.logback"                 % "logback-classic"                % "1.2.3",
-  "tf.tofu"                       %% "tofu-core"                      % "0.10.2",
-  "org.scalatest"                 %% "scalatest"                      % "3.2.9" % Test
+  "org.locationtech.geotrellis"   %% "geotrellis-s3"                      % geotrellisVersion.value,
+  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                    % geotrellisVersion.value,
+  "com.azavea.stac4s"             %% "client"                             % stac4sVersion.value,
+  "com.monovore"                  %% "decline"                            % declineVersion,
+  "com.monovore"                  %% "decline-effect"                     % declineVersion,
+  "com.monovore"                  %% "decline-refined"                    % declineVersion,
+  "io.circe"                      %% "circe-refined"                      % "0.13.0",
+  "org.typelevel"                 %% "cats-effect"                        % "2.5.1",
+  "io.chrisdavenport"             %% "log4cats-slf4j"                     % "1.1.1",
+  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.4",
+  "ch.qos.logback"                 % "logback-classic"                    % "1.2.3",
+  "tf.tofu"                       %% "tofu-core"                          % "0.10.2",
+  "org.scalatest"                 %% "scalatest"                          % "3.2.9" % Test
 )
 
 assembly / assemblyJarName := "cog-clip-assembly.jar"

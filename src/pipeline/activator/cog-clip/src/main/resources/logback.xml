@@ -5,7 +5,8 @@
         </encoder>
     </appender>
     <logger name="com.azavea.nasa.hsi" level="${LOG_LEVEL:-TRACE}"/>
-    <logger name="com.azavea.nasa.hsi.util.StacClientLoggingMid" level="${STAC_CLIENT_LOG_LEVEL:-INFO}"/>
+    <logger name="com.azavea.nasa.hsi.util.logging.StacClientLoggingMid" level="${STAC_CLIENT_LOG_LEVEL:-INFO}"/>
+    <logger name="com.azavea.nasa.hsi.util.logging.StreamingStacClientLoggingMid" level="${STREAMING_STAC_CLIENT_LOG_LEVEL:-INFO}"/>
     <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>

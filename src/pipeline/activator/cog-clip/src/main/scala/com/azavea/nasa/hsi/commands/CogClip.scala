@@ -33,7 +33,7 @@ object CogClip {
   def apply[F[_]: Concurrent: ContextShift: Parallel: Logger](config: CogClipConfig, backend: SttpBackend[F, Any]): F[ExitCode] =
     for {
       _ <- Logger[F].info(s"Retrieving item ${config.sourceItemId} from the catalog ${config.sourceCollectionId}...")
-      client = StacClientLoggingMid[F] attach SttpStacClient(backend, config.stacApiURI.toSttpUri)
+      client = SttpStacClient(backend, config.stacApiURI.toSttpUri).withLogging
       // request an item
       item <- client
         .item(config.sourceCollectionId, config.sourceItemId)
