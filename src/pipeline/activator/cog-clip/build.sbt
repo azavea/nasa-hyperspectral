@@ -56,7 +56,7 @@ def ver(for212: String, for213: String) = Def.setting {
 
 val declineVersion    = "1.4.0"
 val geotrellisVersion = Def.setting(ver("3.6.0", "3.6.1-SNAPSHOT").value)
-val stac4sVersion     = Def.setting(ver("0.4.0", "0.4.0-13-ge85ee2f-SNAPSHOT").value)
+val stac4sVersion     = Def.setting(ver("0.4.0", "0.4.0-9-gb8eb735-SNAPSHOT").value)
 
 libraryDependencies ++= Seq(
   "org.locationtech.geotrellis"   %% "geotrellis-s3"                      % geotrellisVersion.value,
