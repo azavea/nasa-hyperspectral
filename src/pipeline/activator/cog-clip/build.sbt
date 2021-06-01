@@ -3,7 +3,7 @@ organization := "com.azavea"
 version := "0.1.0"
 
 scalaVersion := "2.13.6"
-crossScalaVersions := Seq("2.12.13", "2.13.6")
+crossScalaVersions := Seq("2.12.14", "2.13.6", "3.0.0")
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -24,7 +24,7 @@ scalacOptions ++= Seq(
 scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
   case Some((2, 13)) => Seq("-Ymacro-annotations")   // replaces paradise in 2.13
   case Some((2, 12)) => Seq("-Ypartial-unification") // required by Cats
-  case x             => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+  case _             => Seq("-Xignore-scala2-macros")
 })
 
 resolvers ++= Seq(
@@ -33,24 +33,28 @@ resolvers ++= Seq(
   "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 )
 
-addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.13.0" cross CrossVersion.full)
-addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
+libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
+  case Some((2, 12)) =>
+    Seq(
+      compilerPlugin("org.typelevel" %% "kind-projector"     % "0.13.0" cross CrossVersion.full),
+      compilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
+    )
+  case _ => Nil
+})
 
 libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-  case Some((2, 13)) => Nil
   case Some((2, 12)) =>
     Seq(
       compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
       "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.2"
     )
-  case x => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+  case _ => Nil
 })
 
 def ver(for212: String, for213: String) = Def.setting {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, 12)) => for212
-    case Some((2, 13)) => for213
-    case _             => sys.error("not good")
+    case _ => for213
   }
 }
 
@@ -59,18 +63,18 @@ val geotrellisVersion = Def.setting(ver("3.6.0", "3.6.1-SNAPSHOT").value)
 val stac4sVersion     = Def.setting(ver("0.4.0", "0.4.0-9-gb8eb735-SNAPSHOT").value)
 
 libraryDependencies ++= Seq(
-  "org.locationtech.geotrellis"   %% "geotrellis-s3"                      % geotrellisVersion.value,
-  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                    % geotrellisVersion.value,
-  "com.azavea.stac4s"             %% "client"                             % stac4sVersion.value,
-  "com.monovore"                  %% "decline"                            % declineVersion,
-  "com.monovore"                  %% "decline-effect"                     % declineVersion,
-  "com.monovore"                  %% "decline-refined"                    % declineVersion,
-  "io.circe"                      %% "circe-refined"                      % "0.13.0",
+  "org.locationtech.geotrellis"   %% "geotrellis-s3"                      % geotrellisVersion.value cross(CrossVersion.for3Use2_13),
+  "org.locationtech.geotrellis"   %% "geotrellis-gdal"                    % geotrellisVersion.value cross(CrossVersion.for3Use2_13),
+  "com.azavea.stac4s"             %% "client"                             % stac4sVersion.value cross(CrossVersion.for3Use2_13),
+  "com.monovore"                  %% "decline"                            % declineVersion cross(CrossVersion.for3Use2_13),
+  "com.monovore"                  %% "decline-effect"                     % declineVersion cross(CrossVersion.for3Use2_13),
+  "com.monovore"                  %% "decline-refined"                    % declineVersion cross(CrossVersion.for3Use2_13),
+  "io.circe"                      %% "circe-refined"                      % "0.14.1",
   "org.typelevel"                 %% "cats-effect"                        % "2.5.1",
-  "io.chrisdavenport"             %% "log4cats-slf4j"                     % "1.1.1",
-  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.4",
+  "io.chrisdavenport"             %% "log4cats-slf4j"                     % "1.1.1" cross(CrossVersion.for3Use2_13),
+  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.5",
   "ch.qos.logback"                 % "logback-classic"                    % "1.2.3",
-  "tf.tofu"                       %% "tofu-core"                          % "0.10.2",
+  "tf.tofu"                       %% "tofu-core"                          % "0.10.2" cross(CrossVersion.for3Use2_13),
   "org.scalatest"                 %% "scalatest"                          % "3.2.9" % Test
 )
 

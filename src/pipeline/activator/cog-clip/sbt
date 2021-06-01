@@ -34,11 +34,12 @@
 
 set -o pipefail
 
-declare -r sbt_release_version="1.5.2"
-declare -r sbt_unreleased_version="1.5.2"
+declare -r sbt_release_version="1.5.3"
+declare -r sbt_unreleased_version="1.5.3"
 
-declare -r latest_213="2.13.5"
-declare -r latest_212="2.12.13"
+declare -r latest_300="3.0.0"
+declare -r latest_213="2.13.6"
+declare -r latest_212="2.12.14"
 declare -r latest_211="2.11.12"
 declare -r latest_210="2.10.7"
 declare -r latest_29="2.9.3"
@@ -424,6 +425,7 @@ are not special.
   -211                       use $latest_211
   -212                       use $latest_212
   -213                       use $latest_213
+  -300                       use $latest_300
   -scala-home <path>         use the scala build at the specified directory
   -scala-version <version>   use the specified version of scala
   -binary-version <version>  use the specified scala version when searching for dependencies
@@ -503,6 +505,7 @@ process_args() {
       -211)         setScalaVersion "$latest_211" && shift ;;
       -212)         setScalaVersion "$latest_212" && shift ;;
       -213)         setScalaVersion "$latest_213" && shift ;;
+      -300)         setScalaVersion "$latest_300" && shift ;;
 
       -scala-version) require_arg version "$1" "$2" && setScalaVersion "$2" && shift 2 ;;
       -binary-version) require_arg version "$1" "$2" && setThisBuild scalaBinaryVersion "\"$2\"" && shift 2 ;;
