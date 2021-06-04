@@ -37,6 +37,7 @@ object CogClip {
       // request an item
       item <- client
         .item(config.sourceCollectionId, config.sourceItemId)
+        .map(_.entity)
         .redeem({ case e: HttpError[_] if e.statusCode == StatusCode.NotFound => None }, _.some)
       result <- item match {
         // if such item is present in the catalog
@@ -55,6 +56,7 @@ object CogClip {
                 .flatMap { featureId =>
                   client
                     .item(config.targetCollectionId, config.resultId(featureId))
+                    .map(_.entity)
                     .redeem({ case e: HttpError[_] if e.statusCode == StatusCode.NotFound => None }, _.some)
                 }
                 .flatMap {
@@ -114,6 +116,7 @@ object CogClip {
             _ <- Logger[F].trace(s"Create Item ${cogItem.id} int the collection ${config.targetCollectionId}")
             item <- client
               .itemCreate(config.targetCollectionId, cogItem)
+              .map(_.entity)
               .onError { case _ =>
                 Logger[F].trace(s"Item ${cogItem.id} already exists in the collection ${config.targetCollectionId}")
               }
