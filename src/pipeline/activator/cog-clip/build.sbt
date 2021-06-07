@@ -3,7 +3,7 @@ organization := "com.azavea"
 version := "0.1.0"
 
 scalaVersion := "2.13.6"
-crossScalaVersions := Seq("2.12.13", "2.13.6")
+crossScalaVersions := Seq("2.12.14", "2.13.6")
 
 scalacOptions ++= Seq(
   "-deprecation",
@@ -30,7 +30,8 @@ scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
 resolvers ++= Seq(
   "eclipse-releases" at "https://repo.eclipse.org/content/groups/releases",
   "eclipse-snapshots" at "https://repo.eclipse.org/content/groups/snapshots",
-  "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
+  "oss-snapshots" at "https://oss.sonatype.org/content/repositories/snapshots",
+  "jitpack" at "https://jitpack.io"
 )
 
 addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.13.0" cross CrossVersion.full)
@@ -38,12 +39,8 @@ addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
 
 libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
   case Some((2, 13)) => Nil
-  case Some((2, 12)) =>
-    Seq(
-      compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
-      "org.scala-lang.modules" %% "scala-collection-compat" % "2.4.2"
-    )
-  case x => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+  case Some((2, 12)) => Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
+  case x             => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
 })
 
 def ver(for212: String, for213: String) = Def.setting {
@@ -56,7 +53,7 @@ def ver(for212: String, for213: String) = Def.setting {
 
 val declineVersion    = "1.4.0"
 val geotrellisVersion = Def.setting(ver("3.6.0", "3.6.1-SNAPSHOT").value)
-val stac4sVersion     = Def.setting(ver("0.4.0", "0.4.0-9-gb8eb735-SNAPSHOT").value)
+val stac4sVersion     = Def.setting(ver("0.5.0-8-gaab61a6-SNAPSHOT", "0.5.0-8-gaab61a6-SNAPSHOT").value)
 
 libraryDependencies ++= Seq(
   "org.locationtech.geotrellis"   %% "geotrellis-s3"                      % geotrellisVersion.value,
@@ -65,10 +62,10 @@ libraryDependencies ++= Seq(
   "com.monovore"                  %% "decline"                            % declineVersion,
   "com.monovore"                  %% "decline-effect"                     % declineVersion,
   "com.monovore"                  %% "decline-refined"                    % declineVersion,
-  "io.circe"                      %% "circe-refined"                      % "0.13.0",
+  "io.circe"                      %% "circe-refined"                      % "0.14.1",
   "org.typelevel"                 %% "cats-effect"                        % "2.5.1",
   "io.chrisdavenport"             %% "log4cats-slf4j"                     % "1.1.1",
-  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.4",
+  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.6",
   "ch.qos.logback"                 % "logback-classic"                    % "1.2.3",
   "tf.tofu"                       %% "tofu-core"                          % "0.10.2",
   "org.scalatest"                 %% "scalatest"                          % "3.2.9" % Test

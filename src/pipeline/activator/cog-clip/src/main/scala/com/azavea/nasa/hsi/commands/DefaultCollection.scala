@@ -1,7 +1,7 @@
 package com.azavea.nasa.hsi.commands
 
 import com.azavea.stac4s._
-import com.azavea.stac4s.jvmTypes.TemporalExtent
+
 import cats.syntax.option._
 import eu.timepit.refined.types.string.NonEmptyString
 import geotrellis.vector.{io => _, _}
@@ -16,7 +16,7 @@ import java.time.{LocalDate, ZoneOffset}
 object DefaultCollection {
   def collection(id: String): StacCollection = StacCollection(
     _type = refineMV("Collection"),
-    stacVersion = "1.0.0-beta.2",
+    stacVersion = "1.0.0",
     stacExtensions = Nil,
     id = id,
     title = "".some,
@@ -44,7 +44,7 @@ object DefaultCollection {
         )
       )
     ),
-    summaries = JsonObject.empty,
+    summaries = Map.empty,
     properties = JsonObject.empty,
     links = Nil,
     extensionFields = JsonObject.empty,
