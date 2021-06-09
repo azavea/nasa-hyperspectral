@@ -24,7 +24,7 @@ scalacOptions ++= Seq(
 scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
   case Some((2, 13)) => Seq("-Ymacro-annotations")   // replaces paradise in 2.13
   case Some((2, 12)) => Seq("-Ypartial-unification") // required by Cats
-  case x             => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+  case _             => Nil
 })
 
 resolvers ++= Seq(
@@ -38,9 +38,8 @@ addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.13.0" cross Cross
 addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
 
 libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-  case Some((2, 13)) => Nil
   case Some((2, 12)) => Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
-  case x             => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+  case _             => Nil
 })
 
 def ver(for212: String, for213: String) = Def.setting {
