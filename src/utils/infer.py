@@ -33,17 +33,21 @@ if __name__ == '__main__':
     with rio.open(args.infile, 'r') as in_ds:
         profile = copy.deepcopy(in_ds.profile)
         profile.update(count=1, driver='GTiff', bigtiff='yes', compress='deflate',
-                       predictor='2', tiled='yes', dtype=np.float32)
+                       predictor='2', tiled='yes', dtype=np.float32, sparse_ok='yes')
         with rio.open(args.outfile, 'w', **profile) as out_ds:
             for col in tqdm(range(0, in_ds.width, 512), position=0):
                 width = min(col+512, in_ds.width) - col
                 for row in tqdm(range(0, in_ds.height, 512), position=1, leave=False):
                     height = min(row+512, in_ds.height) - row
                     window = rasterio.windows.Window(col, row, width, height)
+                    data = in_ds.read(1, window=window)
+                    if np.abs(data.sum()) == 0:
+                        continue
                     data = np.transpose(in_ds.read(window=window).astype(np.float32), (1, 2, 0))
                     norm = np.linalg.norm(data, ord=2, axis=2)[..., None].astype(np.float32)
                     data /= norm
                     data -= np.mean(data, axis=2)[..., None]
                     data = np.dot(data, spectrum_normalized)
+                    data[np.isnan(data)] = 0
                     data = data.reshape(1, width, height).astype(np.float32)
                     out_ds.write(data, window=window)
