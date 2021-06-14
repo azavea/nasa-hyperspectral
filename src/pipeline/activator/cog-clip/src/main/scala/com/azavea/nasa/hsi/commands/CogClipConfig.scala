@@ -8,6 +8,8 @@ import io.circe.generic.JsonCodec
 import io.circe.refined._
 import eu.timepit.refined.types.all.PosInt
 import eu.timepit.refined.types.string.NonEmptyString
+import monocle.Lens
+import monocle.macros.{GenLens, PLenses}
 import org.apache.commons.lang3.concurrent.BasicThreadFactory
 
 import java.net.URI
@@ -49,4 +51,10 @@ case class CogClipConfig(
         )
       )(p => Sync[F].delay(p.shutdown()))
       .map(p => Blocker.liftExecutionContext(ExecutionContext.fromExecutor(p)))
+}
+
+object CogClipConfig {
+  val sourceCollectionId: Lens[CogClipConfig, NonEmptyString] = GenLens[CogClipConfig](_.sourceCollectionId)
+  val sourceItemId: Lens[CogClipConfig, NonEmptyString] = GenLens[CogClipConfig](_.sourceItemId)
+  val sourceAssetId: Lens[CogClipConfig, NonEmptyString] = GenLens[CogClipConfig](_.sourceAssetId)
 }

@@ -17,6 +17,7 @@ from osgeo import gdal
 import pystac
 import requests
 import urllib.request
+import json
 
 from progress import ProgressPercentage, timing, warp_callback, DownloadProgressBar
 from stac_client import STACClient
@@ -54,6 +55,13 @@ def ftp_to_https(uri: str) -> str:
         return f'https://{ftp_hostname}/avcl{gzip_ftp_url.path}'
     else:
         return uri
+
+def activation_output(item_id: str): 
+    with open('/tmp/activator-output.json', 'w') as outfile:
+      json.dump({
+        'sourceCollectionId': AVIRIS_L2_COG_COLLECTION.id,
+        'sourceItemId': item_id
+      }, outfile)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -157,6 +165,7 @@ def main():
         try:
             stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
             logger.info("STAC Item {} already exists. Exiting.".format(cog_item_id))
+            activation_output(cog_item_id)
             return
         except requests.exceptions.HTTPError:
             pass
@@ -273,7 +282,8 @@ def main():
     logger.info("POST Item {} to {}".format(cog_item.id, args.stac_api_uri))
     item_data = stac_client.post_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item)
     if item_data.get('id', None):
-        logger.info("Success: {}".format(item_data["id"]))
+        logger.info("Success: {}".format(item_data['id']))
+        activation_output(item_data['id'])
     else:
         logger.error("Failure: {}".format(item_data))
         return -1

@@ -67,6 +67,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.6",
   "ch.qos.logback"                 % "logback-classic"                    % "1.2.3",
   "tf.tofu"                       %% "tofu-core"                          % "0.10.2",
+  "com.github.julien-truffaut"    %% "monocle-macro"                      % "2.1.0",
   "org.scalatest"                 %% "scalatest"                          % "3.2.9" % Test
 )
 

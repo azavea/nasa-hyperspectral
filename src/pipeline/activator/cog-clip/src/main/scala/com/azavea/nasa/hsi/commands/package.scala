@@ -23,6 +23,10 @@ import scala.util.Try
 
 package object commands {
 
+  implicit class LensOps[S, A](val self: Lens[S, A]) extends AnyVal {
+    def setOptional(so: Option[A])(s: S): S = so.fold(s)(self.set(_)(s))
+  }
+
   implicit class ExtentOps(val self: Extent) extends AnyVal {
     def toTwoDimBbox: TwoDimBbox = {
       val Extent(xmin, xmax, ymin, ymax) = self
@@ -67,11 +71,12 @@ package object commands {
         .toValidatedNel
     }
 
-  implicit val cogClipConfigArgument: Argument[CogClipConfig] =
-    Argument.from("Json arguments") { string =>
+  /** Derive Argument for all case classes that have a [[Decoder]]. */
+  implicit def jsonArgument[T <: Product: Decoder]: Argument[T] =
+    Argument.from("Json argument") { string =>
       parser
-        .parse(string)
-        .flatMap(_.as[CogClipConfig])
+        .parse(string.replace("\\", ""))
+        .flatMap(_.as[T])
         .leftMap(_.getMessage)
         .toValidatedNel
     }

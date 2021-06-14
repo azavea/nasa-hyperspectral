@@ -7,8 +7,10 @@ To run the workflow sample we'd need to have a minikube with installed Argo Work
 ```bash
 # check that the yaml file is valid
 $ argo submit workflow-one.yaml --dry-run -o yaml
+$ argo submit workflow-two.yaml --dry-run -o yaml
 # submit the workflow
 $ argo submit -n argo workflow-one.yaml --watch 
+$ argo submit -n argo workflow-two.yaml --watch 
 ```
 
 ### S3 Credentials configuration

@@ -52,7 +52,7 @@ trait CogClipOptions {
 
   private val force = Opts.flag(long = "force", help = "Force reingest StacItem even though this it is already present in the catalog.").orFalse
 
-  val clipCogConfig: Opts[CogClipConfig] =
+  val cogClipConfig: Opts[CogClipConfig] =
     (
       sourceCollectionId,
       sourceItemId,
