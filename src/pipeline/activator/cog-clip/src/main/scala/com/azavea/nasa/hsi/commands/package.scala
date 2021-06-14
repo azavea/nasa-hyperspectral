@@ -22,11 +22,6 @@ import java.util.UUID
 import scala.util.Try
 
 package object commands {
-
-  implicit class LensOps[S, A](val self: Lens[S, A]) extends AnyVal {
-    def setOptional(so: Option[A])(s: S): S = so.fold(s)(self.set(_)(s))
-  }
-
   implicit class ExtentOps(val self: Extent) extends AnyVal {
     def toTwoDimBbox: TwoDimBbox = {
       val Extent(xmin, xmax, ymin, ymax) = self
