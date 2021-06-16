@@ -9,40 +9,46 @@ import com.monovore.decline.{Command, Opts}
 import io.chrisdavenport.log4cats.Logger
 import io.circe.parser
 
-import java.net.URI
-
 object Commands {
-  final case class RunClipCog(clipCogConfig: CogClipConfig)
-  final case class RunClipCogUri(uri: URI)
+  final case class RunCogClip(cogClipConfig: CogClipConfig)
+  final case class RunCogClipUri(cogClipUriConfig: CogClipUriConfig)
 
-  def uriToClipCog[F[_]: ApplicativeThrow](uri: URI): F[CogClipConfig] =
+  def uriToCogClip[F[_]: ApplicativeThrow](cogClipUriConfig: CogClipUriConfig): F[CogClipConfig] =
     parser
-      .parse(RangeReader(uri).readAll().map(_.toChar).mkString)
+      .parse(RangeReader(cogClipUriConfig.uri).readAll().map(_.toChar).mkString)
       .flatMap(_.as[CogClipConfig])
+      .map { config =>
+        val configOverride = cogClipUriConfig.cogClipConfigOverride
+        config.copy(
+          sourceCollectionId = configOverride.sourceCollectionId.getOrElse(config.sourceCollectionId),
+          sourceItemId = configOverride.sourceItemId.getOrElse(config.sourceItemId),
+          sourceAssetId = configOverride.sourceAssetId.getOrElse(config.sourceAssetId)
+        )
+      }
       .toTry
       .liftTo[F]
 
-  def runClipCog[F[_]: Concurrent: ContextShift: Parallel: Logger](clipCogConfig: CogClipConfig): F[ExitCode] =
-    CogClip.runF[F](clipCogConfig)
+  def runCogClip[F[_]: Concurrent: ContextShift: Parallel: Logger](cogClipConfig: CogClipConfig): F[ExitCode] =
+    CogClip.runF[F](cogClipConfig)
 
-  def runClipCogUri[F[_]: Concurrent: ContextShift: Parallel: Logger](uri: URI): F[ExitCode] =
-    uriToClipCog(uri).flatMap(CogClip.runF[F])
+  def runCogClipUri[F[_]: Concurrent: ContextShift: Parallel: Logger](cogClipUriConfig: CogClipUriConfig): F[ExitCode] =
+    uriToCogClip(cogClipUriConfig).flatMap(CogClip.runF[F])
 
-  private def runClipCogOpts: Opts[RunClipCog] =
+  private def runCogClipOpts: Opts[RunCogClip] =
     Opts.subcommand("clip", "Clip extents from COG as provided by GeoJSON Feature Collection") {
-      Options.clipCogConfig map RunClipCog
+      Options.cogClipConfig map RunCogClip
     }
 
-  private def runClipCogPipelineOpts: Opts[RunClipCog] =
+  private def runCogClipPipelineOpts: Opts[RunCogClip] =
     Opts.subcommand("clip-pipeline", "Clip extents from COG as provided by GeoJSON Feature Collection") {
-      Options.clipCogConfigJson map RunClipCog
+      Options.cogClipConfigJson map RunCogClip
     }
 
-  private def runClipCogPipelineUriOpts: Opts[RunClipCogUri] =
+  private def runClipCogPipelineUriOpts: Opts[RunCogClipUri] =
     Opts.subcommand("clip-pipeline-uri", "Clip extents from COG as provided by GeoJSON Feature Collection") {
-      Options.clipCogConfigUri map RunClipCogUri
+      Options.cogClipUriConfig map RunCogClipUri
     }
 
   def applicationCommand: Command[Product] =
-    Command(name = "", header = "")(runClipCogPipelineUriOpts orElse runClipCogPipelineOpts orElse runClipCogOpts)
+    Command(name = "", header = "")(runClipCogPipelineUriOpts orElse runCogClipPipelineOpts orElse runCogClipOpts)
 }

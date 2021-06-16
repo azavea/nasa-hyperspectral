@@ -24,7 +24,7 @@ scalacOptions ++= Seq(
 scalacOptions ++= (CrossVersion.partialVersion(scalaVersion.value) match {
   case Some((2, 13)) => Seq("-Ymacro-annotations")   // replaces paradise in 2.13
   case Some((2, 12)) => Seq("-Ypartial-unification") // required by Cats
-  case x             => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+  case _             => Nil
 })
 
 resolvers ++= Seq(
@@ -38,9 +38,8 @@ addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.13.0" cross Cross
 addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1")
 
 libraryDependencies ++= (CrossVersion.partialVersion(scalaVersion.value) match {
-  case Some((2, 13)) => Nil
   case Some((2, 12)) => Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
-  case x             => sys.error(s"Encountered unsupported Scala version ${x.getOrElse("undefined")}")
+  case _             => Nil
 })
 
 def ver(for212: String, for213: String) = Def.setting {
@@ -53,7 +52,7 @@ def ver(for212: String, for213: String) = Def.setting {
 
 val declineVersion    = "1.4.0"
 val geotrellisVersion = Def.setting(ver("3.6.0", "3.6.1-SNAPSHOT").value)
-val stac4sVersion     = Def.setting(ver("0.5.0-8-gaab61a6-SNAPSHOT", "0.5.0-8-gaab61a6-SNAPSHOT").value)
+val stac4sVersion     = Def.setting(ver("0.5.0-13-g35ad8d4-SNAPSHOT", "0.5.0-13-g35ad8d4-SNAPSHOT").value)
 
 libraryDependencies ++= Seq(
   "org.locationtech.geotrellis"   %% "geotrellis-s3"                      % geotrellisVersion.value,
@@ -68,6 +67,7 @@ libraryDependencies ++= Seq(
   "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.6",
   "ch.qos.logback"                 % "logback-classic"                    % "1.2.3",
   "tf.tofu"                       %% "tofu-core"                          % "0.10.2",
+  "com.github.julien-truffaut"    %% "monocle-macro"                      % "2.1.0",
   "org.scalatest"                 %% "scalatest"                          % "3.2.9" % Test
 )
 

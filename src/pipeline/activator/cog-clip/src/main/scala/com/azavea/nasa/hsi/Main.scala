@@ -13,8 +13,8 @@ object Main extends IOApp {
 
     import Commands._
     applicationCommand.parse(args, env = sys.env) map {
-      case RunClipCog(config) => Commands.runClipCog[IO](config)
-      case RunClipCogUri(uri) => Commands.runClipCogUri[IO](uri)
+      case RunCogClip(config)    => Commands.runCogClip[IO](config)
+      case RunCogClipUri(config) => Commands.runCogClipUri[IO](config)
     } match {
       case Left(e)  => logger.error(e.toString()).as(ExitCode.Error)
       case Right(s) => s
