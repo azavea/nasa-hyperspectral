@@ -6,12 +6,12 @@ In all examples we use Argo Workflows 3.1.0, since we are interested in some of 
 
 ## Argo CLI instructions
 
-For details see: https://github.com/argoproj/argo-workflows/releases/tag/v3.1.0-rc11
+For details see: https://github.com/argoproj/argo-workflows/releases/tag/v3.1.0-rc13
 
 ### Mac
 
 ```bash
-$ curl -sLO https://github.com/argoproj/argo/releases/download/v3.1.0-rc11/argo-darwin-amd64.gz
+$ curl -sLO https://github.com/argoproj/argo/releases/download/v3.1.0-rc13/argo-darwin-amd64.gz
 $ gunzip argo-darwin-amd64.gz
 $ chmod +x argo-darwin-amd64
 $ mv ./argo-darwin-amd64 /usr/local/bin/argo
@@ -21,7 +21,7 @@ $ argo version
 ### Linux
 
 ```bash
-$ curl -sLO https://github.com/argoproj/argo/releases/download/v3.1.0-rc11/argo-darwin-amd64.gz
+$ curl -sLO https://github.com/argoproj/argo/releases/download/v3.1.0-rc13/argo-darwin-amd64.gz
 $ gunzip argo-linux-amd64.gz
 $ chmod +x argo-linux-amd64
 $ mv ./argo-linux-amd64 /usr/local/bin/argo
@@ -38,9 +38,9 @@ $ minikube start
 
 # lunch argo
 $ kubectl create ns argo
-# install 3.1.0-RC11
-$ kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj/argo-workflows/v3.1.0-rc11/manifests/quick-start-postgres.yaml
-# $ kubectl delete -n argo -f https://raw.githubusercontent.com/argoproj/argo-workflows/v3.1.0-rc11/manifests/quick-start-postgres.yaml
+# install 3.1.0-rc13
+$ kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj/argo-workflows/v3.1.0-rc13/manifests/quick-start-postgres.yaml
+# $ kubectl delete -n argo -f https://raw.githubusercontent.com/argoproj/argo-workflows/v3.1.0-rc13/manifests/quick-start-postgres.yaml
 # On GKE, you may need to grant your account the ability to create new clusterroles
 # kubectl create clusterrolebinding YOURNAME-cluster-admin-binding --clusterrole=cluster-admin --user=YOUREMAIL@gmail.com
 # port forwarding for the local development
