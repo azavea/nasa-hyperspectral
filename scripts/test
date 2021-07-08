@@ -32,17 +32,5 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         pushd ./src/pipeline/activator/cog-clip
         ./sbt test
         popd
-
-        # Argo Workflows dry run
-        pushd ./deployment/argo-workflows/local
-        argo submit workflow-one.yaml --dry-run -o yaml
-        argo submit workflow-two.yaml --dry-run -o yaml
-        popd
-
-        pushd ./deployment/argo-workflows/azavea-dev
-        argo submit workflow-one.yaml --dry-run -o yaml
-        argo submit workflow-two.yaml --dry-run -o yaml
-        popd
-
     fi
 fi

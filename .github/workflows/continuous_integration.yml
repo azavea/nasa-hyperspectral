@@ -52,6 +52,9 @@ jobs:
           sudo mv ./argo-linux-amd64 /usr/local/bin/argo && \
           argo version
 
+      - name: Argo Workflows dry run
+        run: ./scripts/test-argo
+
       - run: ./scripts/cibuild
 
       - run: ./scripts/cipublish

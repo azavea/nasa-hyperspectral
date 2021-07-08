@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${NASA_HSI_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Run tests.
+"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    if [[ "${1:-}" == "--help" ]]; then
+        usage
+    else
+        # Argo Workflows dry run
+        pushd ./deployment/argo-workflows/local
+        argo submit workflow-one.yaml --dry-run -o yaml
+        argo submit workflow-two.yaml --dry-run -o yaml
+        popd
+
+        pushd ./deployment/argo-workflows/azavea-dev
+        argo submit workflow-one.yaml --dry-run -o yaml
+        argo submit workflow-two.yaml --dry-run -o yaml
+        popd
+
+    fi
+fi
