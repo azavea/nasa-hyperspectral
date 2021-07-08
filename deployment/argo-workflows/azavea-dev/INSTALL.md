@@ -63,12 +63,12 @@ $ argo logs -n argo @latest
 
 WebUI access here: https://127.0.0.1:2746/
 
-<img width="1000" alt="WebUI" src="./img/workflows.png">
+<img width="1000" alt="WebUI" src="https://github.com/azavea/pipeline-playground/raw/main/argo-workflows/img/workflows.png">
 
 #### !Warning
 Argo Workflows support https only, so add your local certificate into trusted to make the endpoint work:
 
-<img width="300" alt="MacOS Keychain Access" src="./img/keychain.png">
+<img width="300" alt="MacOS Keychain Access" src="https://github.com/azavea/pipeline-playground/raw/main/argo-workflows/img/keychain.png">
 
 ### Accessing the provided Minio
 
