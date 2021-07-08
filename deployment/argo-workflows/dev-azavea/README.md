@@ -56,4 +56,15 @@ spec:
       - name: regcred
 ```
 
-For more details see [k8s docs](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials).
+For more details, see [https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/#registry-secret-existing-credentials)
+
+`imagePullSecrets` can be referenced in a workflow spec, which will be carried forward to all pods
+of the workflow. Note that imagePullSecrets can also be attached to a service account, see [https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account).
+
+In the dev cluster, workflow pods are launched with the default serviceaccount in the `argo` namespace:
+```bash
+kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "regcred"}]}' -n argo
+# there is also an argo service account which also has ECR credentials set
+kubectl patch serviceaccount argo -p '{"imagePullSecrets": [{"name": "regcred"}]}' -n argo
+```
+
