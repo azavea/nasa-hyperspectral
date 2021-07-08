@@ -3,6 +3,7 @@ kind: Workflow
 metadata:
   generateName: workflow-
 spec:
+  # optional, can be added to service account
   imagePullSecrets:
     - name: regcred
   entrypoint: workflow-template

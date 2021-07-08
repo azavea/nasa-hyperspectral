@@ -33,9 +33,9 @@ $ argo version
 This is the summary of the official [Argo Workflows Quick Start](https://argoproj.github.io/argo-workflows/quick-start/).
 
 ```bash
-# start local k8s cluster
-$ minikube start
-
+# you should be in the azavea-dev context
+# to list all contexts run kubectl config get-contexts
+$ kubectl config use-context azavea-dev
 # lunch argo
 $ kubectl create ns argo
 # install 3.1.1

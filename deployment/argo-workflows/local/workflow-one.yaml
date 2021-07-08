@@ -50,7 +50,7 @@ spec:
       parameters:
       - name: activator-input
     container:
-      image: activator-aviris-l2
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l2:latest
       imagePullPolicy: Never
       env:
       - name: AWS_ACCESS_KEY_ID
@@ -76,7 +76,7 @@ spec:
       parameters:
       - name: processor-input
     container:
-      image: cog-clip
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/cog-clip:latest
       imagePullPolicy: Never
       env:
       - name: AWS_ACCESS_KEY_ID
