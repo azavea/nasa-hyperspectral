@@ -4,9 +4,13 @@
 
 To run the workflow sample we'd need to have a minikube with installed Argo Workflows.
 
+All steps below require a running minikube.
+
 ```bash
 # build docker images
 $ ./docker/build.sh
+# tag them, requires correct AWS credentials
+$ ./docker/ecr-tag.sh
 # check that the yaml file is valid
 $ argo submit workflow-one.yaml --dry-run -o yaml
 $ argo submit workflow-two.yaml --dry-run -o yaml

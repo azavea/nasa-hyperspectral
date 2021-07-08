@@ -28,6 +28,15 @@ $ mv ./argo-linux-amd64 /usr/local/bin/argo
 $ argo version
 ```
 
+## K8S Cluster Access
+
+1. ssh to `ubuntu@kube-1.internal.azavea.com` using the special key in LastPass.
+2. `cat ~/.kube/config`
+3. Add the cluster, context, and user listed there to your local `$HOME/.kube/config` (you can rename things during this process, i.e. into `azavea-dev`)
+4. verify things are ok: `kubectl config get-contexts`, you should see the context you created
+5. switch to the azavea-dev context: `kubectl config use-context azavea-dev`
+6. confirm everything is correct by listing pods: `kubectl get pods -n kubernetes-dashboard`
+
 ## Argo Workflows deploy on a local K8S cluster
 
 This is the summary of the official [Argo Workflows Quick Start](https://argoproj.github.io/argo-workflows/quick-start/).
