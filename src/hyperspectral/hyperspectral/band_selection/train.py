@@ -60,7 +60,7 @@ def vanilla_train(model: torch.nn.Module,
         An n×1×1 tensor containing labels for the pixels ps.  0 is for
         background and 1 is for target.
     v : torch.tensor
-        A 1×c tensor containing the target spectrum.
+        A 1×c×1 tensor containing the target spectrum.
     num_epochs : int
         The number of training epochs to use.
 
