@@ -37,6 +37,21 @@ jobs:
             ~/.cache/coursier/v1
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('**/project/build.properties') }}
 
+      - name: Install Argo CLI
+        run: |
+          curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.1.1/argo-linux-amd64.gz && \
+          gunzip argo-linux-amd64.gz && \
+          sudo chmod +x argo-linux-amd64 && \
+          sudo mv ./argo-linux-amd64 /usr/local/bin/argo && \
+          argo version
+
+      - name: Set K8S Config
+        run: |
+          mkdir -p ~/.kube
+          echo $K8S_DEV_CONFIG >> ~/.kube/config
+        env:
+          K8S_DEV_CONFIG: ${{ secrets.K8S_DEV_CONFIG }}
+
       - run: ./scripts/cibuild
 
       - run: ./scripts/cipublish
