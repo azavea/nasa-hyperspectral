@@ -1,0 +1,130 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: workflow-
+spec:
+  imagePullSecrets:
+    - name: regcred
+  entrypoint: workflow-template
+  parallelism: 2
+  arguments:
+    parameters:
+    - name: activator-input
+      value: |
+        [
+          {
+            "id": "activator-1",
+            "event": "s3://aviris-data-dev-azavea/commands/aviris-l2/pipeline-test-s3.json"
+          }
+        ]
+    - name: processor-input
+      value: |
+        [
+          {
+            "id": "processor-1",
+            "event": "s3://aviris-data-dev-azavea/commands/cog-clip/pipeline-test-s3.json"
+          }
+        ]
+
+  templates:
+  - name: workflow-template
+    dag:
+      tasks:
+      - name: activator
+        template: activator-template
+        arguments:
+          parameters:
+          - name: activator-input
+            value: "{{item.event}}"
+        withParam: "{{workflow.parameters.activator-input}}"
+
+      # in parallel iterate over processor-inputs and activator-outputs
+      # that's possible through the extra nested step
+      # https://github.com/argoproj/argo-workflows/blob/master/examples/parallelism-nested.yaml
+      - name: processors-seq
+        dependencies: [activator]
+        template: processor
+        arguments:
+          parameters:
+            - name: activator-output
+              value: "{{tasks.activator.outputs.parameters.activator-output}}"
+            - name: processor-input
+              value: "{{item.event}}"
+        withParam: "{{workflow.parameters.processor-input}}"
+
+  - name: processor
+    inputs:
+      parameters:
+      - name: activator-output
+      - name: processor-input
+    steps:
+    - - name: processor-step
+        template: processor-template
+        arguments:
+          parameters:
+          - name: activator-output
+            value: "{{item}}"
+          - name: processor-input
+            value: "{{inputs.parameters.processor-input}}"
+        withParam: "{{inputs.parameters.activator-output}}"
+
+  - name: activator-template
+    inputs:
+      parameters:
+      - name: activator-input
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l2:latest
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: AWS_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: s3-secrets
+            key: accessKey
+      - name: AWS_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: s3-secrets
+            key: secretAccessKey
+      - name: AWS_REGION
+        valueFrom:
+          secretKeyRef:
+            name: s3-secrets
+            key: region
+      command: [python, main.py, --pipeline-uri]
+      args: ["{{inputs.parameters.activator-input}}"]
+    outputs:
+      parameters:
+      - name: activator-output
+        valueFrom:
+          path: /tmp/activator-output.json
+
+  - name: processor-template
+    inputs:
+      parameters:
+      - name: processor-input
+      - name: activator-output
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/cog-clip:latest
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: AWS_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: s3-secrets
+            key: accessKey
+      - name: AWS_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: s3-secrets
+            key: secretAccessKey
+      - name: AWS_REGION
+        valueFrom:
+          secretKeyRef:
+            name: s3-secrets
+            key: region
+      command: [java, -XX:+UseG1GC, -jar, cog-clip-assembly.jar, clip-pipeline-uri]
+      args: [
+        --uri, "{{inputs.parameters.processor-input}}", 
+        --override, "{{inputs.parameters.activator-output}}"
+      ]
