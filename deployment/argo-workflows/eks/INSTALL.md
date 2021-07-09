@@ -28,29 +28,28 @@ $ mv ./argo-linux-amd64 /usr/local/bin/argo
 $ argo version
 ```
 
+## K8S Cluster provisioning
+
+EKS is provisioned via terraform, for more details see [deployment/terraform/eks-*.tf](../../terraform) files.
+
 ## K8S Cluster Access
 
-1. ssh to `ubuntu@kube-1.internal.azavea.com` using the special key in LastPass.
-2. `cat ~/.kube/config`
-3. Add the cluster, context, and user listed there to your local `$HOME/.kube/config` (you can rename things during this process, i.e. into `azavea-dev`)
-4. verify things are ok: `kubectl config get-contexts`, you should see the context you created
-5. switch to the azavea-dev context: `kubectl config use-context azavea-dev`
-6. confirm everything is correct by listing pods: `kubectl get pods -n kubernetes-dashboard`
+1. Install [iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html) via `brew install aws-iam-authenticator`
+2. Run `aws eks --region us-east-1 update-kubeconfig --name hsi-spot` to retrieve kubeconfig
 
-## Argo Workflows deploy on a development K8S cluster
+## Argo Workflows deploy on EKS
 
 This is the summary of the official [Argo Workflows Quick Start](https://argoproj.github.io/argo-workflows/quick-start/).
 
 ```bash
-# you should be in the azavea-dev context
+# retrieve kubeconfig 
+$ aws eks --region us-east-1 update-kubeconfig --name hsi-spot
 # to list all contexts run kubectl config get-contexts
-$ kubectl config use-context azavea-dev
+$ kubectl config use-context eks_hsi-spot
 # lunch argo
 $ kubectl create ns argo
 # install 3.1.1
-$ kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj/argo-workflows/v3.1.1/manifests/quick-start-postgres.yaml
-# On GKE, you may need to grant your account the ability to create new clusterroles
-# kubectl create clusterrolebinding YOURNAME-cluster-admin-binding --clusterrole=cluster-admin --user=YOUREMAIL@gmail.com
+$ kubectl apply -n argo -f install-argo.yaml
 # port forwarding for the local development
 $ kubectl -n argo port-forward deployment/argo-server 2746:2746
 
