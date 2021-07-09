@@ -40,7 +40,7 @@ provider "registry.terraform.io/hashicorp/cloudinit" {
 
 provider "registry.terraform.io/hashicorp/kubernetes" {
   version     = "2.3.2"
-  constraints = ">= 1.11.1, ~> 2.3.2"
+  constraints = ">= 1.11.1, ~> 2.3"
   hashes = [
     "h1:X+wKrZNYF+qtoBNcMD3cL0+bXSWUDZ7RpHm+2vAwvhE=",
     "zh:10f71c170be13538374a4b9553fcb3d98a6036bcd1ca5901877773116c3f828e",
