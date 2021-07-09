@@ -32,6 +32,5 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         pushd ./src/pipeline/activator/cog-clip
         ./sbt test
         popd
-
     fi
 fi

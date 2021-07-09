@@ -3,6 +3,9 @@ kind: Workflow
 metadata:
   generateName: workflow-
 spec:
+  # optional, can be added to service account
+  imagePullSecrets:
+    - name: regcred
   entrypoint: workflow-template
   parallelism: 2
   arguments:
@@ -51,7 +54,7 @@ spec:
       - name: activator-input
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l2:latest
-      imagePullPolicy: Never
+      imagePullPolicy: IfNotPresent
       env:
       - name: AWS_ACCESS_KEY_ID
         valueFrom:
@@ -77,7 +80,7 @@ spec:
       - name: processor-input
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/cog-clip:latest
-      imagePullPolicy: Never
+      imagePullPolicy: IfNotPresent
       env:
       - name: AWS_ACCESS_KEY_ID
         valueFrom:

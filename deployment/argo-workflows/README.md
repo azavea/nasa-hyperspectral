@@ -1,5 +1,5 @@
 ## Argo Workflows deployment
 
 * [Local Cluster Environment](./local)
-* [Private Cluster Environment](./private)
+* [Azavea Development Cluster Environment](./azavea-dev)
 * [EKS Cluster Environment](./eks)

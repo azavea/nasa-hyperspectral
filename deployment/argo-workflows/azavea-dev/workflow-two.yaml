@@ -3,6 +3,9 @@ kind: Workflow
 metadata:
   generateName: workflow-
 spec:
+  # optional, can be added to service account
+  imagePullSecrets:
+    - name: regcred
   entrypoint: workflow-template
   parallelism: 2
   arguments:
@@ -35,15 +38,36 @@ spec:
           - name: activator-input
             value: "{{item.event}}"
         withParam: "{{workflow.parameters.activator-input}}"
-      
-      - name: processor
+
+      # in parallel iterate over processor-inputs and activator-outputs
+      # that's possible through the extra nested step
+      # https://github.com/argoproj/argo-workflows/blob/master/examples/parallelism-nested.yaml
+      - name: processors-seq
         dependencies: [activator]
-        template: processor-template
+        template: processor
         arguments:
           parameters:
+            - name: activator-output
+              value: "{{tasks.activator.outputs.parameters.activator-output}}"
             - name: processor-input
               value: "{{item.event}}"
         withParam: "{{workflow.parameters.processor-input}}"
+
+  - name: processor
+    inputs:
+      parameters:
+      - name: activator-output
+      - name: processor-input
+    steps:
+    - - name: processor-step
+        template: processor-template
+        arguments:
+          parameters:
+          - name: activator-output
+            value: "{{item}}"
+          - name: processor-input
+            value: "{{inputs.parameters.processor-input}}"
+        withParam: "{{inputs.parameters.activator-output}}"
 
   - name: activator-template
     inputs:
@@ -51,7 +75,7 @@ spec:
       - name: activator-input
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l2:latest
-      imagePullPolicy: Never
+      imagePullPolicy: IfNotPresent
       env:
       - name: AWS_ACCESS_KEY_ID
         valueFrom:
@@ -70,14 +94,20 @@ spec:
             key: region
       command: [python, main.py, --pipeline-uri]
       args: ["{{inputs.parameters.activator-input}}"]
+    outputs:
+      parameters:
+      - name: activator-output
+        valueFrom:
+          path: /tmp/activator-output.json
 
   - name: processor-template
     inputs:
       parameters:
       - name: processor-input
+      - name: activator-output
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/cog-clip:latest
-      imagePullPolicy: Never
+      imagePullPolicy: IfNotPresent
       env:
       - name: AWS_ACCESS_KEY_ID
         valueFrom:
@@ -94,5 +124,8 @@ spec:
           secretKeyRef:
             name: s3-secrets
             key: region
-      command: [java, -XX:+UseG1GC, -jar, cog-clip-assembly.jar, clip-pipeline-uri, --uri]
-      args: ["{{inputs.parameters.processor-input}}"]
+      command: [java, -XX:+UseG1GC, -jar, cog-clip-assembly.jar, clip-pipeline-uri]
+      args: [
+        --uri, "{{inputs.parameters.processor-input}}", 
+        --override, "{{inputs.parameters.activator-output}}"
+      ]
