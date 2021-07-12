@@ -2,9 +2,7 @@
 
 ![Argo Workflows](https://argoproj.github.io/argo-workflows/assets/argo.png)
 
-To run the workflow sample we'd need to have a minikube with installed Argo Workflows.
-
-All steps require a correctly set K8S context, for more instructions see [INSTALL.md](./INSTALL.md#k8s-cluster-access).
+To run the workflow sample we'd need to have an active EKS k8s context with Argo Workflows installed.
 
 ```bash
 # build docker images
@@ -23,8 +21,8 @@ $ argo submit -n argo workflow-two.yaml --watch
 
 ### S3 Credentials configuration
 
-Controlled via IAM roles
+Controlled via IAM roles, see [eks-iam.tf](../../terraform/eks-iam.tf)
 
 ### Configure ECR Registry Access
 
-Controlled via IAM roles
+Controlled via default EKS IAM roles
