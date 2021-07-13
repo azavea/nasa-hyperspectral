@@ -32,7 +32,12 @@ module "eks" {
     }
   ]
 
-  workers_additional_policies   = [aws_iam_policy.worker_s3_policy.arn]
+  workers_additional_policies = [
+    aws_iam_policy.worker_s3_policy.arn,
+    aws_iam_policy.worker_cloudwatch_policy.arn
+  ]
+  # https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
+  # cluster_enabled_log_types = ["api", "controllerManager", "scheduler"]
 }
 
 data "aws_eks_cluster" "cluster" {

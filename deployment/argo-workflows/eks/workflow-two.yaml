@@ -12,7 +12,7 @@ spec:
         [
           {
             "id": "activator-1",
-            "event": "s3://aviris-data-dev-azavea/commands/aviris-l2/pipeline-test-s3.json"
+            "event": "s3://aviris-data-dev-azavea/commands/aviris-l2/pipeline-test-s3-large.json"
           }
         ]
     - name: processor-input
@@ -73,8 +73,21 @@ spec:
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l2:latest
       imagePullPolicy: IfNotPresent
+      env:
+      - name: GDAL_CACHEMAX
+        value: "50%"
+      - name: WARP_MEMORY_LIMIT
+        value: "4000"
       command: [python, main.py, --pipeline-uri]
       args: ["{{inputs.parameters.activator-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/#:~:text=If%20limits%20are%20not%20set,or%20limits%20for%20all%20containers.
+      resources:
+        requests:
+          cpu: 3000m
+          memory: 8G 
+        limits:
+          cpu: 3200m
+          memory: 10G 
     outputs:
       parameters:
       - name: activator-output
@@ -94,3 +107,11 @@ spec:
         --uri, "{{inputs.parameters.processor-input}}", 
         --override, "{{inputs.parameters.activator-output}}"
       ]
+      # https://argoproj.github.io/argo-workflows/resource-duration/#:~:text=If%20limits%20are%20not%20set,or%20limits%20for%20all%20containers.
+      resources:
+        requests:
+          cpu: 3000m
+          memory: 8G 
+        limits:
+          cpu: 3200m
+          memory: 10G 

@@ -68,3 +68,37 @@ WebUI access here: https://127.0.0.1:2746/
 Argo Workflows support https only, so add your local certificate into trusted to make the endpoint work:
 
 <img width="300" alt="MacOS Keychain Access" src="https://github.com/azavea/pipeline-playground/raw/main/argo-workflows/img/keychain.png">
+
+## CloudWatch Conatiner insight
+
+For more details check out AWS [Container Insights setup metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-metrics.html) doc page.
+
+EKS Quick start is [here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-EKS-quickstart.html):
+
+0.x Quick Start with the CloudWatch agent and Fluentd (in case you want to skip all steps below)
+
+curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluentd-quickstart.yaml | sed "s/{{cluster_name}}/hsi-spot/;s/{{region_name}}/us-east-1/" | kubectl apply -f -
+
+1. Create CloudWatch namespace
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/cloudwatch-namespace.yaml
+```
+
+2. Create CloudWatch Service Account
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/cwagent/cwagent-serviceaccount.yaml
+```
+
+3. Create CloudWatch agent config map
+
+```bash
+curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/cwagent/cwagent-configmap.yaml | sed "s/{{cluster_name}}/hsi-spot/;s/{{region_name}}/us-east-1/" | kubectl apply -f -
+```
+
+4. Deploy the CloudWatch agent as a DaemonSet
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/cwagent/cwagent-daemonset.yaml
+```
