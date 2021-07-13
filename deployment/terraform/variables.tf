@@ -308,3 +308,28 @@ variable "aws_ecs_task_execution_role_policy_arn" {
   default = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
   type    = string
 }
+
+variable "eks_cluster_name" {
+  default = "hsi-spot"
+  type    = string
+}
+
+variable "eks_workers_instance_type" {
+  default = "m4.xlarge"
+  type    = string
+}
+
+variable "eks_workers_spot_price" {
+  default = "0.08"
+  type    = string
+}
+
+variable "eks_workers_desired_capacity" {
+  default = 1
+  type    = number
+}
+
+variable "eks_workers_max_size" {
+  default = 1
+  type    = number
+}

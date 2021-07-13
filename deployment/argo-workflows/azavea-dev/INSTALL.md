@@ -37,7 +37,7 @@ $ argo version
 5. switch to the azavea-dev context: `kubectl config use-context azavea-dev`
 6. confirm everything is correct by listing pods: `kubectl get pods -n kubernetes-dashboard`
 
-## Argo Workflows deploy on a local K8S cluster
+## Argo Workflows deploy on a development K8S cluster
 
 This is the summary of the official [Argo Workflows Quick Start](https://argoproj.github.io/argo-workflows/quick-start/).
 
@@ -69,29 +69,3 @@ WebUI access here: https://127.0.0.1:2746/
 Argo Workflows support https only, so add your local certificate into trusted to make the endpoint work:
 
 <img width="300" alt="MacOS Keychain Access" src="https://github.com/azavea/pipeline-playground/raw/main/argo-workflows/img/keychain.png">
-
-### Accessing the provided Minio
-
-```bash
-# info 
-$ kubectl get service minio --namespace=argo
-# port forward, it will generate a URI and a tunnel
-$ minikube service --url minio --namespace=argo
-## AccessKey: kubectl get secret my-minio-cred -o jsonpath='{.data.accesskey}' | base64 --decode
-## SecretKey: kubectl get secret my-minio-cred -o jsonpath='{.data.secretkey}' | base64 --decode
-```
-
-### Configuring Minio via Helm (this step is not neccesary)
-
-```bash
-$ brew install helm # mac, helm 3.x
-$ helm repo add minio https://helm.min.io/ # official minio Helm charts
-$ helm repo update
-$ helm install argo-artifacts minio/minio --set service.type=LoadBalancer --set fullnameOverride=argo-artifacts --namespace=argo
-# info 
-$ kubectl get service argo-artifacts --namespace=argo
-# port forward, it will generate a URI and a tunnel
-$ minikube service --url argo-artifacts --namespace=argo
-## AccessKey: kubectl get secret argo-artifacts -o jsonpath='{.data.accesskey}' | base64 --decode
-## SecretKey: kubectl get secret argo-artifacts -o jsonpath='{.data.secretkey}' | base64 --decode
-```

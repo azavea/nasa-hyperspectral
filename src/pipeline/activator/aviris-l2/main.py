@@ -119,6 +119,11 @@ def main():
         help="If provided, force reingest StacItem even though this it is already present in the catalog.",
     )
 
+    try:
+        warpMemoryLimit = int(os.environ.get("GDAL_WARP_MEMORY_LIMIT", None))
+    except TypeError:
+        warpMemoryLimit = None
+
     # TODO: replace it with parser.parse_args() later
     cli_args, cli_unknown = parser.parse_known_args()
 
@@ -228,6 +233,7 @@ def main():
                 warpOptions=["NUM_THREADS=ALL_CPUS"],
                 creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE", "BIGTIFF=YES"],
                 multithread=True,
+                warpMemoryLimit=warpMemoryLimit,
                 format="COG"
             )
             logger.info("Converting {} to {}...".format(hdr_path, cog_path))

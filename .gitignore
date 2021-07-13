@@ -9,6 +9,9 @@ Thumbs.db
 .history
 .metals
 
+# K8S
+deployment/terraform/kubeconfig_*
+
 # Other
 
 pipeline-data/
