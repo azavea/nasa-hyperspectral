@@ -119,7 +119,10 @@ def main():
         help="If provided, force reingest StacItem even though this it is already present in the catalog.",
     )
 
-    warpMemoryLimit = int(os.environ.get("WARP_MEMORY_LIMIT", None))
+    try:
+        warpMemoryLimit = int(os.environ.get("GDAL_WARP_MEMORY_LIMIT", None))
+    except TypeError:
+        warpMemoryLimit = None
 
     # TODO: replace it with parser.parse_args() later
     cli_args, cli_unknown = parser.parse_known_args()

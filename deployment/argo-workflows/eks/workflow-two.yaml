@@ -76,7 +76,7 @@ spec:
       env:
       - name: GDAL_CACHEMAX
         value: "50%"
-      - name: WARP_MEMORY_LIMIT
+      - name: GDAL_WARP_MEMORY_LIMIT
         value: "4000"
       command: [python, main.py, --pipeline-uri]
       args: ["{{inputs.parameters.activator-input}}"]
