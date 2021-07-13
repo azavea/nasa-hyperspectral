@@ -49,7 +49,7 @@ $ kubectl config use-context eks_hsi-spot
 # lunch argo
 $ kubectl create ns argo
 # install 3.1.1
-$ kubectl apply -n argo -f install-argo.yaml
+$ kubectl apply -n argo -f manifests/install-argo.yaml
 # port forwarding for the local development
 $ kubectl -n argo port-forward deployment/argo-server 2746:2746
 
@@ -78,7 +78,7 @@ EKS Quick start is [here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/mo
 0.x Current EKS CloudWatch Conatiner Insight Deployment
 
 ```bash
-cat install-cw-container-insight.yaml | sed "s/{{cluster_name}}/hsi-spot/;s/{{region_name}}/us-east-1/" | kubectl apply -f -
+cat manifests/install-cw-container-insight.yaml | sed "s/{{cluster_name}}/hsi-spot/;s/{{region_name}}/us-east-1/" | kubectl apply -f -
 ```
 
 0.1.x Quick Start with the CloudWatch agent and Fluentd (in case you want to skip all steps below)
