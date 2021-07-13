@@ -28,5 +28,10 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         argo submit workflow-two.yaml --dry-run -o yaml
         popd
 
+        pushd ./deployment/argo-workflows/eks
+        argo submit workflow-one.yaml --dry-run -o yaml
+        argo submit workflow-two.yaml --dry-run -o yaml
+        popd
+
     fi
 fi
