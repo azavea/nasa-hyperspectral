@@ -19,8 +19,8 @@ module "eks" {
 
   tags = {
     Environment = "Hyperspectral"
-    GithubRepo  = "terraform-aws-eks"
-    GithubOrg   = "terraform-aws-modules"
+    GithubRepo  = "nasa-hyperspectral"
+    GithubOrg   = "azavea"
   }
 
   vpc_id = module.vpc.id
