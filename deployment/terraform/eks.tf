@@ -1,9 +1,9 @@
 data "aws_availability_zones" "available" { }
 
 locals {
-  aws_iam_users = concat(data.aws_iam_group.engineers.users, data.aws_iam_group.operations.users)
+  eks_aws_iam_users = concat(data.aws_iam_group.engineers.users, data.aws_iam_group.operations.users)
 
-  eks_map_users = [for u in local.aws_iam_users : {
+  eks_map_users = [for u in local.eks_aws_iam_users : {
      userarn  = u.arn
      username = u.user_name
      groups   = ["system:masters"]
