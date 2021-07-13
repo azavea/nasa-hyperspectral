@@ -69,13 +69,19 @@ Argo Workflows support https only, so add your local certificate into trusted to
 
 <img width="300" alt="MacOS Keychain Access" src="https://github.com/azavea/pipeline-playground/raw/main/argo-workflows/img/keychain.png">
 
-## CloudWatch Conatiner insight
+## CloudWatch Conatiner Insight
 
 For more details check out AWS [Container Insights setup metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-metrics.html) doc page.
 
 EKS Quick start is [here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-EKS-quickstart.html):
 
-0.x Quick Start with the CloudWatch agent and Fluentd (in case you want to skip all steps below)
+0.x Current EKS CloudWatch Conatiner Insight Deployment
+
+```bash
+cat install-cw-container-insight.yaml | sed "s/{{cluster_name}}/hsi-spot/;s/{{region_name}}/us-east-1/" | kubectl apply -f -
+```
+
+0.1.x Quick Start with the CloudWatch agent and Fluentd (in case you want to skip all steps below)
 
 curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/quickstart/cwagent-fluentd-quickstart.yaml | sed "s/{{cluster_name}}/hsi-spot/;s/{{region_name}}/us-east-1/" | kubectl apply -f -
 
