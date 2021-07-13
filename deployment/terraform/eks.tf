@@ -1,4 +1,15 @@
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" { }
+
+locals {
+  aws_iam_users = concat(data.aws_iam_group.engineers.users, data.aws_iam_group.operations.users)
+
+  eks_map_users = [for u in local.aws_iam_users : {
+     userarn  = u.arn
+     username = u.user_name
+     groups   = ["system:masters"]
+   }
+  ]
+}
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
@@ -17,6 +28,9 @@ module "eks" {
   workers_group_defaults = {
     root_volume_type = "gp2"
   }
+
+  # https://aws.amazon.com/premiumsupport/knowledge-center/amazon-eks-cluster-access/
+  map_users = local.eks_map_users
 
   worker_groups = [
     {
@@ -38,12 +52,4 @@ module "eks" {
   ]
   # https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
   # cluster_enabled_log_types = ["api", "controllerManager", "scheduler"]
-}
-
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_id
-}
-
-data "aws_eks_cluster_auth" "cluster" {
-  name = module.eks.cluster_id
 }

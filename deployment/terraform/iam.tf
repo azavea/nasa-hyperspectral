@@ -201,3 +201,14 @@ resource "aws_iam_role_policy" "step_functions_service_role_policy" {
   role   = aws_iam_role.step_functions_service_role.name
   policy = data.aws_iam_policy_document.step_functions_service_role_policy.json
 }
+
+# 
+# Getting all users from Engineering and Operation groups to grant EKS access permissions
+# 
+data "aws_iam_group" "engineers" {
+  group_name = "Engineers"
+}
+
+data "aws_iam_group" "operations" {
+  group_name = "Operations"
+}
