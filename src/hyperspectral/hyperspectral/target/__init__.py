@@ -1,1 +1,1 @@
-from .matched_filter import normalized_matched_filter
+from .matched_filter import normalized_matched_filter, robust_filter_vector, robust_matched_filter
