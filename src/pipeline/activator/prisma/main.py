@@ -59,6 +59,13 @@ PRISMA_COG_COLLECTION.links = []
 PRISMA_COG_COLLECTION.properties = {}
 # https://directory.eoportal.org/web/eoportal/satellite-missions/p/prisma-hyperspectral
 
+def activation_output(item_id: str): 
+  with open('/tmp/activator-output.json', 'w') as outfile:
+    json.dump({
+      'sourceCollectionId': PRISMA_COG_COLLECTION.id,
+      'sourceItemId': item_id
+    }, outfile)
+
 # returns Extent, (xres, yres), affine_transform
 def raster_extent(ll_y, ll_x, lr_y, lr_x, ul_y, ul_x, ur_y, ur_x, cols, rows):
   # X = Lon, Y = Lat
@@ -145,6 +152,12 @@ def main():
     action="store_true",
     help="If provided, force reingest StacItem even though this it is already present in the catalog.",
   )
+  parser.add_argument(
+    "--skip-upload",
+    action="store_true",
+    help="Skips upload to S3",
+    default=False
+  )
 
   try:
     warpMemoryLimit = int(os.environ.get("GDAL_WARP_MEMORY_LIMIT", None))
@@ -165,247 +178,247 @@ def main():
   stac_client = STACClient(args.stac_api_uri)
 
   prisma_uri = S3Uri(args.prisma_uri)
-
   product_name_derived = os.path.splitext(Path(prisma_uri.key).name)[0]
-
   local_archive = Path(temp_dir, Path(prisma_uri.key).name)
 
-  if not local_archive.exists():
-    logger.info(f'Downloading PRISMA archive {prisma_uri.url} to {str(local_archive)}...')
-    s3.download_file(prisma_uri.bucket, prisma_uri.key, str(local_archive))
-  else:
-    logger.info(f'Skipping downloading PRISMA archive {prisma_uri.url}, it already exists {str(local_archive)}')
-  
-  h5_path = Path(Path(temp_dir), f'{product_name_derived}.he5')
-
-  if not h5_path.exists():
-    logger.info(f'Extracting PRISMA archive {str(local_archive)}...')
-    with zipfile.ZipFile(local_archive, 'r') as zip_ref:
-      zip_ref.extractall(str(temp_dir))
-  else:
-    logger.info(f'Skipping extraction of the PRISMA archive {str(local_archive)}, file is already extracted {str(h5_path)}')
-
-  logger.info(f'Reading {str(h5_path)}...')
-  h5 = h5py.File(str(h5_path))
-
-  data = h5['HDFEOS']['SWATHS']['PRS_L2D_HCO']['Data Fields']
-
-  # UInt16
-  swir = data['SWIR_Cube']
-  # UInt16
-  vnir = data['VNIR_Cube']
-  # ERR Matrix is in Bytes
-  swir_error = data['SWIR_PIXEL_L2_ERR_MATRIX']
-  vnir_error = data['VNIR_PIXEL_L2_ERR_MATRIX']
-
-  swirT = np.swapaxes(swir,1,2)
-  vnirT = np.swapaxes(vnir,1,2)
-
-  swir_errorT = np.swapaxes(swir_error,1,2)
-  vnir_errorT = np.swapaxes(vnir_error,1,2)
-
-  rows, cols = swirT.shape[0], swirT.shape[1]
-
-  product_name = os.path.splitext(str(h5.attrs['Product_Name'].decode()))[0]
-
-  # X = Lon, Y = Lat
-  # LatLon projection, required for the STAC catalog
-  extent_ll, _, _ = raster_extent(
-    ll_y = h5.attrs['Product_LLcorner_lat'],
-    ll_x = h5.attrs['Product_LLcorner_long'],
-
-    lr_y = h5.attrs['Product_LRcorner_lat'],
-    lr_x = h5.attrs['Product_LRcorner_long'],
-
-    ul_y = h5.attrs['Product_ULcorner_lat'],
-    ul_x = h5.attrs['Product_ULcorner_long'],
-
-    ur_y = h5.attrs['Product_URcorner_lat'],
-    ur_x = h5.attrs['Product_URcorner_long'],
-
-    cols = cols, 
-    rows = rows
-  )
-
-  # X = easting, Y = northing
-  extent, res, affine_transform = raster_extent(
-    ll_y = h5.attrs['Product_LLcorner_lat'],
-    ll_x = h5.attrs['Product_LLcorner_long'],
-
-    lr_y = h5.attrs['Product_LRcorner_lat'],
-    lr_x = h5.attrs['Product_LRcorner_long'],
-
-    ul_y = h5.attrs['Product_ULcorner_lat'],
-    ul_x = h5.attrs['Product_ULcorner_long'],
-
-    ur_y = h5.attrs['Product_URcorner_lat'],
-    ur_x = h5.attrs['Product_URcorner_long'],
-
-    cols = cols, 
-    rows = rows
-  )
-  
-  cog_proj = osr.SpatialReference()
-  cog_proj.SetUTM(int(h5.attrs['Projection_Id'].decode()))
-  cog_proj.AutoIdentifyEPSG()
-
-  def create_geotiff(path, array, geo_transform = affine_transform, projection = cog_proj, dataType = gdal.GDT_UInt16, driver = gdal.GetDriverByName("GTiff")):
-    ds = driver.Create(str(path), array.shape[1], array.shape[0], array.shape[2], dataType, ['COMPRESS=DEFLATE', 'BIGTIFF=YES'])
-    ds.SetGeoTransform(geo_transform)
-    ds.SetProjection(projection.ExportToWkt())
-    for i in range(1, array.shape[2]):
-      ds.GetRasterBand(i).WriteArray(array[::, ::, i])
-    ds.FlushCache()
-
-    cog_path = str(Path(path.parent, f'cog_{path.name}'))
+  try:
+    if not local_archive.exists():
+      logger.info(f'Downloading PRISMA archive {prisma_uri.url} to {str(local_archive)}...')
+      s3.download_file(prisma_uri.bucket, prisma_uri.key, str(local_archive))
+    else:
+      logger.info(f'Skipping downloading PRISMA archive {prisma_uri.url}, it already exists {str(local_archive)}')
     
-    warp_opts = gdal.WarpOptions(
-      callback=warp_callback,
-      warpOptions=["NUM_THREADS=ALL_CPUS"],
-      creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE", "BIGTIFF=YES"],
-      multithread=True,
-      warpMemoryLimit=warpMemoryLimit,
-      format="COG"
+    h5_path = Path(Path(temp_dir), f'{product_name_derived}.he5')
+
+    if not h5_path.exists():
+      logger.info(f'Extracting PRISMA archive {str(local_archive)}...')
+      with zipfile.ZipFile(local_archive, 'r') as zip_ref:
+        zip_ref.extractall(str(temp_dir))
+    else:
+      logger.info(f'Skipping extraction of the PRISMA archive {str(local_archive)}, file is already extracted {str(h5_path)}')
+
+    logger.info(f'Reading {str(h5_path)}...')
+    h5 = h5py.File(str(h5_path))
+
+    data = h5['HDFEOS']['SWATHS']['PRS_L2D_HCO']['Data Fields']
+
+    # UInt16
+    swir = data['SWIR_Cube']
+    # UInt16
+    vnir = data['VNIR_Cube']
+    # ERR Matrix is in Bytes
+    swir_error = data['SWIR_PIXEL_L2_ERR_MATRIX']
+    vnir_error = data['VNIR_PIXEL_L2_ERR_MATRIX']
+
+    swirT = np.swapaxes(swir,1,2)
+    vnirT = np.swapaxes(vnir,1,2)
+
+    swir_errorT = np.swapaxes(swir_error,1,2)
+    vnir_errorT = np.swapaxes(vnir_error,1,2)
+
+    rows, cols = swirT.shape[0], swirT.shape[1]
+
+    product_name = os.path.splitext(str(h5.attrs['Product_Name'].decode()))[0]
+
+    # X = Lon, Y = Lat
+    # LatLon projection, required for the STAC catalog
+    extent_ll, _, _ = raster_extent(
+      ll_y = h5.attrs['Product_LLcorner_lat'],
+      ll_x = h5.attrs['Product_LLcorner_long'],
+
+      lr_y = h5.attrs['Product_LRcorner_lat'],
+      lr_x = h5.attrs['Product_LRcorner_long'],
+
+      ul_y = h5.attrs['Product_ULcorner_lat'],
+      ul_x = h5.attrs['Product_ULcorner_long'],
+
+      ur_y = h5.attrs['Product_URcorner_lat'],
+      ur_x = h5.attrs['Product_URcorner_long'],
+
+      cols = cols, 
+      rows = rows
     )
-    logger.info("Converting {} to {}...".format(str(path), cog_path))
-    # with timing("GDAL Warp"):
-      # gdal.Warp(str(cog_path), str(path), options=warp_opts)
 
-    # return cog_path
-    return path
+    # X = easting, Y = northing
+    extent, res, affine_transform = raster_extent(
+      ll_y = h5.attrs['Product_LLcorner_lat'],
+      ll_x = h5.attrs['Product_LLcorner_long'],
 
-  swir_path = create_geotiff(Path(temp_dir, "SWIR_Cube.tiff"), swirT)
-  vnir_path = create_geotiff(Path(temp_dir, "VNIR_Cube.tiff"), vnirT)
+      lr_y = h5.attrs['Product_LRcorner_lat'],
+      lr_x = h5.attrs['Product_LRcorner_long'],
 
-  swir_error_path = create_geotiff(Path(temp_dir, "SWIR_PIXEL_L2_ERR_MATRIX.tiff"), swir_errorT)
-  vnir_error_path = create_geotiff(Path(temp_dir, "VNIR_PIXEL_L2_ERR_MATRIX.tiff"), vnir_errorT)
+      ul_y = h5.attrs['Product_ULcorner_lat'],
+      ul_x = h5.attrs['Product_ULcorner_long'],
 
-  def key(name): 
-    return f'prisma-scene-cogs/{product_name}{name}'
+      ur_y = h5.attrs['Product_URcorner_lat'],
+      ur_x = h5.attrs['Product_URcorner_long'],
 
-  skip_upload = True
+      cols = cols, 
+      rows = rows
+    )
+    
+    cog_proj = osr.SpatialReference()
+    cog_proj.SetUTM(int(h5.attrs['Projection_Id'].decode()))
+    cog_proj.AutoIdentifyEPSG()
 
-  # prep all upload links
-  s3_uri_swir = "s3://{}/{}".format(args.s3_bucket, key(swir_path))
-  s3_uri_vnir = "s3://{}/{}".format(args.s3_bucket, key(vnir_path))
-  s3_uri_swir_error = "s3://{}/{}".format(args.s3_bucket, key(swir_error_path))
-  s3_uri_vnir_error = "s3://{}/{}".format(args.s3_bucket, key(vnir_error_path))
+    def create_geotiff(path, array, geo_transform = affine_transform, projection = cog_proj, dataType = gdal.GDT_UInt16, driver = gdal.GetDriverByName("GTiff")):
+      ds = driver.Create(str(path), array.shape[1], array.shape[0], array.shape[2], dataType, ['COMPRESS=DEFLATE', 'BIGTIFF=YES'])
+      ds.SetGeoTransform(geo_transform)
+      ds.SetProjection(projection.ExportToWkt())
+      for i in range(1, array.shape[2]):
+        ds.GetRasterBand(i).WriteArray(array[::, ::, i])
+      ds.FlushCache()
 
-  upload_paths = [
-    (swir_path, s3_uri_swir),
-    (vnir_path, s3_uri_vnir),
-    (swir_error_path, s3_uri_swir_error),
-    (vnir_error_path, s3_uri_vnir_error)
-  ]
-
-  if(not skip_upload):
-    for local_path, s3_uri in upload_paths:
-      logger.info("Uploading {} to {}".format(local_path, s3_uri))
-      s3.upload_file(
-        str(local_path),
-        args.s3_bucket,
-        str(key(local_path)),
-        Callback=ProgressPercentage(str(local_path)),
-        Config=TransferConfig(multipart_threshold=1 * GB),
+      cog_path = str(Path(path.parent, f'cog_{path.name}'))
+      
+      warp_opts = gdal.WarpOptions(
+        callback=warp_callback,
+        warpOptions=["NUM_THREADS=ALL_CPUS"],
+        creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE", "BIGTIFF=YES"],
+        multithread=True,
+        warpMemoryLimit=warpMemoryLimit,
+        format="COG"
       )
+      logger.info(f'Converting {str(path)} to {cog_path}...')
+      with timing("GDAL Warp"):
+        gdal.Warp(str(cog_path), str(path), options=warp_opts)
 
-  image = np.dstack([np.swapaxes(swir,1,2), np.swapaxes(vnir,1,2)]) / 65535
+      return cog_path
 
-  swir_λs = h5.attrs['List_Cw_Swir']
-  swir_flags = h5.attrs['List_Cw_Swir_Flags']
-  swir_freqs = zip(swir_λs[swir_flags==1], map(lambda x: x[0], filter(lambda x: x[1]==1, enumerate(swir_flags))))
-  swir_freqs_sorted = sorted([(b, f * 0.001) for f, b in swir_freqs], key=lambda x: x[0])
+    swir_path = create_geotiff(Path(temp_dir, "SWIR_Cube.tiff"), swirT)
+    vnir_path = create_geotiff(Path(temp_dir, "VNIR_Cube.tiff"), vnirT)
 
-  vnir_λs = h5.attrs['List_Cw_Vnir']
-  vnir_flags = h5.attrs['List_Cw_Vnir_Flags']
-  vnir_freqs = zip(vnir_λs[vnir_flags==1], map(lambda x: x[0], filter(lambda x: x[1]==1, enumerate(vnir_flags))))
-  vnir_freqs_sorted = sorted([(b, f * 0.001) for f, b in vnir_freqs], key=lambda x: x[0])
+    swir_error_path = create_geotiff(Path(temp_dir, "SWIR_PIXEL_L2_ERR_MATRIX.tiff"), swir_errorT)
+    vnir_error_path = create_geotiff(Path(temp_dir, "VNIR_PIXEL_L2_ERR_MATRIX.tiff"), vnir_errorT)
 
-  λs = np.hstack([swir_λs, vnir_λs])
-  flags = np.hstack([swir_flags, vnir_flags])
-  band_freqs = sorted(zip(λs[flags==1], map(lambda x: x[0], filter(lambda x: x[1]==1, enumerate(flags)))))
-  sorted_freqs = sorted([(b, f * 0.001) for f, b in band_freqs], key=lambda x: x[0])
+    def key(name): 
+      return f'prisma-scene-cogs/{product_name}{name}'
 
-  eo_swir_bands = [{'name': str(b), 'center_wavelength': float(f)} for (b, f) in swir_freqs_sorted]
-  eo_vnir_bands = [{'name': str(b), 'center_wavelength': float(f)} for (b, f) in vnir_freqs_sorted]
+    # prep all upload links
+    s3_uri_swir = f's3://{args.s3_bucket}/{key(swir_path)}'
+    s3_uri_vnir = f's3://{args.s3_bucket}/{key(vnir_path)}'
+    s3_uri_swir_error = f's3://{args.s3_bucket}/{key(swir_error_path)}'
+    s3_uri_vnir_error = f's3://{args.s3_bucket}/{key(vnir_error_path)}'
 
-  start_datetime = str(h5.attrs['Product_StartTime'].decode())
-  end_datetime = str(h5.attrs['Product_StopTime'].decode())
+    upload_paths = [
+      (swir_path, s3_uri_swir),
+      (vnir_path, s3_uri_vnir),
+      (swir_error_path, s3_uri_swir_error),
+      (vnir_error_path, s3_uri_vnir_error)
+    ]
 
-  wavelength_min = float(min(sorted_freqs, key = lambda e: e[1])[1])
-  wavelength_max = float(max(sorted_freqs, key = lambda e: e[1])[1])
+    if(not args.skip_upload):
+      for local_path, s3_uri in upload_paths:
+        logger.info(f'Uploading {local_path} to {s3_uri}')
+        s3.upload_file(
+          str(local_path),
+          args.s3_bucket,
+          str(key(local_path)),
+          Callback=ProgressPercentage(str(local_path)),
+          Config=TransferConfig(multipart_threshold=1 * GB),
+        )
 
-  cog_item_id = f'{PRISMA_COG_COLLECTION.id}_{product_name}'
+    image = np.dstack([np.swapaxes(swir,1,2), np.swapaxes(vnir,1,2)]) / 65535
 
-  cog_item = pystac.Item(
-    id=cog_item_id,
-    stac_extensions=['eo', 'proj', 'hsi'],
-    geometry=shapely.geometry.mapping(shapely.geometry.box(*extent_ll)),
-    datetime=dateutil.parser.isoparse(start_datetime),
-    bbox=list(map(lambda c: float(c), extent_ll)),
-    collection=PRISMA_COG_COLLECTION.id,
-    properties = {
-      'start_datetime': start_datetime,
-      'end_datetime': end_datetime,
-      'hsi:wavelength_min': wavelength_min,
-      'hsi:wavelength_max': wavelength_max,
-      'proj:epsg': int(cog_proj.GetAttrValue('AUTHORITY', 1))
-    }
-  )
-  # add item assets
-  cog_item.add_asset(
-    key='SWIR_Cube',
-    asset=pystac.Asset(
-      href=s3_uri_swir,
-      media_type=pystac.MediaType.GEOTIFF,
+    swir_λs = h5.attrs['List_Cw_Swir']
+    swir_flags = h5.attrs['List_Cw_Swir_Flags']
+    swir_freqs = zip(swir_λs[swir_flags==1], map(lambda x: x[0], filter(lambda x: x[1]==1, enumerate(swir_flags))))
+    swir_freqs_sorted = sorted([(b, f * 0.001) for f, b in swir_freqs], key=lambda x: x[0])
+
+    vnir_λs = h5.attrs['List_Cw_Vnir']
+    vnir_flags = h5.attrs['List_Cw_Vnir_Flags']
+    vnir_freqs = zip(vnir_λs[vnir_flags==1], map(lambda x: x[0], filter(lambda x: x[1]==1, enumerate(vnir_flags))))
+    vnir_freqs_sorted = sorted([(b, f * 0.001) for f, b in vnir_freqs], key=lambda x: x[0])
+
+    λs = np.hstack([swir_λs, vnir_λs])
+    flags = np.hstack([swir_flags, vnir_flags])
+    band_freqs = sorted(zip(λs[flags==1], map(lambda x: x[0], filter(lambda x: x[1]==1, enumerate(flags)))))
+    sorted_freqs = sorted([(b, f * 0.001) for f, b in band_freqs], key=lambda x: x[0])
+
+    eo_swir_bands = [{'name': str(b), 'center_wavelength': float(f)} for (b, f) in swir_freqs_sorted]
+    eo_vnir_bands = [{'name': str(b), 'center_wavelength': float(f)} for (b, f) in vnir_freqs_sorted]
+
+    start_datetime = str(h5.attrs['Product_StartTime'].decode())
+    end_datetime = str(h5.attrs['Product_StopTime'].decode())
+
+    wavelength_min = float(min(sorted_freqs, key = lambda e: e[1])[1])
+    wavelength_max = float(max(sorted_freqs, key = lambda e: e[1])[1])
+
+    cog_item_id = f'{PRISMA_COG_COLLECTION.id}_{product_name}'
+
+    cog_item = pystac.Item(
+      id=cog_item_id,
+      stac_extensions=['eo', 'proj', 'hsi'],
+      geometry=shapely.geometry.mapping(shapely.geometry.box(*extent_ll)),
+      datetime=dateutil.parser.isoparse(start_datetime),
+      bbox=list(map(lambda c: float(c), extent_ll)),
+      collection=PRISMA_COG_COLLECTION.id,
       properties = {
-        'eo:bands': eo_swir_bands
+        'start_datetime': start_datetime,
+        'end_datetime': end_datetime,
+        'hsi:wavelength_min': wavelength_min,
+        'hsi:wavelength_max': wavelength_max,
+        'proj:epsg': int(cog_proj.GetAttrValue('AUTHORITY', 1))
       }
     )
-  )
-  cog_item.add_asset(
-    key='VNIR_Cube',
-    asset=pystac.Asset(
-      href=s3_uri_vnir,
-      media_type=pystac.MediaType.GEOTIFF,
-      properties = {
-        'eo:bands': eo_vnir_bands
-      }
+    # add item assets
+    cog_item.add_asset(
+      key='SWIR_Cube',
+      asset=pystac.Asset(
+        href=s3_uri_swir,
+        media_type=pystac.MediaType.GEOTIFF,
+        properties = {
+          'eo:bands': eo_swir_bands
+        }
+      )
     )
-  )
-  cog_item.add_asset(
-    key='SWIR_PIXEL_L2_ERR_MATRIX',
-    asset=pystac.Asset(
-      href=s3_uri_swir_error,
-      media_type=pystac.MediaType.GEOTIFF,
-      properties = {
-        'eo:bands': eo_swir_bands
-      }
+    cog_item.add_asset(
+      key='VNIR_Cube',
+      asset=pystac.Asset(
+        href=s3_uri_vnir,
+        media_type=pystac.MediaType.GEOTIFF,
+        properties = {
+          'eo:bands': eo_vnir_bands
+        }
+      )
     )
-  )
-  cog_item.add_asset(
-    key='VNIR_PIXEL_L2_ERR_MATRIX',
-    asset=pystac.Asset(
-      href=s3_uri_vnir_error,
-      media_type=pystac.MediaType.GEOTIFF,
-      properties = {
-        'eo:bands': eo_vnir_bands
-      }
+    cog_item.add_asset(
+      key='SWIR_PIXEL_L2_ERR_MATRIX',
+      asset=pystac.Asset(
+        href=s3_uri_swir_error,
+        media_type=pystac.MediaType.GEOTIFF,
+        properties = {
+          'eo:bands': eo_swir_bands
+        }
+      )
     )
-  )
+    cog_item.add_asset(
+      key='VNIR_PIXEL_L2_ERR_MATRIX',
+      asset=pystac.Asset(
+        href=s3_uri_vnir_error,
+        media_type=pystac.MediaType.GEOTIFF,
+        properties = {
+          'eo:bands': eo_vnir_bands
+        }
+      )
+    )
+  finally:
+    if not args.keep_temp_dir:
+      logger.info(f'Removing temp dir: {temp_dir}')
+      shutil.rmtree(temp_dir, ignore_errors=True)
 
   # Create COG Collection if it doesn't exist
   if not stac_client.has_collection(PRISMA_COG_COLLECTION.id):
     stac_client.post_collection(PRISMA_COG_COLLECTION)
 
   # Add COG Item to AVIRIS L2 STAC Collection
-  logger.info("POST Item {} to {}".format(cog_item.id, args.stac_api_uri))
+  logger.info(f'POST Item {cog_item.id} to {args.stac_api_uri}')
   item_data = stac_client.post_collection_item(PRISMA_COG_COLLECTION.id, cog_item)
   if item_data.get('id', None):
-    logger.info("Success: {}".format(item_data['id']))
-    # activation_output(item_data['id'])
+    logger.info(f"Success: {item_data['id']}")
+    activation_output(item_data['id'])
   else:
-    logger.error("Failure: {}".format(item_data))
+    logger.error(f'Failure: {item_data}')
     return -1
 
 if __name__ == "__main__":

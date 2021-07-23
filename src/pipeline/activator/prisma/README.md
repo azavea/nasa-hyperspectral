@@ -25,14 +25,9 @@ A common set of arguments to use in development, to re-use the same temp dir and
 
 ```shell
 docker compose run --rm activator-prisma \
-  --prisma-path /data/prisma/PRS_L2D_STD_20200825024857_20200825024901_0001.he5 \
-  --temp-dir /data \
-  --keep-temp-dir 
-
-docker compose run --rm activator-prisma \
   --prisma-uri s3://asi-prisma/L2D/PRS_L2D_STD_20200825024857_20200825024901_0001.zip \
   --temp-dir /data \
-  --keep-temp-dir 
+  --keep-temp-dir
 ```
 
 Alternatively, activator can be launched via the following command:
