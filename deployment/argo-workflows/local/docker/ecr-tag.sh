@@ -37,6 +37,12 @@ amazon_ecr_login
 docker tag "activator-aviris-l2:${GIT_COMMIT}" "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
 docker tag "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}" "${ECR_REGISTRY}/activator-aviris-l2:latest"
 
+echo "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
+echo "${ECR_REGISTRY}/activator-aviris-l2:latest"
+
 # Tag the COG Clip module.
 docker tag "cog-clip:${GIT_COMMIT}" "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
 docker tag "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}" "${ECR_REGISTRY}/cog-clip:latest"
+
+echo "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
+echo "${ECR_REGISTRY}/cog-clip:latest"
