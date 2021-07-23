@@ -301,14 +301,14 @@ def main():
     s3_uri_vnir_error = f's3://{args.s3_bucket}/{key(vnir_error_path)}'
 
     upload_paths = [
-      (swir_path, s3_uri_swir),
-      (vnir_path, s3_uri_vnir),
-      (swir_error_path, s3_uri_swir_error),
-      (vnir_error_path, s3_uri_vnir_error)
+      ('SWIR_Cube', swir_path, s3_uri_swir),
+      ('VNIR_Cube', vnir_path, s3_uri_vnir),
+      ('SWIR_PIXEL_L2_ERR_MATRIX', swir_error_path, s3_uri_swir_error),
+      ('VNIR_PIXEL_L2_ERR_MATRIX', vnir_error_path, s3_uri_vnir_error)
     ]
 
     if(not args.skip_upload):
-      for local_path, s3_uri in upload_paths:
+      for _, local_path, s3_uri in upload_paths:
         logger.info(f'Uploading {local_path} to {s3_uri}')
         s3.upload_file(
           str(local_path),
@@ -317,8 +317,6 @@ def main():
           Callback=ProgressPercentage(str(local_path)),
           Config=TransferConfig(multipart_threshold=1 * GB),
         )
-
-    image = np.dstack([np.swapaxes(swir,1,2), np.swapaxes(vnir,1,2)]) / 65535
 
     swir_λs = h5.attrs['List_Cw_Swir']
     swir_flags = h5.attrs['List_Cw_Swir_Flags']
@@ -361,47 +359,20 @@ def main():
         'proj:epsg': int(cog_proj.GetAttrValue('AUTHORITY', 1))
       }
     )
+
     # add item assets
-    cog_item.add_asset(
-      key='SWIR_Cube',
-      asset=pystac.Asset(
-        href=s3_uri_swir,
-        media_type=pystac.MediaType.GEOTIFF,
-        properties = {
-          'eo:bands': eo_swir_bands
-        }
+    for eo_bands, (key, _, uri) in zip([eo_swir_bands, eo_swir_bands, eo_swir_bands, eo_swir_bands], upload_paths):
+      cog_item.add_asset(
+        key=key,
+        asset=pystac.Asset(
+          href=uri,
+          media_type=pystac.MediaType.GEOTIFF,
+          properties = {
+            'eo:bands': eo_bands
+          }
+        )
       )
-    )
-    cog_item.add_asset(
-      key='VNIR_Cube',
-      asset=pystac.Asset(
-        href=s3_uri_vnir,
-        media_type=pystac.MediaType.GEOTIFF,
-        properties = {
-          'eo:bands': eo_vnir_bands
-        }
-      )
-    )
-    cog_item.add_asset(
-      key='SWIR_PIXEL_L2_ERR_MATRIX',
-      asset=pystac.Asset(
-        href=s3_uri_swir_error,
-        media_type=pystac.MediaType.GEOTIFF,
-        properties = {
-          'eo:bands': eo_swir_bands
-        }
-      )
-    )
-    cog_item.add_asset(
-      key='VNIR_PIXEL_L2_ERR_MATRIX',
-      asset=pystac.Asset(
-        href=s3_uri_vnir_error,
-        media_type=pystac.MediaType.GEOTIFF,
-        properties = {
-          'eo:bands': eo_vnir_bands
-        }
-      )
-    )
+
   finally:
     if not args.keep_temp_dir:
       logger.info(f'Removing temp dir: {temp_dir}')
