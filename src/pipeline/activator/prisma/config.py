@@ -5,6 +5,7 @@ import boto3
 
 logger = logging.getLogger(__name__)
 
+
 class CliConfig:
     PRISMA_ARCHIVE_COLLECTION_ID = "prisma"
 
@@ -14,10 +15,11 @@ class CliConfig:
 
         self._type = 'activator-prisma'
 
-        def from_json(json_str): 
+        def from_json(json_str):
             args_json = json.loads(json_str)
             self.prisma_stac_id = args_json['prismaStacId']
-            self.prisma_collection_id = args_json.get('prismaCollectionId', self.AVIRIS_ARCHIVE_COLLECTION_ID)
+            self.prisma_collection_id = args_json.get(
+                'prismaCollectionId', self.AVIRIS_ARCHIVE_COLLECTION_ID)
             self.prisma_path = args_json.get('prismaPath', None)
             self.prisma_uri = args_json.get('prismaUri', None)
             self.stac_api_uri = args_json.get('stacApiUri', 'http://franklin:9090')
@@ -41,7 +43,7 @@ class CliConfig:
                     args_json = file.read().replace('\n', '')
                     from_json(args_json)
 
-        elif args.pipeline: 
+        elif args.pipeline:
             args_json = args.pipeline
             from_json(args_json)
         else:
@@ -56,4 +58,3 @@ class CliConfig:
             self.prisma_path = args.prisma_path
             self.prisma_uri = args.prisma_uri
             self.skip_upload = args.skip_upload
-    

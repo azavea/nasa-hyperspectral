@@ -1,6 +1,5 @@
 import argparse
 from datetime import datetime, timezone
-import ftplib
 from math import floor
 import os
 from pathlib import Path
@@ -27,12 +26,22 @@ from time import sleep
 
 # set a configurable logging level for the entire app
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
-logging.basicConfig(format='[%(relativeCreated)d|%(levelname)s|%(name)s|%(lineno)d] %(message)s', level=LOG_LEVEL)
+logging.basicConfig(
+    format='[%(relativeCreated)d|%(levelname)s|%(name)s|%(lineno)d] %(message)s', level=LOG_LEVEL)
 logger = logging.getLogger(__name__)
 
 GB = 1024 ** 3
 
 AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-classic"
+
+COG_COLLECTION_EXTENSIONS = [
+    'https://stac-extensions.github.io/eo/v1.0.0/schema.json',
+    'https://github.com/azavea/nasa-hyperspectral/tree/master/docs/stac/hsi/json-schema/schema.json'
+]
+
+COG_ITEM_EXTENSIONS = COG_COLLECTION_EXTENSIONS + \
+    ['https://stac-extensions.github.io/projection/v1.0.0/schema.json']
+
 AVIRIS_L2_COG_COLLECTION = pystac.Collection(
     "aviris-l2-cogs",
     "AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
@@ -47,7 +56,7 @@ AVIRIS_L2_COG_COLLECTION = pystac.Collection(
             ]
         ),
     ),
-    stac_extensions = ['eo', 'hsi']
+    stac_extensions=COG_COLLECTION_EXTENSIONS
 )
 AVIRIS_L2_COG_COLLECTION.links = []
 AVIRIS_L2_COG_COLLECTION.properties = {}
@@ -283,29 +292,23 @@ AVIRIS_L2_BANDS_FREQS_NANO = {
 }
 
 # sorted by bands
-AVIRIS_L2_BANDS_FREQS = [(b, f * 0.001) for b, f in sorted(AVIRIS_L2_BANDS_FREQS_NANO.items(), key = lambda x: x[0])]
+AVIRIS_L2_BANDS_FREQS = [(b, f * 0.001)
+                         for b, f in sorted(AVIRIS_L2_BANDS_FREQS_NANO.items(), key=lambda x: x[0])]
 # properties."hsi:wavelengths" = [],
 AVIRIS_L2_FREQS = [f for b, f in AVIRIS_L2_BANDS_FREQS]
 
-AVIRIS_L2_COG_COLLECTION.properties['eo:bands'] = [{'name': b, 'center_wavelength': f} for (b, f) in AVIRIS_L2_BANDS_FREQS]
+AVIRIS_L2_COG_COLLECTION.properties['eo:bands'] = [
+    {'name': b, 'center_wavelength': f} for (b, f) in AVIRIS_L2_BANDS_FREQS]
 AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_min'] = min(AVIRIS_L2_FREQS)
 AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_max'] = max(AVIRIS_L2_FREQS)
 
-# TODO: remove ftp_to_https after the STAC Catalog update
-def ftp_to_https(uri: str) -> str:
-    if uri.startswith('ftp'):
-        gzip_ftp_url = urlparse(uri)
-        username_password, ftp_hostname = gzip_ftp_url.netloc.split("@")
-        return f'https://{ftp_hostname}/avcl{gzip_ftp_url.path}'
-    else:
-        return uri
-
-def activation_output(item_id: str): 
+def activation_output(item_id: str):
     with open('/tmp/activator-output.json', 'w') as outfile:
-      json.dump({
-        'sourceCollectionId': AVIRIS_L2_COG_COLLECTION.id,
-        'sourceItemId': item_id
-      }, outfile)
+        json.dump({
+            'sourceCollectionId': AVIRIS_L2_COG_COLLECTION.id,
+            'sourceItemId': item_id
+        }, outfile)
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -358,7 +361,7 @@ def main():
         help="If provided, script will not process any COG > 200 MB to keep processing times reasonable. Useful for debugging.",
     )
     parser.add_argument(
-        "--force", 
+        "--force",
         action="store_true",
         help="If provided, force reingest StacItem even though this it is already present in the catalog.",
     )
@@ -381,10 +384,10 @@ def main():
     item = stac_client.get_collection_item(
         args.aviris_collection_id, args.aviris_stac_id
     )
-    l2_asset = item.assets.get("ftp_refl", None)
+    l2_asset = item.assets.get("https_refl", None)
     if l2_asset is None:
         raise ValueError(
-            "STAC Item {} from {} has no asset 'ftp_refl'!".format(
+            "STAC Item {} from {} has no asset 'https_refl'!".format(
                 args.aviris_stac_id, args.stac_api_uri
             )
         )
@@ -407,7 +410,7 @@ def main():
         item.bbox,
         item.datetime,
         item.properties,
-        stac_extensions = ['eo', 'proj', 'hsi'],
+        stac_extensions=COG_ITEM_EXTENSIONS,
         collection=AVIRIS_L2_COG_COLLECTION.id,
     )
 
@@ -434,14 +437,11 @@ def main():
         if local_archive.exists():
             logger.info("Using existing archive: {}".format(local_archive))
         else:
-            # Historically AVIRIS distributed scenes via FTP.
-            # However, it's not the case anymore.
-            # This is a temporary function that converts old AVIRIS FTP links into HTTPs links
-            # TODO: remove ftp_to_https after the STAC Catalog update
             logger.info(f'Downloading archive {local_archive}...')
-            gzip_https_url = ftp_to_https(l2_asset.href)
+            gzip_https_url = l2_asset.href
             with DownloadProgressBar(unit='B', unit_scale=True, miniters=1, desc=gzip_https_url.split('/')[-1]) as t:
-                urllib.request.urlretrieve(gzip_https_url, filename=local_archive, reporthook=t.update_to)
+                urllib.request.urlretrieve(
+                    gzip_https_url, filename=local_archive, reporthook=t.update_to)
 
         # Retrieve file names from archive and extract if not already extracted to temp_dir
         extract_path = Path(temp_dir, scene_name)
@@ -551,6 +551,7 @@ def main():
     else:
         logger.error("Failure: {}".format(item_data))
         return -1
+
 
 if __name__ == "__main__":
     main()

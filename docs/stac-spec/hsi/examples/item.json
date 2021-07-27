@@ -1,0 +1,2836 @@
+{
+  "id": "prisma-cogs_PRS_L2D_STD_20200825024857_20200825024901_0001",
+  "stac_version": "1.0.0",
+  "stac_extensions": [
+    "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
+    "https://stac-extensions.github.io/projection/v1.0.0/schema.json",
+    "https://github.com/azavea/nasa-hyperspectral/tree/master/docs/stac/hsi/json-schema/schema.json"
+  ],
+  "type": "Feature",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          115.2136459350586,
+          -8.346113204956055
+        ],
+        [
+          115.2136459350586,
+          -8.025066375732422
+        ],
+        [
+          114.88735961914062,
+          -8.025066375732422
+        ],
+        [
+          114.88735961914062,
+          -8.346113204956055
+        ],
+        [
+          115.2136459350586,
+          -8.346113204956055
+        ]
+      ]
+    ]
+  },
+  "bbox": [
+    114.88735961914062,
+    -8.346113204956055,
+    115.2136459350586,
+    -8.025066375732422
+  ],
+  "links": [
+    {
+      "rel": "collection",
+      "href": "https://franklin.nasa-hsi.azavea.com/collections/prisma-cogs",
+      "type": "application/json",
+      "title": "Parent Collection"
+    },
+    {
+      "rel": "parent",
+      "href": "https://franklin.nasa-hsi.azavea.com/collections/prisma-cogs",
+      "type": "application/json",
+      "title": "Parent Collection"
+    },
+    {
+      "href": "https://franklin.nasa-hsi.azavea.com",
+      "rel": "root",
+      "type": "application/json",
+      "title": "Welcome to Franklin"
+    }
+  ],
+  "assets": {
+    "SWIR_Cube": {
+      "eo:bands": [
+        {
+          "name": "0",
+          "center_wavelength": 2.4968740234375
+        },
+        {
+          "name": "1",
+          "center_wavelength": 2.490028076171875
+        },
+        {
+          "name": "2",
+          "center_wavelength": 2.483590576171875
+        },
+        {
+          "name": "3",
+          "center_wavelength": 2.476791259765625
+        },
+        {
+          "name": "4",
+          "center_wavelength": 2.46941552734375
+        },
+        {
+          "name": "5",
+          "center_wavelength": 2.46281298828125
+        },
+        {
+          "name": "6",
+          "center_wavelength": 2.45632958984375
+        },
+        {
+          "name": "7",
+          "center_wavelength": 2.4489235839843753
+        },
+        {
+          "name": "8",
+          "center_wavelength": 2.4421877441406252
+        },
+        {
+          "name": "9",
+          "center_wavelength": 2.435326904296875
+        },
+        {
+          "name": "10",
+          "center_wavelength": 2.428400146484375
+        },
+        {
+          "name": "11",
+          "center_wavelength": 2.4209873046875
+        },
+        {
+          "name": "12",
+          "center_wavelength": 2.414156494140625
+        },
+        {
+          "name": "13",
+          "center_wavelength": 2.407338623046875
+        },
+        {
+          "name": "14",
+          "center_wavelength": 2.3998010253906252
+        },
+        {
+          "name": "15",
+          "center_wavelength": 2.392841796875
+        },
+        {
+          "name": "16",
+          "center_wavelength": 2.38580859375
+        },
+        {
+          "name": "17",
+          "center_wavelength": 2.378509521484375
+        },
+        {
+          "name": "18",
+          "center_wavelength": 2.37133642578125
+        },
+        {
+          "name": "19",
+          "center_wavelength": 2.364370849609375
+        },
+        {
+          "name": "20",
+          "center_wavelength": 2.3570224609375
+        },
+        {
+          "name": "21",
+          "center_wavelength": 2.3495751953125
+        },
+        {
+          "name": "22",
+          "center_wavelength": 2.3425888671875
+        },
+        {
+          "name": "23",
+          "center_wavelength": 2.335236083984375
+        },
+        {
+          "name": "24",
+          "center_wavelength": 2.32760693359375
+        },
+        {
+          "name": "25",
+          "center_wavelength": 2.32064013671875
+        },
+        {
+          "name": "26",
+          "center_wavelength": 2.312912109375
+        },
+        {
+          "name": "27",
+          "center_wavelength": 2.305502197265625
+        },
+        {
+          "name": "28",
+          "center_wavelength": 2.2983349609375
+        },
+        {
+          "name": "29",
+          "center_wavelength": 2.290572998046875
+        },
+        {
+          "name": "30",
+          "center_wavelength": 2.283275146484375
+        },
+        {
+          "name": "31",
+          "center_wavelength": 2.27576953125
+        },
+        {
+          "name": "32",
+          "center_wavelength": 2.268042236328125
+        },
+        {
+          "name": "33",
+          "center_wavelength": 2.2606279296875003
+        },
+        {
+          "name": "34",
+          "center_wavelength": 2.252848388671875
+        },
+        {
+          "name": "35",
+          "center_wavelength": 2.245213623046875
+        },
+        {
+          "name": "36",
+          "center_wavelength": 2.237647705078125
+        },
+        {
+          "name": "37",
+          "center_wavelength": 2.229753173828125
+        },
+        {
+          "name": "38",
+          "center_wavelength": 2.22219287109375
+        },
+        {
+          "name": "39",
+          "center_wavelength": 2.214341552734375
+        },
+        {
+          "name": "40",
+          "center_wavelength": 2.20659765625
+        },
+        {
+          "name": "41",
+          "center_wavelength": 2.198886962890625
+        },
+        {
+          "name": "42",
+          "center_wavelength": 2.19083544921875
+        },
+        {
+          "name": "43",
+          "center_wavelength": 2.183183349609375
+        },
+        {
+          "name": "44",
+          "center_wavelength": 2.1750712890625
+        },
+        {
+          "name": "45",
+          "center_wavelength": 2.16725244140625
+        },
+        {
+          "name": "46",
+          "center_wavelength": 2.159287841796875
+        },
+        {
+          "name": "47",
+          "center_wavelength": 2.151125732421875
+        },
+        {
+          "name": "48",
+          "center_wavelength": 2.143225830078125
+        },
+        {
+          "name": "49",
+          "center_wavelength": 2.1352353515625
+        },
+        {
+          "name": "50",
+          "center_wavelength": 2.127093994140625
+        },
+        {
+          "name": "51",
+          "center_wavelength": 2.118955322265625
+        },
+        {
+          "name": "52",
+          "center_wavelength": 2.110816650390625
+        },
+        {
+          "name": "53",
+          "center_wavelength": 2.102548095703125
+        },
+        {
+          "name": "54",
+          "center_wavelength": 2.09440771484375
+        },
+        {
+          "name": "55",
+          "center_wavelength": 2.086100830078125
+        },
+        {
+          "name": "56",
+          "center_wavelength": 2.077751708984375
+        },
+        {
+          "name": "57",
+          "center_wavelength": 2.069538818359375
+        },
+        {
+          "name": "58",
+          "center_wavelength": 2.061137939453125
+        },
+        {
+          "name": "59",
+          "center_wavelength": 2.0527573242187502
+        },
+        {
+          "name": "60",
+          "center_wavelength": 2.04442236328125
+        },
+        {
+          "name": "61",
+          "center_wavelength": 2.0359952392578125
+        },
+        {
+          "name": "62",
+          "center_wavelength": 2.0274759521484373
+        },
+        {
+          "name": "63",
+          "center_wavelength": 2.019049560546875
+        },
+        {
+          "name": "64",
+          "center_wavelength": 2.0104102783203124
+        },
+        {
+          "name": "65",
+          "center_wavelength": 2.0018427734375
+        },
+        {
+          "name": "66",
+          "center_wavelength": 1.99328857421875
+        },
+        {
+          "name": "67",
+          "center_wavelength": 1.9845478515625001
+        },
+        {
+          "name": "68",
+          "center_wavelength": 1.9757813720703126
+        },
+        {
+          "name": "69",
+          "center_wavelength": 1.9670589599609376
+        },
+        {
+          "name": "70",
+          "center_wavelength": 1.95837060546875
+        },
+        {
+          "name": "71",
+          "center_wavelength": 1.9496390380859376
+        },
+        {
+          "name": "72",
+          "center_wavelength": 1.94083056640625
+        },
+        {
+          "name": "73",
+          "center_wavelength": 1.9319915771484375
+        },
+        {
+          "name": "74",
+          "center_wavelength": 1.923089111328125
+        },
+        {
+          "name": "75",
+          "center_wavelength": 1.9140478515625001
+        },
+        {
+          "name": "76",
+          "center_wavelength": 1.904628173828125
+        },
+        {
+          "name": "77",
+          "center_wavelength": 1.895846435546875
+        },
+        {
+          "name": "78",
+          "center_wavelength": 1.8868109130859376
+        },
+        {
+          "name": "79",
+          "center_wavelength": 1.8784632568359376
+        },
+        {
+          "name": "80",
+          "center_wavelength": 1.86801806640625
+        },
+        {
+          "name": "81",
+          "center_wavelength": 1.859297607421875
+        },
+        {
+          "name": "82",
+          "center_wavelength": 1.8502786865234375
+        },
+        {
+          "name": "83",
+          "center_wavelength": 1.8410494384765625
+        },
+        {
+          "name": "84",
+          "center_wavelength": 1.8317412109375
+        },
+        {
+          "name": "85",
+          "center_wavelength": 1.8221488037109375
+        },
+        {
+          "name": "86",
+          "center_wavelength": 1.812820556640625
+        },
+        {
+          "name": "87",
+          "center_wavelength": 1.803365966796875
+        },
+        {
+          "name": "88",
+          "center_wavelength": 1.7936890869140625
+        },
+        {
+          "name": "89",
+          "center_wavelength": 1.7844418945312501
+        },
+        {
+          "name": "90",
+          "center_wavelength": 1.7749093017578126
+        },
+        {
+          "name": "91",
+          "center_wavelength": 1.765253173828125
+        },
+        {
+          "name": "92",
+          "center_wavelength": 1.7555489501953125
+        },
+        {
+          "name": "93",
+          "center_wavelength": 1.745929443359375
+        },
+        {
+          "name": "94",
+          "center_wavelength": 1.736255615234375
+        },
+        {
+          "name": "95",
+          "center_wavelength": 1.7264375
+        },
+        {
+          "name": "96",
+          "center_wavelength": 1.7165975341796875
+        },
+        {
+          "name": "97",
+          "center_wavelength": 1.7068074951171874
+        },
+        {
+          "name": "98",
+          "center_wavelength": 1.69700927734375
+        },
+        {
+          "name": "99",
+          "center_wavelength": 1.6871717529296875
+        },
+        {
+          "name": "100",
+          "center_wavelength": 1.6771246337890626
+        },
+        {
+          "name": "101",
+          "center_wavelength": 1.666966552734375
+        },
+        {
+          "name": "102",
+          "center_wavelength": 1.6567723388671876
+        },
+        {
+          "name": "103",
+          "center_wavelength": 1.6469727783203125
+        },
+        {
+          "name": "104",
+          "center_wavelength": 1.6368546142578124
+        },
+        {
+          "name": "105",
+          "center_wavelength": 1.62678125
+        },
+        {
+          "name": "106",
+          "center_wavelength": 1.616583984375
+        },
+        {
+          "name": "107",
+          "center_wavelength": 1.6062432861328126
+        },
+        {
+          "name": "108",
+          "center_wavelength": 1.5959794921875001
+        },
+        {
+          "name": "109",
+          "center_wavelength": 1.5856314697265625
+        },
+        {
+          "name": "110",
+          "center_wavelength": 1.57539306640625
+        },
+        {
+          "name": "111",
+          "center_wavelength": 1.5651214599609375
+        },
+        {
+          "name": "112",
+          "center_wavelength": 1.554580078125
+        },
+        {
+          "name": "113",
+          "center_wavelength": 1.5440301513671875
+        },
+        {
+          "name": "114",
+          "center_wavelength": 1.5335644531250001
+        },
+        {
+          "name": "115",
+          "center_wavelength": 1.523007080078125
+        },
+        {
+          "name": "116",
+          "center_wavelength": 1.5124136962890626
+        },
+        {
+          "name": "117",
+          "center_wavelength": 1.5017792968750001
+        },
+        {
+          "name": "118",
+          "center_wavelength": 1.49119775390625
+        },
+        {
+          "name": "119",
+          "center_wavelength": 1.4806201171875
+        },
+        {
+          "name": "120",
+          "center_wavelength": 1.4697003173828125
+        },
+        {
+          "name": "121",
+          "center_wavelength": 1.4590675048828126
+        },
+        {
+          "name": "122",
+          "center_wavelength": 1.4489208984375
+        },
+        {
+          "name": "123",
+          "center_wavelength": 1.438169921875
+        },
+        {
+          "name": "124",
+          "center_wavelength": 1.4271055908203125
+        },
+        {
+          "name": "125",
+          "center_wavelength": 1.416310302734375
+        },
+        {
+          "name": "126",
+          "center_wavelength": 1.4053883056640626
+        },
+        {
+          "name": "127",
+          "center_wavelength": 1.394524658203125
+        },
+        {
+          "name": "128",
+          "center_wavelength": 1.38300830078125
+        },
+        {
+          "name": "129",
+          "center_wavelength": 1.372718994140625
+        },
+        {
+          "name": "130",
+          "center_wavelength": 1.3608426513671876
+        },
+        {
+          "name": "131",
+          "center_wavelength": 1.3495989990234376
+        },
+        {
+          "name": "132",
+          "center_wavelength": 1.3389462890625001
+        },
+        {
+          "name": "133",
+          "center_wavelength": 1.3280897216796874
+        },
+        {
+          "name": "134",
+          "center_wavelength": 1.3170177001953125
+        },
+        {
+          "name": "135",
+          "center_wavelength": 1.3060472412109376
+        },
+        {
+          "name": "136",
+          "center_wavelength": 1.2951966552734375
+        },
+        {
+          "name": "137",
+          "center_wavelength": 1.2842795410156251
+        },
+        {
+          "name": "138",
+          "center_wavelength": 1.273306396484375
+        },
+        {
+          "name": "139",
+          "center_wavelength": 1.2623343505859375
+        },
+        {
+          "name": "140",
+          "center_wavelength": 1.2507955322265625
+        },
+        {
+          "name": "141",
+          "center_wavelength": 1.2400567626953125
+        },
+        {
+          "name": "142",
+          "center_wavelength": 1.2289989013671876
+        },
+        {
+          "name": "143",
+          "center_wavelength": 1.2176959228515625
+        },
+        {
+          "name": "144",
+          "center_wavelength": 1.2071148681640624
+        },
+        {
+          "name": "145",
+          "center_wavelength": 1.1961748046875
+        },
+        {
+          "name": "146",
+          "center_wavelength": 1.18539794921875
+        },
+        {
+          "name": "147",
+          "center_wavelength": 1.1745257568359375
+        },
+        {
+          "name": "148",
+          "center_wavelength": 1.163484130859375
+        },
+        {
+          "name": "149",
+          "center_wavelength": 1.1524715576171876
+        },
+        {
+          "name": "150",
+          "center_wavelength": 1.1418736572265624
+        },
+        {
+          "name": "151",
+          "center_wavelength": 1.13114306640625
+        },
+        {
+          "name": "152",
+          "center_wavelength": 1.12049462890625
+        },
+        {
+          "name": "153",
+          "center_wavelength": 1.1097408447265624
+        },
+        {
+          "name": "154",
+          "center_wavelength": 1.0991082763671876
+        },
+        {
+          "name": "155",
+          "center_wavelength": 1.0885898437500001
+        },
+        {
+          "name": "156",
+          "center_wavelength": 1.0780390625
+        },
+        {
+          "name": "157",
+          "center_wavelength": 1.0676099853515626
+        },
+        {
+          "name": "158",
+          "center_wavelength": 1.05738037109375
+        },
+        {
+          "name": "159",
+          "center_wavelength": 1.04743115234375
+        },
+        {
+          "name": "160",
+          "center_wavelength": 1.0377646484375
+        },
+        {
+          "name": "161",
+          "center_wavelength": 1.0288062744140625
+        },
+        {
+          "name": "162",
+          "center_wavelength": 1.017984619140625
+        },
+        {
+          "name": "163",
+          "center_wavelength": 1.0081682739257813
+        },
+        {
+          "name": "164",
+          "center_wavelength": 0.9983749389648438
+        },
+        {
+          "name": "165",
+          "center_wavelength": 0.9884115600585938
+        },
+        {
+          "name": "166",
+          "center_wavelength": 0.9787376708984376
+        },
+        {
+          "name": "167",
+          "center_wavelength": 0.9693899536132813
+        },
+        {
+          "name": "168",
+          "center_wavelength": 0.9595220336914063
+        },
+        {
+          "name": "169",
+          "center_wavelength": 0.9510114135742188
+        },
+        {
+          "name": "170",
+          "center_wavelength": 0.9429578857421875
+        }
+      ],
+      "href": "s3://prisma-data-dev-daunnc/prisma-scene-cogs/PRS_L2D_STD_20200825024857_20200825024901_0001/data/cog_SWIR_Cube.tiff",
+      "roles": [],
+      "type": "image/tiff; application=geotiff"
+    },
+    "VNIR_Cube": {
+      "eo:bands": [
+        {
+          "name": "0",
+          "center_wavelength": 2.4968740234375
+        },
+        {
+          "name": "1",
+          "center_wavelength": 2.490028076171875
+        },
+        {
+          "name": "2",
+          "center_wavelength": 2.483590576171875
+        },
+        {
+          "name": "3",
+          "center_wavelength": 2.476791259765625
+        },
+        {
+          "name": "4",
+          "center_wavelength": 2.46941552734375
+        },
+        {
+          "name": "5",
+          "center_wavelength": 2.46281298828125
+        },
+        {
+          "name": "6",
+          "center_wavelength": 2.45632958984375
+        },
+        {
+          "name": "7",
+          "center_wavelength": 2.4489235839843753
+        },
+        {
+          "name": "8",
+          "center_wavelength": 2.4421877441406252
+        },
+        {
+          "name": "9",
+          "center_wavelength": 2.435326904296875
+        },
+        {
+          "name": "10",
+          "center_wavelength": 2.428400146484375
+        },
+        {
+          "name": "11",
+          "center_wavelength": 2.4209873046875
+        },
+        {
+          "name": "12",
+          "center_wavelength": 2.414156494140625
+        },
+        {
+          "name": "13",
+          "center_wavelength": 2.407338623046875
+        },
+        {
+          "name": "14",
+          "center_wavelength": 2.3998010253906252
+        },
+        {
+          "name": "15",
+          "center_wavelength": 2.392841796875
+        },
+        {
+          "name": "16",
+          "center_wavelength": 2.38580859375
+        },
+        {
+          "name": "17",
+          "center_wavelength": 2.378509521484375
+        },
+        {
+          "name": "18",
+          "center_wavelength": 2.37133642578125
+        },
+        {
+          "name": "19",
+          "center_wavelength": 2.364370849609375
+        },
+        {
+          "name": "20",
+          "center_wavelength": 2.3570224609375
+        },
+        {
+          "name": "21",
+          "center_wavelength": 2.3495751953125
+        },
+        {
+          "name": "22",
+          "center_wavelength": 2.3425888671875
+        },
+        {
+          "name": "23",
+          "center_wavelength": 2.335236083984375
+        },
+        {
+          "name": "24",
+          "center_wavelength": 2.32760693359375
+        },
+        {
+          "name": "25",
+          "center_wavelength": 2.32064013671875
+        },
+        {
+          "name": "26",
+          "center_wavelength": 2.312912109375
+        },
+        {
+          "name": "27",
+          "center_wavelength": 2.305502197265625
+        },
+        {
+          "name": "28",
+          "center_wavelength": 2.2983349609375
+        },
+        {
+          "name": "29",
+          "center_wavelength": 2.290572998046875
+        },
+        {
+          "name": "30",
+          "center_wavelength": 2.283275146484375
+        },
+        {
+          "name": "31",
+          "center_wavelength": 2.27576953125
+        },
+        {
+          "name": "32",
+          "center_wavelength": 2.268042236328125
+        },
+        {
+          "name": "33",
+          "center_wavelength": 2.2606279296875003
+        },
+        {
+          "name": "34",
+          "center_wavelength": 2.252848388671875
+        },
+        {
+          "name": "35",
+          "center_wavelength": 2.245213623046875
+        },
+        {
+          "name": "36",
+          "center_wavelength": 2.237647705078125
+        },
+        {
+          "name": "37",
+          "center_wavelength": 2.229753173828125
+        },
+        {
+          "name": "38",
+          "center_wavelength": 2.22219287109375
+        },
+        {
+          "name": "39",
+          "center_wavelength": 2.214341552734375
+        },
+        {
+          "name": "40",
+          "center_wavelength": 2.20659765625
+        },
+        {
+          "name": "41",
+          "center_wavelength": 2.198886962890625
+        },
+        {
+          "name": "42",
+          "center_wavelength": 2.19083544921875
+        },
+        {
+          "name": "43",
+          "center_wavelength": 2.183183349609375
+        },
+        {
+          "name": "44",
+          "center_wavelength": 2.1750712890625
+        },
+        {
+          "name": "45",
+          "center_wavelength": 2.16725244140625
+        },
+        {
+          "name": "46",
+          "center_wavelength": 2.159287841796875
+        },
+        {
+          "name": "47",
+          "center_wavelength": 2.151125732421875
+        },
+        {
+          "name": "48",
+          "center_wavelength": 2.143225830078125
+        },
+        {
+          "name": "49",
+          "center_wavelength": 2.1352353515625
+        },
+        {
+          "name": "50",
+          "center_wavelength": 2.127093994140625
+        },
+        {
+          "name": "51",
+          "center_wavelength": 2.118955322265625
+        },
+        {
+          "name": "52",
+          "center_wavelength": 2.110816650390625
+        },
+        {
+          "name": "53",
+          "center_wavelength": 2.102548095703125
+        },
+        {
+          "name": "54",
+          "center_wavelength": 2.09440771484375
+        },
+        {
+          "name": "55",
+          "center_wavelength": 2.086100830078125
+        },
+        {
+          "name": "56",
+          "center_wavelength": 2.077751708984375
+        },
+        {
+          "name": "57",
+          "center_wavelength": 2.069538818359375
+        },
+        {
+          "name": "58",
+          "center_wavelength": 2.061137939453125
+        },
+        {
+          "name": "59",
+          "center_wavelength": 2.0527573242187502
+        },
+        {
+          "name": "60",
+          "center_wavelength": 2.04442236328125
+        },
+        {
+          "name": "61",
+          "center_wavelength": 2.0359952392578125
+        },
+        {
+          "name": "62",
+          "center_wavelength": 2.0274759521484373
+        },
+        {
+          "name": "63",
+          "center_wavelength": 2.019049560546875
+        },
+        {
+          "name": "64",
+          "center_wavelength": 2.0104102783203124
+        },
+        {
+          "name": "65",
+          "center_wavelength": 2.0018427734375
+        },
+        {
+          "name": "66",
+          "center_wavelength": 1.99328857421875
+        },
+        {
+          "name": "67",
+          "center_wavelength": 1.9845478515625001
+        },
+        {
+          "name": "68",
+          "center_wavelength": 1.9757813720703126
+        },
+        {
+          "name": "69",
+          "center_wavelength": 1.9670589599609376
+        },
+        {
+          "name": "70",
+          "center_wavelength": 1.95837060546875
+        },
+        {
+          "name": "71",
+          "center_wavelength": 1.9496390380859376
+        },
+        {
+          "name": "72",
+          "center_wavelength": 1.94083056640625
+        },
+        {
+          "name": "73",
+          "center_wavelength": 1.9319915771484375
+        },
+        {
+          "name": "74",
+          "center_wavelength": 1.923089111328125
+        },
+        {
+          "name": "75",
+          "center_wavelength": 1.9140478515625001
+        },
+        {
+          "name": "76",
+          "center_wavelength": 1.904628173828125
+        },
+        {
+          "name": "77",
+          "center_wavelength": 1.895846435546875
+        },
+        {
+          "name": "78",
+          "center_wavelength": 1.8868109130859376
+        },
+        {
+          "name": "79",
+          "center_wavelength": 1.8784632568359376
+        },
+        {
+          "name": "80",
+          "center_wavelength": 1.86801806640625
+        },
+        {
+          "name": "81",
+          "center_wavelength": 1.859297607421875
+        },
+        {
+          "name": "82",
+          "center_wavelength": 1.8502786865234375
+        },
+        {
+          "name": "83",
+          "center_wavelength": 1.8410494384765625
+        },
+        {
+          "name": "84",
+          "center_wavelength": 1.8317412109375
+        },
+        {
+          "name": "85",
+          "center_wavelength": 1.8221488037109375
+        },
+        {
+          "name": "86",
+          "center_wavelength": 1.812820556640625
+        },
+        {
+          "name": "87",
+          "center_wavelength": 1.803365966796875
+        },
+        {
+          "name": "88",
+          "center_wavelength": 1.7936890869140625
+        },
+        {
+          "name": "89",
+          "center_wavelength": 1.7844418945312501
+        },
+        {
+          "name": "90",
+          "center_wavelength": 1.7749093017578126
+        },
+        {
+          "name": "91",
+          "center_wavelength": 1.765253173828125
+        },
+        {
+          "name": "92",
+          "center_wavelength": 1.7555489501953125
+        },
+        {
+          "name": "93",
+          "center_wavelength": 1.745929443359375
+        },
+        {
+          "name": "94",
+          "center_wavelength": 1.736255615234375
+        },
+        {
+          "name": "95",
+          "center_wavelength": 1.7264375
+        },
+        {
+          "name": "96",
+          "center_wavelength": 1.7165975341796875
+        },
+        {
+          "name": "97",
+          "center_wavelength": 1.7068074951171874
+        },
+        {
+          "name": "98",
+          "center_wavelength": 1.69700927734375
+        },
+        {
+          "name": "99",
+          "center_wavelength": 1.6871717529296875
+        },
+        {
+          "name": "100",
+          "center_wavelength": 1.6771246337890626
+        },
+        {
+          "name": "101",
+          "center_wavelength": 1.666966552734375
+        },
+        {
+          "name": "102",
+          "center_wavelength": 1.6567723388671876
+        },
+        {
+          "name": "103",
+          "center_wavelength": 1.6469727783203125
+        },
+        {
+          "name": "104",
+          "center_wavelength": 1.6368546142578124
+        },
+        {
+          "name": "105",
+          "center_wavelength": 1.62678125
+        },
+        {
+          "name": "106",
+          "center_wavelength": 1.616583984375
+        },
+        {
+          "name": "107",
+          "center_wavelength": 1.6062432861328126
+        },
+        {
+          "name": "108",
+          "center_wavelength": 1.5959794921875001
+        },
+        {
+          "name": "109",
+          "center_wavelength": 1.5856314697265625
+        },
+        {
+          "name": "110",
+          "center_wavelength": 1.57539306640625
+        },
+        {
+          "name": "111",
+          "center_wavelength": 1.5651214599609375
+        },
+        {
+          "name": "112",
+          "center_wavelength": 1.554580078125
+        },
+        {
+          "name": "113",
+          "center_wavelength": 1.5440301513671875
+        },
+        {
+          "name": "114",
+          "center_wavelength": 1.5335644531250001
+        },
+        {
+          "name": "115",
+          "center_wavelength": 1.523007080078125
+        },
+        {
+          "name": "116",
+          "center_wavelength": 1.5124136962890626
+        },
+        {
+          "name": "117",
+          "center_wavelength": 1.5017792968750001
+        },
+        {
+          "name": "118",
+          "center_wavelength": 1.49119775390625
+        },
+        {
+          "name": "119",
+          "center_wavelength": 1.4806201171875
+        },
+        {
+          "name": "120",
+          "center_wavelength": 1.4697003173828125
+        },
+        {
+          "name": "121",
+          "center_wavelength": 1.4590675048828126
+        },
+        {
+          "name": "122",
+          "center_wavelength": 1.4489208984375
+        },
+        {
+          "name": "123",
+          "center_wavelength": 1.438169921875
+        },
+        {
+          "name": "124",
+          "center_wavelength": 1.4271055908203125
+        },
+        {
+          "name": "125",
+          "center_wavelength": 1.416310302734375
+        },
+        {
+          "name": "126",
+          "center_wavelength": 1.4053883056640626
+        },
+        {
+          "name": "127",
+          "center_wavelength": 1.394524658203125
+        },
+        {
+          "name": "128",
+          "center_wavelength": 1.38300830078125
+        },
+        {
+          "name": "129",
+          "center_wavelength": 1.372718994140625
+        },
+        {
+          "name": "130",
+          "center_wavelength": 1.3608426513671876
+        },
+        {
+          "name": "131",
+          "center_wavelength": 1.3495989990234376
+        },
+        {
+          "name": "132",
+          "center_wavelength": 1.3389462890625001
+        },
+        {
+          "name": "133",
+          "center_wavelength": 1.3280897216796874
+        },
+        {
+          "name": "134",
+          "center_wavelength": 1.3170177001953125
+        },
+        {
+          "name": "135",
+          "center_wavelength": 1.3060472412109376
+        },
+        {
+          "name": "136",
+          "center_wavelength": 1.2951966552734375
+        },
+        {
+          "name": "137",
+          "center_wavelength": 1.2842795410156251
+        },
+        {
+          "name": "138",
+          "center_wavelength": 1.273306396484375
+        },
+        {
+          "name": "139",
+          "center_wavelength": 1.2623343505859375
+        },
+        {
+          "name": "140",
+          "center_wavelength": 1.2507955322265625
+        },
+        {
+          "name": "141",
+          "center_wavelength": 1.2400567626953125
+        },
+        {
+          "name": "142",
+          "center_wavelength": 1.2289989013671876
+        },
+        {
+          "name": "143",
+          "center_wavelength": 1.2176959228515625
+        },
+        {
+          "name": "144",
+          "center_wavelength": 1.2071148681640624
+        },
+        {
+          "name": "145",
+          "center_wavelength": 1.1961748046875
+        },
+        {
+          "name": "146",
+          "center_wavelength": 1.18539794921875
+        },
+        {
+          "name": "147",
+          "center_wavelength": 1.1745257568359375
+        },
+        {
+          "name": "148",
+          "center_wavelength": 1.163484130859375
+        },
+        {
+          "name": "149",
+          "center_wavelength": 1.1524715576171876
+        },
+        {
+          "name": "150",
+          "center_wavelength": 1.1418736572265624
+        },
+        {
+          "name": "151",
+          "center_wavelength": 1.13114306640625
+        },
+        {
+          "name": "152",
+          "center_wavelength": 1.12049462890625
+        },
+        {
+          "name": "153",
+          "center_wavelength": 1.1097408447265624
+        },
+        {
+          "name": "154",
+          "center_wavelength": 1.0991082763671876
+        },
+        {
+          "name": "155",
+          "center_wavelength": 1.0885898437500001
+        },
+        {
+          "name": "156",
+          "center_wavelength": 1.0780390625
+        },
+        {
+          "name": "157",
+          "center_wavelength": 1.0676099853515626
+        },
+        {
+          "name": "158",
+          "center_wavelength": 1.05738037109375
+        },
+        {
+          "name": "159",
+          "center_wavelength": 1.04743115234375
+        },
+        {
+          "name": "160",
+          "center_wavelength": 1.0377646484375
+        },
+        {
+          "name": "161",
+          "center_wavelength": 1.0288062744140625
+        },
+        {
+          "name": "162",
+          "center_wavelength": 1.017984619140625
+        },
+        {
+          "name": "163",
+          "center_wavelength": 1.0081682739257813
+        },
+        {
+          "name": "164",
+          "center_wavelength": 0.9983749389648438
+        },
+        {
+          "name": "165",
+          "center_wavelength": 0.9884115600585938
+        },
+        {
+          "name": "166",
+          "center_wavelength": 0.9787376708984376
+        },
+        {
+          "name": "167",
+          "center_wavelength": 0.9693899536132813
+        },
+        {
+          "name": "168",
+          "center_wavelength": 0.9595220336914063
+        },
+        {
+          "name": "169",
+          "center_wavelength": 0.9510114135742188
+        },
+        {
+          "name": "170",
+          "center_wavelength": 0.9429578857421875
+        }
+      ],
+      "href": "s3://prisma-data-dev-daunnc/prisma-scene-cogs/PRS_L2D_STD_20200825024857_20200825024901_0001/data/cog_VNIR_Cube.tiff",
+      "roles": [],
+      "type": "image/tiff; application=geotiff"
+    },
+    "SWIR_PIXEL_L2_ERR_MATRIX": {
+      "eo:bands": [
+        {
+          "name": "0",
+          "center_wavelength": 2.4968740234375
+        },
+        {
+          "name": "1",
+          "center_wavelength": 2.490028076171875
+        },
+        {
+          "name": "2",
+          "center_wavelength": 2.483590576171875
+        },
+        {
+          "name": "3",
+          "center_wavelength": 2.476791259765625
+        },
+        {
+          "name": "4",
+          "center_wavelength": 2.46941552734375
+        },
+        {
+          "name": "5",
+          "center_wavelength": 2.46281298828125
+        },
+        {
+          "name": "6",
+          "center_wavelength": 2.45632958984375
+        },
+        {
+          "name": "7",
+          "center_wavelength": 2.4489235839843753
+        },
+        {
+          "name": "8",
+          "center_wavelength": 2.4421877441406252
+        },
+        {
+          "name": "9",
+          "center_wavelength": 2.435326904296875
+        },
+        {
+          "name": "10",
+          "center_wavelength": 2.428400146484375
+        },
+        {
+          "name": "11",
+          "center_wavelength": 2.4209873046875
+        },
+        {
+          "name": "12",
+          "center_wavelength": 2.414156494140625
+        },
+        {
+          "name": "13",
+          "center_wavelength": 2.407338623046875
+        },
+        {
+          "name": "14",
+          "center_wavelength": 2.3998010253906252
+        },
+        {
+          "name": "15",
+          "center_wavelength": 2.392841796875
+        },
+        {
+          "name": "16",
+          "center_wavelength": 2.38580859375
+        },
+        {
+          "name": "17",
+          "center_wavelength": 2.378509521484375
+        },
+        {
+          "name": "18",
+          "center_wavelength": 2.37133642578125
+        },
+        {
+          "name": "19",
+          "center_wavelength": 2.364370849609375
+        },
+        {
+          "name": "20",
+          "center_wavelength": 2.3570224609375
+        },
+        {
+          "name": "21",
+          "center_wavelength": 2.3495751953125
+        },
+        {
+          "name": "22",
+          "center_wavelength": 2.3425888671875
+        },
+        {
+          "name": "23",
+          "center_wavelength": 2.335236083984375
+        },
+        {
+          "name": "24",
+          "center_wavelength": 2.32760693359375
+        },
+        {
+          "name": "25",
+          "center_wavelength": 2.32064013671875
+        },
+        {
+          "name": "26",
+          "center_wavelength": 2.312912109375
+        },
+        {
+          "name": "27",
+          "center_wavelength": 2.305502197265625
+        },
+        {
+          "name": "28",
+          "center_wavelength": 2.2983349609375
+        },
+        {
+          "name": "29",
+          "center_wavelength": 2.290572998046875
+        },
+        {
+          "name": "30",
+          "center_wavelength": 2.283275146484375
+        },
+        {
+          "name": "31",
+          "center_wavelength": 2.27576953125
+        },
+        {
+          "name": "32",
+          "center_wavelength": 2.268042236328125
+        },
+        {
+          "name": "33",
+          "center_wavelength": 2.2606279296875003
+        },
+        {
+          "name": "34",
+          "center_wavelength": 2.252848388671875
+        },
+        {
+          "name": "35",
+          "center_wavelength": 2.245213623046875
+        },
+        {
+          "name": "36",
+          "center_wavelength": 2.237647705078125
+        },
+        {
+          "name": "37",
+          "center_wavelength": 2.229753173828125
+        },
+        {
+          "name": "38",
+          "center_wavelength": 2.22219287109375
+        },
+        {
+          "name": "39",
+          "center_wavelength": 2.214341552734375
+        },
+        {
+          "name": "40",
+          "center_wavelength": 2.20659765625
+        },
+        {
+          "name": "41",
+          "center_wavelength": 2.198886962890625
+        },
+        {
+          "name": "42",
+          "center_wavelength": 2.19083544921875
+        },
+        {
+          "name": "43",
+          "center_wavelength": 2.183183349609375
+        },
+        {
+          "name": "44",
+          "center_wavelength": 2.1750712890625
+        },
+        {
+          "name": "45",
+          "center_wavelength": 2.16725244140625
+        },
+        {
+          "name": "46",
+          "center_wavelength": 2.159287841796875
+        },
+        {
+          "name": "47",
+          "center_wavelength": 2.151125732421875
+        },
+        {
+          "name": "48",
+          "center_wavelength": 2.143225830078125
+        },
+        {
+          "name": "49",
+          "center_wavelength": 2.1352353515625
+        },
+        {
+          "name": "50",
+          "center_wavelength": 2.127093994140625
+        },
+        {
+          "name": "51",
+          "center_wavelength": 2.118955322265625
+        },
+        {
+          "name": "52",
+          "center_wavelength": 2.110816650390625
+        },
+        {
+          "name": "53",
+          "center_wavelength": 2.102548095703125
+        },
+        {
+          "name": "54",
+          "center_wavelength": 2.09440771484375
+        },
+        {
+          "name": "55",
+          "center_wavelength": 2.086100830078125
+        },
+        {
+          "name": "56",
+          "center_wavelength": 2.077751708984375
+        },
+        {
+          "name": "57",
+          "center_wavelength": 2.069538818359375
+        },
+        {
+          "name": "58",
+          "center_wavelength": 2.061137939453125
+        },
+        {
+          "name": "59",
+          "center_wavelength": 2.0527573242187502
+        },
+        {
+          "name": "60",
+          "center_wavelength": 2.04442236328125
+        },
+        {
+          "name": "61",
+          "center_wavelength": 2.0359952392578125
+        },
+        {
+          "name": "62",
+          "center_wavelength": 2.0274759521484373
+        },
+        {
+          "name": "63",
+          "center_wavelength": 2.019049560546875
+        },
+        {
+          "name": "64",
+          "center_wavelength": 2.0104102783203124
+        },
+        {
+          "name": "65",
+          "center_wavelength": 2.0018427734375
+        },
+        {
+          "name": "66",
+          "center_wavelength": 1.99328857421875
+        },
+        {
+          "name": "67",
+          "center_wavelength": 1.9845478515625001
+        },
+        {
+          "name": "68",
+          "center_wavelength": 1.9757813720703126
+        },
+        {
+          "name": "69",
+          "center_wavelength": 1.9670589599609376
+        },
+        {
+          "name": "70",
+          "center_wavelength": 1.95837060546875
+        },
+        {
+          "name": "71",
+          "center_wavelength": 1.9496390380859376
+        },
+        {
+          "name": "72",
+          "center_wavelength": 1.94083056640625
+        },
+        {
+          "name": "73",
+          "center_wavelength": 1.9319915771484375
+        },
+        {
+          "name": "74",
+          "center_wavelength": 1.923089111328125
+        },
+        {
+          "name": "75",
+          "center_wavelength": 1.9140478515625001
+        },
+        {
+          "name": "76",
+          "center_wavelength": 1.904628173828125
+        },
+        {
+          "name": "77",
+          "center_wavelength": 1.895846435546875
+        },
+        {
+          "name": "78",
+          "center_wavelength": 1.8868109130859376
+        },
+        {
+          "name": "79",
+          "center_wavelength": 1.8784632568359376
+        },
+        {
+          "name": "80",
+          "center_wavelength": 1.86801806640625
+        },
+        {
+          "name": "81",
+          "center_wavelength": 1.859297607421875
+        },
+        {
+          "name": "82",
+          "center_wavelength": 1.8502786865234375
+        },
+        {
+          "name": "83",
+          "center_wavelength": 1.8410494384765625
+        },
+        {
+          "name": "84",
+          "center_wavelength": 1.8317412109375
+        },
+        {
+          "name": "85",
+          "center_wavelength": 1.8221488037109375
+        },
+        {
+          "name": "86",
+          "center_wavelength": 1.812820556640625
+        },
+        {
+          "name": "87",
+          "center_wavelength": 1.803365966796875
+        },
+        {
+          "name": "88",
+          "center_wavelength": 1.7936890869140625
+        },
+        {
+          "name": "89",
+          "center_wavelength": 1.7844418945312501
+        },
+        {
+          "name": "90",
+          "center_wavelength": 1.7749093017578126
+        },
+        {
+          "name": "91",
+          "center_wavelength": 1.765253173828125
+        },
+        {
+          "name": "92",
+          "center_wavelength": 1.7555489501953125
+        },
+        {
+          "name": "93",
+          "center_wavelength": 1.745929443359375
+        },
+        {
+          "name": "94",
+          "center_wavelength": 1.736255615234375
+        },
+        {
+          "name": "95",
+          "center_wavelength": 1.7264375
+        },
+        {
+          "name": "96",
+          "center_wavelength": 1.7165975341796875
+        },
+        {
+          "name": "97",
+          "center_wavelength": 1.7068074951171874
+        },
+        {
+          "name": "98",
+          "center_wavelength": 1.69700927734375
+        },
+        {
+          "name": "99",
+          "center_wavelength": 1.6871717529296875
+        },
+        {
+          "name": "100",
+          "center_wavelength": 1.6771246337890626
+        },
+        {
+          "name": "101",
+          "center_wavelength": 1.666966552734375
+        },
+        {
+          "name": "102",
+          "center_wavelength": 1.6567723388671876
+        },
+        {
+          "name": "103",
+          "center_wavelength": 1.6469727783203125
+        },
+        {
+          "name": "104",
+          "center_wavelength": 1.6368546142578124
+        },
+        {
+          "name": "105",
+          "center_wavelength": 1.62678125
+        },
+        {
+          "name": "106",
+          "center_wavelength": 1.616583984375
+        },
+        {
+          "name": "107",
+          "center_wavelength": 1.6062432861328126
+        },
+        {
+          "name": "108",
+          "center_wavelength": 1.5959794921875001
+        },
+        {
+          "name": "109",
+          "center_wavelength": 1.5856314697265625
+        },
+        {
+          "name": "110",
+          "center_wavelength": 1.57539306640625
+        },
+        {
+          "name": "111",
+          "center_wavelength": 1.5651214599609375
+        },
+        {
+          "name": "112",
+          "center_wavelength": 1.554580078125
+        },
+        {
+          "name": "113",
+          "center_wavelength": 1.5440301513671875
+        },
+        {
+          "name": "114",
+          "center_wavelength": 1.5335644531250001
+        },
+        {
+          "name": "115",
+          "center_wavelength": 1.523007080078125
+        },
+        {
+          "name": "116",
+          "center_wavelength": 1.5124136962890626
+        },
+        {
+          "name": "117",
+          "center_wavelength": 1.5017792968750001
+        },
+        {
+          "name": "118",
+          "center_wavelength": 1.49119775390625
+        },
+        {
+          "name": "119",
+          "center_wavelength": 1.4806201171875
+        },
+        {
+          "name": "120",
+          "center_wavelength": 1.4697003173828125
+        },
+        {
+          "name": "121",
+          "center_wavelength": 1.4590675048828126
+        },
+        {
+          "name": "122",
+          "center_wavelength": 1.4489208984375
+        },
+        {
+          "name": "123",
+          "center_wavelength": 1.438169921875
+        },
+        {
+          "name": "124",
+          "center_wavelength": 1.4271055908203125
+        },
+        {
+          "name": "125",
+          "center_wavelength": 1.416310302734375
+        },
+        {
+          "name": "126",
+          "center_wavelength": 1.4053883056640626
+        },
+        {
+          "name": "127",
+          "center_wavelength": 1.394524658203125
+        },
+        {
+          "name": "128",
+          "center_wavelength": 1.38300830078125
+        },
+        {
+          "name": "129",
+          "center_wavelength": 1.372718994140625
+        },
+        {
+          "name": "130",
+          "center_wavelength": 1.3608426513671876
+        },
+        {
+          "name": "131",
+          "center_wavelength": 1.3495989990234376
+        },
+        {
+          "name": "132",
+          "center_wavelength": 1.3389462890625001
+        },
+        {
+          "name": "133",
+          "center_wavelength": 1.3280897216796874
+        },
+        {
+          "name": "134",
+          "center_wavelength": 1.3170177001953125
+        },
+        {
+          "name": "135",
+          "center_wavelength": 1.3060472412109376
+        },
+        {
+          "name": "136",
+          "center_wavelength": 1.2951966552734375
+        },
+        {
+          "name": "137",
+          "center_wavelength": 1.2842795410156251
+        },
+        {
+          "name": "138",
+          "center_wavelength": 1.273306396484375
+        },
+        {
+          "name": "139",
+          "center_wavelength": 1.2623343505859375
+        },
+        {
+          "name": "140",
+          "center_wavelength": 1.2507955322265625
+        },
+        {
+          "name": "141",
+          "center_wavelength": 1.2400567626953125
+        },
+        {
+          "name": "142",
+          "center_wavelength": 1.2289989013671876
+        },
+        {
+          "name": "143",
+          "center_wavelength": 1.2176959228515625
+        },
+        {
+          "name": "144",
+          "center_wavelength": 1.2071148681640624
+        },
+        {
+          "name": "145",
+          "center_wavelength": 1.1961748046875
+        },
+        {
+          "name": "146",
+          "center_wavelength": 1.18539794921875
+        },
+        {
+          "name": "147",
+          "center_wavelength": 1.1745257568359375
+        },
+        {
+          "name": "148",
+          "center_wavelength": 1.163484130859375
+        },
+        {
+          "name": "149",
+          "center_wavelength": 1.1524715576171876
+        },
+        {
+          "name": "150",
+          "center_wavelength": 1.1418736572265624
+        },
+        {
+          "name": "151",
+          "center_wavelength": 1.13114306640625
+        },
+        {
+          "name": "152",
+          "center_wavelength": 1.12049462890625
+        },
+        {
+          "name": "153",
+          "center_wavelength": 1.1097408447265624
+        },
+        {
+          "name": "154",
+          "center_wavelength": 1.0991082763671876
+        },
+        {
+          "name": "155",
+          "center_wavelength": 1.0885898437500001
+        },
+        {
+          "name": "156",
+          "center_wavelength": 1.0780390625
+        },
+        {
+          "name": "157",
+          "center_wavelength": 1.0676099853515626
+        },
+        {
+          "name": "158",
+          "center_wavelength": 1.05738037109375
+        },
+        {
+          "name": "159",
+          "center_wavelength": 1.04743115234375
+        },
+        {
+          "name": "160",
+          "center_wavelength": 1.0377646484375
+        },
+        {
+          "name": "161",
+          "center_wavelength": 1.0288062744140625
+        },
+        {
+          "name": "162",
+          "center_wavelength": 1.017984619140625
+        },
+        {
+          "name": "163",
+          "center_wavelength": 1.0081682739257813
+        },
+        {
+          "name": "164",
+          "center_wavelength": 0.9983749389648438
+        },
+        {
+          "name": "165",
+          "center_wavelength": 0.9884115600585938
+        },
+        {
+          "name": "166",
+          "center_wavelength": 0.9787376708984376
+        },
+        {
+          "name": "167",
+          "center_wavelength": 0.9693899536132813
+        },
+        {
+          "name": "168",
+          "center_wavelength": 0.9595220336914063
+        },
+        {
+          "name": "169",
+          "center_wavelength": 0.9510114135742188
+        },
+        {
+          "name": "170",
+          "center_wavelength": 0.9429578857421875
+        }
+      ],
+      "href": "s3://prisma-data-dev-daunnc/prisma-scene-cogs/PRS_L2D_STD_20200825024857_20200825024901_0001/data/cog_SWIR_PIXEL_L2_ERR_MATRIX.tiff",
+      "roles": [],
+      "type": "image/tiff; application=geotiff"
+    },
+    "VNIR_PIXEL_L2_ERR_MATRIX": {
+      "eo:bands": [
+        {
+          "name": "0",
+          "center_wavelength": 2.4968740234375
+        },
+        {
+          "name": "1",
+          "center_wavelength": 2.490028076171875
+        },
+        {
+          "name": "2",
+          "center_wavelength": 2.483590576171875
+        },
+        {
+          "name": "3",
+          "center_wavelength": 2.476791259765625
+        },
+        {
+          "name": "4",
+          "center_wavelength": 2.46941552734375
+        },
+        {
+          "name": "5",
+          "center_wavelength": 2.46281298828125
+        },
+        {
+          "name": "6",
+          "center_wavelength": 2.45632958984375
+        },
+        {
+          "name": "7",
+          "center_wavelength": 2.4489235839843753
+        },
+        {
+          "name": "8",
+          "center_wavelength": 2.4421877441406252
+        },
+        {
+          "name": "9",
+          "center_wavelength": 2.435326904296875
+        },
+        {
+          "name": "10",
+          "center_wavelength": 2.428400146484375
+        },
+        {
+          "name": "11",
+          "center_wavelength": 2.4209873046875
+        },
+        {
+          "name": "12",
+          "center_wavelength": 2.414156494140625
+        },
+        {
+          "name": "13",
+          "center_wavelength": 2.407338623046875
+        },
+        {
+          "name": "14",
+          "center_wavelength": 2.3998010253906252
+        },
+        {
+          "name": "15",
+          "center_wavelength": 2.392841796875
+        },
+        {
+          "name": "16",
+          "center_wavelength": 2.38580859375
+        },
+        {
+          "name": "17",
+          "center_wavelength": 2.378509521484375
+        },
+        {
+          "name": "18",
+          "center_wavelength": 2.37133642578125
+        },
+        {
+          "name": "19",
+          "center_wavelength": 2.364370849609375
+        },
+        {
+          "name": "20",
+          "center_wavelength": 2.3570224609375
+        },
+        {
+          "name": "21",
+          "center_wavelength": 2.3495751953125
+        },
+        {
+          "name": "22",
+          "center_wavelength": 2.3425888671875
+        },
+        {
+          "name": "23",
+          "center_wavelength": 2.335236083984375
+        },
+        {
+          "name": "24",
+          "center_wavelength": 2.32760693359375
+        },
+        {
+          "name": "25",
+          "center_wavelength": 2.32064013671875
+        },
+        {
+          "name": "26",
+          "center_wavelength": 2.312912109375
+        },
+        {
+          "name": "27",
+          "center_wavelength": 2.305502197265625
+        },
+        {
+          "name": "28",
+          "center_wavelength": 2.2983349609375
+        },
+        {
+          "name": "29",
+          "center_wavelength": 2.290572998046875
+        },
+        {
+          "name": "30",
+          "center_wavelength": 2.283275146484375
+        },
+        {
+          "name": "31",
+          "center_wavelength": 2.27576953125
+        },
+        {
+          "name": "32",
+          "center_wavelength": 2.268042236328125
+        },
+        {
+          "name": "33",
+          "center_wavelength": 2.2606279296875003
+        },
+        {
+          "name": "34",
+          "center_wavelength": 2.252848388671875
+        },
+        {
+          "name": "35",
+          "center_wavelength": 2.245213623046875
+        },
+        {
+          "name": "36",
+          "center_wavelength": 2.237647705078125
+        },
+        {
+          "name": "37",
+          "center_wavelength": 2.229753173828125
+        },
+        {
+          "name": "38",
+          "center_wavelength": 2.22219287109375
+        },
+        {
+          "name": "39",
+          "center_wavelength": 2.214341552734375
+        },
+        {
+          "name": "40",
+          "center_wavelength": 2.20659765625
+        },
+        {
+          "name": "41",
+          "center_wavelength": 2.198886962890625
+        },
+        {
+          "name": "42",
+          "center_wavelength": 2.19083544921875
+        },
+        {
+          "name": "43",
+          "center_wavelength": 2.183183349609375
+        },
+        {
+          "name": "44",
+          "center_wavelength": 2.1750712890625
+        },
+        {
+          "name": "45",
+          "center_wavelength": 2.16725244140625
+        },
+        {
+          "name": "46",
+          "center_wavelength": 2.159287841796875
+        },
+        {
+          "name": "47",
+          "center_wavelength": 2.151125732421875
+        },
+        {
+          "name": "48",
+          "center_wavelength": 2.143225830078125
+        },
+        {
+          "name": "49",
+          "center_wavelength": 2.1352353515625
+        },
+        {
+          "name": "50",
+          "center_wavelength": 2.127093994140625
+        },
+        {
+          "name": "51",
+          "center_wavelength": 2.118955322265625
+        },
+        {
+          "name": "52",
+          "center_wavelength": 2.110816650390625
+        },
+        {
+          "name": "53",
+          "center_wavelength": 2.102548095703125
+        },
+        {
+          "name": "54",
+          "center_wavelength": 2.09440771484375
+        },
+        {
+          "name": "55",
+          "center_wavelength": 2.086100830078125
+        },
+        {
+          "name": "56",
+          "center_wavelength": 2.077751708984375
+        },
+        {
+          "name": "57",
+          "center_wavelength": 2.069538818359375
+        },
+        {
+          "name": "58",
+          "center_wavelength": 2.061137939453125
+        },
+        {
+          "name": "59",
+          "center_wavelength": 2.0527573242187502
+        },
+        {
+          "name": "60",
+          "center_wavelength": 2.04442236328125
+        },
+        {
+          "name": "61",
+          "center_wavelength": 2.0359952392578125
+        },
+        {
+          "name": "62",
+          "center_wavelength": 2.0274759521484373
+        },
+        {
+          "name": "63",
+          "center_wavelength": 2.019049560546875
+        },
+        {
+          "name": "64",
+          "center_wavelength": 2.0104102783203124
+        },
+        {
+          "name": "65",
+          "center_wavelength": 2.0018427734375
+        },
+        {
+          "name": "66",
+          "center_wavelength": 1.99328857421875
+        },
+        {
+          "name": "67",
+          "center_wavelength": 1.9845478515625001
+        },
+        {
+          "name": "68",
+          "center_wavelength": 1.9757813720703126
+        },
+        {
+          "name": "69",
+          "center_wavelength": 1.9670589599609376
+        },
+        {
+          "name": "70",
+          "center_wavelength": 1.95837060546875
+        },
+        {
+          "name": "71",
+          "center_wavelength": 1.9496390380859376
+        },
+        {
+          "name": "72",
+          "center_wavelength": 1.94083056640625
+        },
+        {
+          "name": "73",
+          "center_wavelength": 1.9319915771484375
+        },
+        {
+          "name": "74",
+          "center_wavelength": 1.923089111328125
+        },
+        {
+          "name": "75",
+          "center_wavelength": 1.9140478515625001
+        },
+        {
+          "name": "76",
+          "center_wavelength": 1.904628173828125
+        },
+        {
+          "name": "77",
+          "center_wavelength": 1.895846435546875
+        },
+        {
+          "name": "78",
+          "center_wavelength": 1.8868109130859376
+        },
+        {
+          "name": "79",
+          "center_wavelength": 1.8784632568359376
+        },
+        {
+          "name": "80",
+          "center_wavelength": 1.86801806640625
+        },
+        {
+          "name": "81",
+          "center_wavelength": 1.859297607421875
+        },
+        {
+          "name": "82",
+          "center_wavelength": 1.8502786865234375
+        },
+        {
+          "name": "83",
+          "center_wavelength": 1.8410494384765625
+        },
+        {
+          "name": "84",
+          "center_wavelength": 1.8317412109375
+        },
+        {
+          "name": "85",
+          "center_wavelength": 1.8221488037109375
+        },
+        {
+          "name": "86",
+          "center_wavelength": 1.812820556640625
+        },
+        {
+          "name": "87",
+          "center_wavelength": 1.803365966796875
+        },
+        {
+          "name": "88",
+          "center_wavelength": 1.7936890869140625
+        },
+        {
+          "name": "89",
+          "center_wavelength": 1.7844418945312501
+        },
+        {
+          "name": "90",
+          "center_wavelength": 1.7749093017578126
+        },
+        {
+          "name": "91",
+          "center_wavelength": 1.765253173828125
+        },
+        {
+          "name": "92",
+          "center_wavelength": 1.7555489501953125
+        },
+        {
+          "name": "93",
+          "center_wavelength": 1.745929443359375
+        },
+        {
+          "name": "94",
+          "center_wavelength": 1.736255615234375
+        },
+        {
+          "name": "95",
+          "center_wavelength": 1.7264375
+        },
+        {
+          "name": "96",
+          "center_wavelength": 1.7165975341796875
+        },
+        {
+          "name": "97",
+          "center_wavelength": 1.7068074951171874
+        },
+        {
+          "name": "98",
+          "center_wavelength": 1.69700927734375
+        },
+        {
+          "name": "99",
+          "center_wavelength": 1.6871717529296875
+        },
+        {
+          "name": "100",
+          "center_wavelength": 1.6771246337890626
+        },
+        {
+          "name": "101",
+          "center_wavelength": 1.666966552734375
+        },
+        {
+          "name": "102",
+          "center_wavelength": 1.6567723388671876
+        },
+        {
+          "name": "103",
+          "center_wavelength": 1.6469727783203125
+        },
+        {
+          "name": "104",
+          "center_wavelength": 1.6368546142578124
+        },
+        {
+          "name": "105",
+          "center_wavelength": 1.62678125
+        },
+        {
+          "name": "106",
+          "center_wavelength": 1.616583984375
+        },
+        {
+          "name": "107",
+          "center_wavelength": 1.6062432861328126
+        },
+        {
+          "name": "108",
+          "center_wavelength": 1.5959794921875001
+        },
+        {
+          "name": "109",
+          "center_wavelength": 1.5856314697265625
+        },
+        {
+          "name": "110",
+          "center_wavelength": 1.57539306640625
+        },
+        {
+          "name": "111",
+          "center_wavelength": 1.5651214599609375
+        },
+        {
+          "name": "112",
+          "center_wavelength": 1.554580078125
+        },
+        {
+          "name": "113",
+          "center_wavelength": 1.5440301513671875
+        },
+        {
+          "name": "114",
+          "center_wavelength": 1.5335644531250001
+        },
+        {
+          "name": "115",
+          "center_wavelength": 1.523007080078125
+        },
+        {
+          "name": "116",
+          "center_wavelength": 1.5124136962890626
+        },
+        {
+          "name": "117",
+          "center_wavelength": 1.5017792968750001
+        },
+        {
+          "name": "118",
+          "center_wavelength": 1.49119775390625
+        },
+        {
+          "name": "119",
+          "center_wavelength": 1.4806201171875
+        },
+        {
+          "name": "120",
+          "center_wavelength": 1.4697003173828125
+        },
+        {
+          "name": "121",
+          "center_wavelength": 1.4590675048828126
+        },
+        {
+          "name": "122",
+          "center_wavelength": 1.4489208984375
+        },
+        {
+          "name": "123",
+          "center_wavelength": 1.438169921875
+        },
+        {
+          "name": "124",
+          "center_wavelength": 1.4271055908203125
+        },
+        {
+          "name": "125",
+          "center_wavelength": 1.416310302734375
+        },
+        {
+          "name": "126",
+          "center_wavelength": 1.4053883056640626
+        },
+        {
+          "name": "127",
+          "center_wavelength": 1.394524658203125
+        },
+        {
+          "name": "128",
+          "center_wavelength": 1.38300830078125
+        },
+        {
+          "name": "129",
+          "center_wavelength": 1.372718994140625
+        },
+        {
+          "name": "130",
+          "center_wavelength": 1.3608426513671876
+        },
+        {
+          "name": "131",
+          "center_wavelength": 1.3495989990234376
+        },
+        {
+          "name": "132",
+          "center_wavelength": 1.3389462890625001
+        },
+        {
+          "name": "133",
+          "center_wavelength": 1.3280897216796874
+        },
+        {
+          "name": "134",
+          "center_wavelength": 1.3170177001953125
+        },
+        {
+          "name": "135",
+          "center_wavelength": 1.3060472412109376
+        },
+        {
+          "name": "136",
+          "center_wavelength": 1.2951966552734375
+        },
+        {
+          "name": "137",
+          "center_wavelength": 1.2842795410156251
+        },
+        {
+          "name": "138",
+          "center_wavelength": 1.273306396484375
+        },
+        {
+          "name": "139",
+          "center_wavelength": 1.2623343505859375
+        },
+        {
+          "name": "140",
+          "center_wavelength": 1.2507955322265625
+        },
+        {
+          "name": "141",
+          "center_wavelength": 1.2400567626953125
+        },
+        {
+          "name": "142",
+          "center_wavelength": 1.2289989013671876
+        },
+        {
+          "name": "143",
+          "center_wavelength": 1.2176959228515625
+        },
+        {
+          "name": "144",
+          "center_wavelength": 1.2071148681640624
+        },
+        {
+          "name": "145",
+          "center_wavelength": 1.1961748046875
+        },
+        {
+          "name": "146",
+          "center_wavelength": 1.18539794921875
+        },
+        {
+          "name": "147",
+          "center_wavelength": 1.1745257568359375
+        },
+        {
+          "name": "148",
+          "center_wavelength": 1.163484130859375
+        },
+        {
+          "name": "149",
+          "center_wavelength": 1.1524715576171876
+        },
+        {
+          "name": "150",
+          "center_wavelength": 1.1418736572265624
+        },
+        {
+          "name": "151",
+          "center_wavelength": 1.13114306640625
+        },
+        {
+          "name": "152",
+          "center_wavelength": 1.12049462890625
+        },
+        {
+          "name": "153",
+          "center_wavelength": 1.1097408447265624
+        },
+        {
+          "name": "154",
+          "center_wavelength": 1.0991082763671876
+        },
+        {
+          "name": "155",
+          "center_wavelength": 1.0885898437500001
+        },
+        {
+          "name": "156",
+          "center_wavelength": 1.0780390625
+        },
+        {
+          "name": "157",
+          "center_wavelength": 1.0676099853515626
+        },
+        {
+          "name": "158",
+          "center_wavelength": 1.05738037109375
+        },
+        {
+          "name": "159",
+          "center_wavelength": 1.04743115234375
+        },
+        {
+          "name": "160",
+          "center_wavelength": 1.0377646484375
+        },
+        {
+          "name": "161",
+          "center_wavelength": 1.0288062744140625
+        },
+        {
+          "name": "162",
+          "center_wavelength": 1.017984619140625
+        },
+        {
+          "name": "163",
+          "center_wavelength": 1.0081682739257813
+        },
+        {
+          "name": "164",
+          "center_wavelength": 0.9983749389648438
+        },
+        {
+          "name": "165",
+          "center_wavelength": 0.9884115600585938
+        },
+        {
+          "name": "166",
+          "center_wavelength": 0.9787376708984376
+        },
+        {
+          "name": "167",
+          "center_wavelength": 0.9693899536132813
+        },
+        {
+          "name": "168",
+          "center_wavelength": 0.9595220336914063
+        },
+        {
+          "name": "169",
+          "center_wavelength": 0.9510114135742188
+        },
+        {
+          "name": "170",
+          "center_wavelength": 0.9429578857421875
+        }
+      ],
+      "href": "s3://prisma-data-dev-daunnc/prisma-scene-cogs/PRS_L2D_STD_20200825024857_20200825024901_0001/data/cog_VNIR_PIXEL_L2_ERR_MATRIX.tiff",
+      "roles": [],
+      "type": "image/tiff; application=geotiff"
+    }
+  },
+  "collection": "prisma-cogs",
+  "properties": {
+    "proj:epsg": 32650,
+    "hsi:wavelength_min": 0.402440185546875,
+    "hsi:wavelength_max": 2.4968740234375,
+    "datetime": "2020-08-25T02:48:57.038Z"
+  }
+}

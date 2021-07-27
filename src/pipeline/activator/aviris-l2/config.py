@@ -5,6 +5,7 @@ import boto3
 
 logger = logging.getLogger(__name__)
 
+
 class CliConfig:
     AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-classic"
 
@@ -14,10 +15,11 @@ class CliConfig:
 
         self._type = 'activator-aviris-l2'
 
-        def from_json(json_str): 
+        def from_json(json_str):
             args_json = json.loads(json_str)
             self.aviris_stac_id = args_json['avirisStacId']
-            self.aviris_collection_id = args_json.get('avirisCollectionId', self.AVIRIS_ARCHIVE_COLLECTION_ID)
+            self.aviris_collection_id = args_json.get(
+                'avirisCollectionId', self.AVIRIS_ARCHIVE_COLLECTION_ID)
             self.stac_api_uri = args_json.get('stacApiUri', 'http://franklin:9090')
             self.s3_bucket = args_json.get('s3Bucket', 'aviris-data')
             self.s3_prefix = args_json.get('s3Prefix', 'aviris-scene-cogs-l2')
@@ -39,7 +41,7 @@ class CliConfig:
                     args_json = file.read().replace('\n', '')
                     from_json(args_json)
 
-        elif args.pipeline: 
+        elif args.pipeline:
             args_json = args.pipeline
             from_json(args_json)
         else:
@@ -52,4 +54,3 @@ class CliConfig:
             self.keep_temp_dir = args.keep_temp_dir
             self.skip_large = args.skip_large
             self.force = args.force
-    
