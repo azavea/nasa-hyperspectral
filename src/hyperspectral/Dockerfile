@@ -1,4 +1,4 @@
-FROM continuumio/miniconda3:4.10.3
+FROM continuumio/miniconda3:4.9.2
 
 RUN mkdir -p /usr/local/src
 WORKDIR /usr/local/src
@@ -11,4 +11,4 @@ RUN set -ex \
 
 COPY . /usr/local/src
 
-ENTRYPOINT [ "python", "main.py" ]
+ENTRYPOINT [ "/bin/bash" ]
