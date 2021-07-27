@@ -12,6 +12,10 @@ Thumbs.db
 # K8S
 deployment/terraform/kubeconfig_*
 
+# npm
+package-lock.json
+node_modules
+
 # Other
 
 pipeline-data/
