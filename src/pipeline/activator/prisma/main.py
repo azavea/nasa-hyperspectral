@@ -411,6 +411,5 @@ def main():
         logger.error(f'Failure: {item_data}')
         return -1
 
-
 if __name__ == "__main__":
     main()

@@ -1,6 +1,5 @@
 import argparse
 from datetime import datetime, timezone
-import ftplib
 from math import floor
 import os
 from pathlib import Path
@@ -303,18 +302,6 @@ AVIRIS_L2_COG_COLLECTION.properties['eo:bands'] = [
 AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_min'] = min(AVIRIS_L2_FREQS)
 AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_max'] = max(AVIRIS_L2_FREQS)
 
-# TODO: remove ftp_to_https after the STAC Catalog update
-
-
-def ftp_to_https(uri: str) -> str:
-    if uri.startswith('ftp'):
-        gzip_ftp_url = urlparse(uri)
-        username_password, ftp_hostname = gzip_ftp_url.netloc.split("@")
-        return f'https://{ftp_hostname}/avcl{gzip_ftp_url.path}'
-    else:
-        return uri
-
-
 def activation_output(item_id: str):
     with open('/tmp/activator-output.json', 'w') as outfile:
         json.dump({
@@ -397,10 +384,10 @@ def main():
     item = stac_client.get_collection_item(
         args.aviris_collection_id, args.aviris_stac_id
     )
-    l2_asset = item.assets.get("ftp_refl", None)
+    l2_asset = item.assets.get("https_refl", None)
     if l2_asset is None:
         raise ValueError(
-            "STAC Item {} from {} has no asset 'ftp_refl'!".format(
+            "STAC Item {} from {} has no asset 'https_refl'!".format(
                 args.aviris_stac_id, args.stac_api_uri
             )
         )
@@ -450,12 +437,8 @@ def main():
         if local_archive.exists():
             logger.info("Using existing archive: {}".format(local_archive))
         else:
-            # Historically AVIRIS distributed scenes via FTP.
-            # However, it's not the case anymore.
-            # This is a temporary function that converts old AVIRIS FTP links into HTTPs links
-            # TODO: remove ftp_to_https after the STAC Catalog update
             logger.info(f'Downloading archive {local_archive}...')
-            gzip_https_url = ftp_to_https(l2_asset.href)
+            gzip_https_url = l2_asset.href
             with DownloadProgressBar(unit='B', unit_scale=True, miniters=1, desc=gzip_https_url.split('/')[-1]) as t:
                 urllib.request.urlretrieve(
                     gzip_https_url, filename=local_archive, reporthook=t.update_to)

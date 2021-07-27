@@ -52,7 +52,7 @@ def ver(for212: String, for213: String) = Def.setting {
 
 val declineVersion    = "1.4.0"
 val geotrellisVersion = Def.setting(ver("3.6.0", "3.6.1-SNAPSHOT").value)
-val stac4sVersion     = Def.setting(ver("0.5.0-13-g35ad8d4-SNAPSHOT", "0.5.0-13-g35ad8d4-SNAPSHOT").value)
+val stac4sVersion     = Def.setting(ver("0.6.1", "0.6.1-3-g1df6e95-SNAPSHOT").value)
 
 libraryDependencies ++= Seq(
   "org.locationtech.geotrellis"   %% "geotrellis-s3"                      % geotrellisVersion.value,
@@ -64,9 +64,9 @@ libraryDependencies ++= Seq(
   "io.circe"                      %% "circe-refined"                      % "0.14.1",
   "org.typelevel"                 %% "cats-effect"                        % "2.5.1",
   "io.chrisdavenport"             %% "log4cats-slf4j"                     % "1.1.1",
-  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.6",
-  "ch.qos.logback"                 % "logback-classic"                    % "1.2.3",
-  "tf.tofu"                       %% "tofu-core"                          % "0.10.2",
+  "com.softwaremill.sttp.client3" %% "async-http-client-backend-cats-ce2" % "3.3.11",
+  "ch.qos.logback"                 % "logback-classic"                    % "1.2.5",
+  "tf.tofu"                       %% "tofu-core"                          % "0.10.3",
   "com.github.julien-truffaut"    %% "monocle-macro"                      % "2.1.0",
   "org.scalatest"                 %% "scalatest"                          % "3.2.9" % Test
 )
