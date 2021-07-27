@@ -2829,8 +2829,8 @@
   "collection": "prisma-cogs",
   "properties": {
     "proj:epsg": 32650,
-    "hsi:wavelength_max": 2.4968740234375,
     "hsi:wavelength_min": 0.402440185546875,
+    "hsi:wavelength_max": 2.4968740234375,
     "datetime": "2020-08-25T02:48:57.038Z"
   }
 }

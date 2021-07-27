@@ -1,6 +1,7 @@
 # https://stackoverflow.com/a/42641363/1092399
 from urllib.parse import urlparse
 
+
 class S3Uri(object):
     """
     >>> s = S3Url("s3://bucket/hello/world")

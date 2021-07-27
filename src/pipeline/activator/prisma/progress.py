@@ -6,8 +6,10 @@ import threading
 from time import time
 from tqdm import tqdm
 
+
 class ProgressPercentage(object):
     """ Callable object for use with s3.upload_object callback """
+
     def __init__(self, filename):
         self._filename = filename
         self._size = float(os.path.getsize(filename))
