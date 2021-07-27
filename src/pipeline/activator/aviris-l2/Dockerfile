@@ -1,4 +1,4 @@
-FROM continuumio/miniconda3:4.9.2
+FROM continuumio/miniconda3:4.10.3
 
 RUN mkdir -p /usr/local/src
 WORKDIR /usr/local/src

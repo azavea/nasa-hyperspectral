@@ -41,7 +41,7 @@ docker compose run --rm activator-aviris-l2 \
 or 
 
 ```shell
-docker-compose run --rm activator-aviris-l2 \
+docker compose run --rm activator-aviris-l2 \
   --pipeline-uri /usr/local/src/data/pipeline-test.json
 ```
 

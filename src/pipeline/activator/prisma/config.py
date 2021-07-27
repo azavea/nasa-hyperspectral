@@ -25,7 +25,6 @@ class CliConfig:
             self.s3_prefix = args_json.get('s3Prefix', 'aviris-scene-cogs-l2')
             self.temp_dir = args_json.get('tempDir', None)
             self.keep_temp_dir = args_json.get('keepTempDir', False)
-            self.skip_large = args_json.get('skipLarge', False)
             self.force = args_json.get('force', False)
             self.skip_upload = args_json.get('skipUpload', False)
 
@@ -53,7 +52,6 @@ class CliConfig:
             self.s3_prefix = args.s3_prefix
             self.temp_dir = args.temp_dir
             self.keep_temp_dir = args.keep_temp_dir
-            self.skip_large = args.skip_large
             self.force = args.force
             self.prisma_path = args.prisma_path
             self.prisma_uri = args.prisma_uri

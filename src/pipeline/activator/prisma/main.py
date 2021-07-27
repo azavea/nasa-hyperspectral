@@ -143,11 +143,6 @@ def main():
     help="If provided, script does not delete temporary directory before script exits. Useful for debugging.",
   )
   parser.add_argument(
-    "--skip-large",
-    action="store_true",
-    help="If provided, script will not process any COG > 200 MB to keep processing times reasonable. Useful for debugging.",
-  )
-  parser.add_argument(
     "--force", 
     action="store_true",
     help="If provided, force reingest StacItem even though this it is already present in the catalog.",
