@@ -12,10 +12,11 @@ locals {
 }
 
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  cluster_name    = var.eks_cluster_name
-  cluster_version = "1.21"
-  subnets         = module.vpc.private_subnet_ids
+  source           = "terraform-aws-modules/eks/aws"
+  cluster_name     = var.eks_cluster_name
+  cluster_version  = "1.21"
+  subnets          = module.vpc.private_subnet_ids
+  write_kubeconfig = false
 
   tags = {
     Environment = "Hyperspectral"
