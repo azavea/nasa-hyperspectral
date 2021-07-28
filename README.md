@@ -1,4 +1,4 @@
-# NASA SBIR — Hyperspectral Imagery Processing [![HSI CI](https://github.com/azavea/nasa-hyperspectral/workflows/CI/badge.svg)](https://github.com/azavea/nasa-hyperspectral/actions)
+## NASA SBIR — Hyperspectral Imagery Processing [![HSI CI](https://github.com/azavea/nasa-hyperspectral/workflows/CI/badge.svg)](https://github.com/azavea/nasa-hyperspectral/actions)
 
 An event-driven image processing pipeline for developing our foundational
 capability to work with HSI data sources.
