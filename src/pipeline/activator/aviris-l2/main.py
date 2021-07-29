@@ -348,7 +348,14 @@ def main():
         default=os.environ.get("S3_PREFIX", "aviris-scene-cogs-l2"),
     )
     parser.add_argument(
-        "--temp-dir", type=str, default=os.environ.get("TEMP_DIR", None)
+        "--temp-dir", 
+        type=str, 
+        default=os.environ.get("TEMP_DIR", None)
+    )
+    parser.add_argument(
+        "--output-format", 
+        type=str, 
+        default=os.environ.get("GDAL_OUTPUT_FORMAT", "COG")
     )
     parser.add_argument(
         "--keep-temp-dir",
@@ -485,7 +492,7 @@ def main():
                 creationOptions=["NUM_THREADS=ALL_CPUS", "COMPRESS=DEFLATE", "BIGTIFF=YES"],
                 multithread=True,
                 warpMemoryLimit=warpMemoryLimit,
-                format="COG"
+                format=args.output_format
             )
             logger.info("Converting {} to {}...".format(hdr_path, cog_path))
             with timing("GDAL Warp"):
@@ -526,7 +533,7 @@ def main():
 
             # Add assets to COG STAC Item
             cog_item.add_asset(
-                "cog_{}".format(idx),
+                f'{args.output_asset_name}_{idx}',
                 pystac.Asset(s3_uri, media_type=pystac.MediaType.COG, roles=["data"]),
             )
             if cog_metadata_path.exists():

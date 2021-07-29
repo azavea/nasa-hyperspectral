@@ -29,6 +29,7 @@ class CliConfig:
             self.keep_temp_dir = args_json.get('keepTempDir', False)
             self.force = args_json.get('force', False)
             self.skip_upload = args_json.get('skipUpload', False)
+            self.output_format = args_json.get('outputFormat', 'COG')
 
         if args.pipeline_uri:
             # right now we support S3 and local FS only
@@ -58,3 +59,4 @@ class CliConfig:
             self.prisma_path = args.prisma_path
             self.prisma_uri = args.prisma_uri
             self.skip_upload = args.skip_upload
+            self.output_format = args.output_format
