@@ -463,12 +463,14 @@ def main():
         for idx, hdr_file_w_ext in enumerate(hdr_files):
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
             hdr_path = Path(extract_path, hdr_file_w_ext_path.with_suffix(""))
-            # cog_path = hdr_path.with_suffix(".tiff")
             cog_path = Path(f'{hdr_path.with_suffix("")}_{args.output_asset_name}.tiff')
 
             # Convert HDR data to pixel interleaved COG with GDAL
             # NUM_THREADS only speeds up compression and overview generation
             # gdal.Warp is used to fix rasters rotation
+            # NOTE: 
+            # We can't directly write TIFFs on S3 as the result of the gdal.Warp operation
+            # see: https://github.com/OSGeo/gdal/issues/1189
             warp_opts = gdal.WarpOptions(
                 callback=warp_callback,
                 warpOptions=["NUM_THREADS=ALL_CPUS"],
