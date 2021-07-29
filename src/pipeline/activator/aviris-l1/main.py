@@ -388,11 +388,7 @@ def main():
     )
     l1_asset = item.assets.get("https", None)
     if l1_asset is None:
-        raise ValueError(
-            "STAC Item {} from {} has no asset 'https'!".format(
-                args.aviris_stac_id, args.stac_api_uri
-            )
-        )
+        raise ValueError(f"STAC Item {args.aviris_stac_id} from {args.stac_api_uri} has no asset 'https'!")
     scene_name = item.properties.get("Name")
 
     # Create new COG STAC Item
@@ -425,7 +421,7 @@ def main():
         # Exit early if COG STAC Item already exists
         try:
             stac_client.get_collection_item(AVIRIS_L1_COG_COLLECTION.id, cog_item_id)
-            logger.info("STAC Item {} already exists. Exiting.".format(cog_item_id))
+            logger.info(f'STAC Item {cog_item_id} already exists. Exiting.')
             activation_output(cog_item_id)
             return
         except requests.exceptions.HTTPError:
@@ -438,7 +434,7 @@ def main():
         # Retrieve AVIRIS GZIP for matching scene name
         local_archive = Path(temp_dir, Path(l1_asset.href).name)
         if local_archive.exists():
-            logger.info("Using existing archive: {}".format(local_archive))
+            logger.info(f'Using existing archive: {local_archive}')
         else:
             logger.info(f'Downloading archive {local_archive}...')
             gzip_https_url = l1_asset.href
@@ -449,21 +445,21 @@ def main():
         # Retrieve file names from archive and extract if not already extracted to temp_dir
         extract_path = Path(temp_dir, f'{scene_name}_l1')
         with tarfile.open(local_archive, mode="r") as tar_gz_fp:
-            logger.info("Retrieving filenames from {}".format(local_archive))
+            logger.info(f'Retrieving filenames from {local_archive}')
             with timing("Query archive"):
                 tar_files = tar_gz_fp.getnames()
-            # logger.info("Files: {}".format(tar_files))
+            logger.info(f"Files: {tar_files}")
 
             if extract_path.exists():
-                logger.info("Skipping extract, exists at {}".format(extract_path))
+                logger.info(f'Skipping extract, exists at {extract_path}')
             else:
-                logger.info("Extracting {} to {}".format(local_archive, extract_path))
+                logger.info(f"Extracting {local_archive} to {extract_path}")
                 with timing("Extract"):
                     tar_gz_fp.extractall(extract_path)
 
         # Find HDR data files in unzipped package
         hdr_files = list(filter(lambda x: x.endswith("ort_img.hdr"), tar_files))
-        logger.info("HDR Files: {}".format(hdr_files))
+        logger.info(f"HDR Files: {hdr_files}")
         for idx, hdr_file_w_ext in enumerate(hdr_files):
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
             hdr_path = Path(extract_path, hdr_file_w_ext_path.with_suffix(""))
@@ -481,7 +477,7 @@ def main():
                 warpMemoryLimit=warpMemoryLimit,
                 format=args.output_format
             )
-            logger.info("Converting {} to {}...".format(hdr_path, cog_path))
+            logger.info(f"Converting {hdr_path} to {cog_path}...")
             with timing("GDAL Warp"):
                 gdal.Warp(str(cog_path), str(hdr_path), options=warp_opts)
 
@@ -501,7 +497,7 @@ def main():
                 cog_path.name,
             )
             s3_uri = f's3://{args.s3_bucket}/{key}'
-            logger.info("Uploading {} to {}".format(cog_path, s3_uri))
+            logger.info(f"Uploading {cog_path} to {s3_uri}")
             s3.upload_file(
                 str(cog_path),
                 args.s3_bucket,
@@ -534,17 +530,17 @@ def main():
                 )
     finally:
         if not args.keep_temp_dir:
-            logger.info("Removing temp dir: {}".format(temp_dir))
+            logger.info(f"Removing temp dir: {temp_dir}")
             shutil.rmtree(temp_dir, ignore_errors=True)
 
     # Add COG Item to AVIRIS L2 STAC Collection
-    logger.info("POST Item {} to {}".format(cog_item.id, args.stac_api_uri))
+    logger.info(f"POST Item {cog_item.id} to {args.stac_api_uri}")
     item_data = stac_client.post_collection_item(AVIRIS_L1_COG_COLLECTION.id, cog_item)
     if item_data.get('id', None):
-        logger.info("Success: {}".format(item_data['id']))
+        logger.info(f"Success: {item_data['id']}")
         activation_output(item_data['id'])
     else:
-        logger.error("Failure: {}".format(item_data))
+        logger.error(f"Failure: {item_data}")
         return -1
 
 
