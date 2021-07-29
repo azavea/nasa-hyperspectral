@@ -299,6 +299,9 @@ def main():
                 format=args.output_format
             )
             logger.info(f'Converting {str(path)} to {cog_path}...')
+            # NOTE: 
+            # We can't directly write TIFFs on S3 as the result of the gdal.Warp operation
+            # see: https://github.com/OSGeo/gdal/issues/1189
             with timing("GDAL Warp"):
                 gdal.Warp(str(cog_path), str(path), options=warp_opts)
 
