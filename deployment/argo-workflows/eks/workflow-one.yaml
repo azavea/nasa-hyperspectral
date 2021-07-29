@@ -51,7 +51,7 @@ spec:
       - name: activator-input
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l2:latest
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always # IfNotPresent
       command: [python, main.py, --pipeline-uri]
       args: ["{{inputs.parameters.activator-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/
@@ -69,7 +69,7 @@ spec:
       - name: processor-input
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/cog-clip:latest
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always # IfNotPresent
       command: [java, -XX:+UseG1GC, -jar, cog-clip-assembly.jar, clip-pipeline-uri, --uri]
       args: ["{{inputs.parameters.processor-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/

@@ -29,7 +29,7 @@ spec:
       - name: activator-input
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l1:latest
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always # IfNotPresent
       env:
       - name: STAC_API_URI
         value: "https://franklin.nasa-hsi.azavea.com"
