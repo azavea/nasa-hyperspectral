@@ -51,24 +51,40 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         docker tag "activator-aviris-l1:${GIT_COMMIT}" \
             "${ECR_REGISTRY}/activator-aviris-l1:${GIT_COMMIT}"
 
+        docker tag "activator-aviris-l1:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/activator-aviris-l1:latest"
+
         docker push "${ECR_REGISTRY}/activator-aviris-l1:${GIT_COMMIT}"
+        docker push "${ECR_REGISTRY}/activator-aviris-l1:latest"
 
         # Tag and publish the Aviris L2 activator.
         docker tag "activator-aviris-l2:${GIT_COMMIT}" \
             "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
 
+        docker tag "activator-aviris-l2:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/activator-aviris-l2:latest"
+
         docker push "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
+        docker push "${ECR_REGISTRY}/activator-aviris-l2:latest"
 
         # Tag and publish the PRISMA activator.
         docker tag "activator-prisma:${GIT_COMMIT}" \
             "${ECR_REGISTRY}/activator-prisma:${GIT_COMMIT}"
 
+        docker tag "activator-prisma:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/activator-prisma:latest"   
+
         docker push "${ECR_REGISTRY}/activator-prisma:${GIT_COMMIT}"
+        docker push "${ECR_REGISTRY}/activator-prisma:latest"
 
         # Tag and publish the COG Clip module.
         docker tag "cog-clip:${GIT_COMMIT}" \
             "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
 
+        docker tag "cog-clip:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/cog-clip:latest"
+
         docker push "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
+        docker push "${ECR_REGISTRY}/cog-clip:latest"
     fi
 fi
