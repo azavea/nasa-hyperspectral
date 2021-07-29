@@ -27,6 +27,10 @@ class CliConfig:
             self.keep_temp_dir = args_json.get('keepTempDir', False)
             self.skip_large = args_json.get('skipLarge', False)
             self.force = args_json.get('force', False)
+            self.output_format = args_json.get('outputFormat', 'COG')
+            self.output_asset_name = 'cog'
+            if args.output_format != 'COG':
+                self.output_asset_name = 'tiff'
 
         if args.pipeline_uri:
             # right now we support S3 and local FS only
@@ -54,3 +58,7 @@ class CliConfig:
             self.keep_temp_dir = args.keep_temp_dir
             self.skip_large = args.skip_large
             self.force = args.force
+            self.output_format = args.output_format
+            self.output_asset_name = 'cog'
+            if args.output_format != 'COG':
+                self.output_asset_name = 'tiff'

@@ -13,26 +13,27 @@ Run tests.
 "
 }
 
+function argo-dry-run() {
+    for filename in *.yaml; do
+        argo submit "$filename" --dry-run -o yaml
+    done
+}
+
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     if [[ "${1:-}" == "--help" ]]; then
         usage
     else
         # Argo Workflows dry run
         pushd ./deployment/argo-workflows/local
-        argo submit workflow-one.yaml --dry-run -o yaml
-        argo submit workflow-two.yaml --dry-run -o yaml
+        argo-dry-run
         popd
 
         pushd ./deployment/argo-workflows/azavea-dev
-        argo submit workflow-one.yaml --dry-run -o yaml
-        argo submit workflow-two.yaml --dry-run -o yaml
+        argo-dry-run
         popd
 
         pushd ./deployment/argo-workflows/eks
-        argo submit workflow-one.yaml --dry-run -o yaml
-        argo submit workflow-two.yaml --dry-run -o yaml
-        argo submit workflow-aviris-l1-scene-id.yaml --dry-run -o yaml
-        argo submit workflow-aviris-l2-scene-id.yaml --dry-run -o yaml
+        argo-dry-run
         popd
 
     fi
