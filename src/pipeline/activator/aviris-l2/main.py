@@ -472,7 +472,8 @@ def main():
         for idx, hdr_file_w_ext in enumerate(hdr_files):
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
             hdr_path = Path(extract_path, hdr_file_w_ext_path.with_suffix(""))
-            cog_path = hdr_path.with_suffix(".tiff")
+            # cog_path = hdr_path.with_suffix(".tiff")
+            cog_path = f'{hdr_path.with_suffix("")}_{args.output_asset_name}.tiff'
 
             if args.skip_large and os.path.getsize(hdr_path) > 0.2 * GB:
                 file_mb = floor(os.path.getsize(hdr_path) / 1024 / 1024)

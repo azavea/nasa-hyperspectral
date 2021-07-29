@@ -467,7 +467,8 @@ def main():
         for idx, hdr_file_w_ext in enumerate(hdr_files):
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
             hdr_path = Path(extract_path, hdr_file_w_ext_path.with_suffix(""))
-            cog_path = hdr_path.with_suffix(".tiff")
+            # cog_path = hdr_path.with_suffix(".tiff")
+            cog_path = f'{hdr_path.with_suffix("")}_{args.output_asset_name}.tiff'
 
             # Convert HDR data to pixel interleaved COG with GDAL
             # NUM_THREADS only speeds up compression and overview generation
@@ -499,7 +500,7 @@ def main():
                 str(item.properties.get("Name")),
                 cog_path.name,
             )
-            s3_uri = "s3://{}/{}".format(args.s3_bucket, key)
+            s3_uri = f's3://{args.s3_bucket}/{key}'
             logger.info("Uploading {} to {}".format(cog_path, s3_uri))
             s3.upload_file(
                 str(cog_path),
@@ -511,8 +512,8 @@ def main():
             cog_metadata_path = cog_path.with_suffix(".tiff.aux.xml")
             if cog_metadata_path.exists():
                 metadata_key = Path(args.s3_prefix, cog_metadata_path.name)
-                metadata_s3_uri = "s3://{}/{}".format(args.s3_bucket, metadata_key)
-                logger.info("Uploading {} to {}".format(cog_metadata_path, metadata_s3_uri))
+                metadata_s3_uri = f's3://{args.s3_bucket}/{metadata_key}'
+                logger.info(f'Uploading {cog_metadata_path} to {metadata_s3_uri}')
                 s3.upload_file(
                     str(cog_metadata_path), args.s3_bucket, str(metadata_key)
                 )
@@ -524,7 +525,7 @@ def main():
             )
             if cog_metadata_path.exists():
                 cog_item.add_asset(
-                    "metadata_{}".format(idx),
+                    f'metadata_{idx}',
                     pystac.Asset(
                         metadata_s3_uri,
                         media_type=pystac.MediaType.XML,
