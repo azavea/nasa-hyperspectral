@@ -32,22 +32,24 @@ class STACClient:
 
     def post_collection(self, collection):
         """ POST collection pystac.Collection to STAC API """
-        d = collection.to_dict()
-        d['type'] = 'Collection'
+        collection_dict = collection.to_dict()
+        collection_dict['type'] = 'Collection'
         response = requests.post(
             "{}/collections".format(self.stac_api_url),
             headers={"Content-Type": "application/json"},
-            data=json.dumps(d),
+            data=json.dumps(collection_dict),
         )
         response.raise_for_status()
         return response.json()
 
     def post_collection_item(self, collection_id, item):
         """ POST item pystac.Item to collection_id """
+        item_dict = item.to_dict()
+        item_dict['stac_version'] = '1.0.0'
         response = requests.post(
             "{}/collections/{}/items".format(self.stac_api_url, collection_id),
             headers={"Content-Type": "application/json"},
-            data=json.dumps(item.to_dict()),
+            data=json.dumps(item_dict),
         )
         response.raise_for_status()
         return response.json()

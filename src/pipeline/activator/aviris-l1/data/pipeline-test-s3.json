@@ -1,0 +1,10 @@
+{
+  "avirisStacId": "aviris_f130329t01p00r06_sc01",
+  "avirisCollectionId": "aviris-classic",
+  "stacApiUri": "https://franklin.nasa-hsi.azavea.com",
+  "s3Bucket": "aviris-data",
+  "s3Prefix": "aviris-scene-cogs-l1",
+  "tempDir": "/data",
+  "keepTempDir": true,
+  "force": false
+}

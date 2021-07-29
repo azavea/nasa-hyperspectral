@@ -1,0 +1,57 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: workflow-
+spec:
+  entrypoint: workflow-template
+  parallelism: 2
+  arguments:
+    parameters:
+    - name: activator-input
+      value: |
+        [
+          {
+            "id": "1",
+            "sceneId": "aviris_f130329t01p00r06_sc01"
+          }
+        ]
+
+  templates:
+  - name: workflow-template
+    dag:
+      tasks:
+      - name: activator
+        template: activator-template
+        arguments:
+          parameters:
+          - name: activator-input
+            value: "{{item.sceneId}}"
+        withParam: "{{workflow.parameters.activator-input}}"
+
+  - name: activator-template
+    inputs:
+      parameters:
+      - name: activator-input
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l1:latest
+      imagePullPolicy: IfNotPresent
+      env:
+      - name: GDAL_CACHEMAX
+        value: "50%"
+      - name: GDAL_WARP_MEMORY_LIMIT
+        value: "4000"
+      command: [python, main.py, --aviris-stac-id]
+      args: ["{{inputs.parameters.activator-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/
+      resources:
+        requests:
+          cpu: 3000m
+          memory: 8G 
+        limits:
+          cpu: 3200m
+          memory: 10G 
+    outputs:
+      parameters:
+      - name: activator-output
+        valueFrom:
+          path: /tmp/activator-output.json
