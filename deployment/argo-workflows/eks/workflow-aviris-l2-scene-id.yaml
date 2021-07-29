@@ -9,7 +9,12 @@ spec:
     parameters:
     - name: activator-input
       value: |
-        ["aviris_f130329t01p00r06_sc01"]
+        [
+          {
+            "id": "activator-1",
+            "event": "s3://aviris-data-dev-azavea/commands/aviris-l2/pipeline-test-s3.json"
+          }
+        ]
 
   templates:
   - name: workflow-template
@@ -20,7 +25,7 @@ spec:
         arguments:
           parameters:
           - name: activator-input
-            value: "{{item}}"
+            value: "{{item.event}}"
         withParam: "{{workflow.parameters.activator-input}}"
 
   - name: activator-template
@@ -28,16 +33,9 @@ spec:
       parameters:
       - name: activator-input
     container:
-      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l1:latest
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l2:latest
       imagePullPolicy: IfNotPresent
-      env:
-      - name: STAC_API_URI
-        value: "https://franklin.nasa-hsi.azavea.com"
-      - name: GDAL_CACHEMAX
-        value: "50%"
-      - name: GDAL_WARP_MEMORY_LIMIT
-        value: "4000"
-      command: [python, main.py, --aviris-stac-id]
+      command: [python, main.py, --pipeline-uri]
       args: ["{{inputs.parameters.activator-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/
       resources:
@@ -47,8 +45,3 @@ spec:
         limits:
           cpu: 3200m
           memory: 10G 
-    outputs:
-      parameters:
-      - name: activator-output
-        valueFrom:
-          path: /tmp/activator-output.json
