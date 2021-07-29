@@ -5,7 +5,8 @@
 ### Get Started
 
 1. Install [Docker](https://www.docker.com/) of the latest version
-2. Install [Kubectl](https://kubernetes.io/docs/tasks/tools/) of the latest version
+2. Install [KubeCtl](https://kubernetes.io/docs/tasks/tools/) of the latest version
+  * (Optionally) Install [K8S Lens](https://k8slens.dev/) to simplify work with K8S cluster
 3. Install [Argo CLI](https://github.com/argoproj/argo-workflows/releases/tag/v3.1.3) of the latest version
 4. Install [iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
   * Run `aws eks --region us-east-1 update-kubeconfig --name hsi-spot` to retrieve kubeconfig
