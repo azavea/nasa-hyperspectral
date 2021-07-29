@@ -464,7 +464,7 @@ def main():
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
             hdr_path = Path(extract_path, hdr_file_w_ext_path.with_suffix(""))
             # cog_path = hdr_path.with_suffix(".tiff")
-            cog_path = f'{hdr_path.with_suffix("")}_{args.output_asset_name}.tiff'
+            cog_path = Path(f'{hdr_path.with_suffix("")}_{args.output_asset_name}.tiff')
 
             # Convert HDR data to pixel interleaved COG with GDAL
             # NUM_THREADS only speeds up compression and overview generation
