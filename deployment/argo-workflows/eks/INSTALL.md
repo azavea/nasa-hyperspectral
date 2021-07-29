@@ -2,16 +2,16 @@
 
 ![Argo Workflows](https://argoproj.github.io/argo-workflows/assets/argo.png)
 
-In all examples we use Argo Workflows 3.1.1, since we are interested in some of new argo workflows features, see https://blog.argoproj.io/argo-workflows-v3-1-is-coming-1fb1c1091324
+In all examples we use Argo Workflows 3.1.3, since we are interested in some of new argo workflows features, see https://blog.argoproj.io/argo-workflows-v3-1-is-coming-1fb1c1091324
 
 ## Argo CLI instructions
 
-For details see: https://github.com/argoproj/argo-workflows/releases/tag/v3.1.1
+For details see: https://github.com/argoproj/argo-workflows/releases/tag/v3.1.3
 
 ### Mac
 
 ```bash
-$ curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.1.1/argo-darwin-amd64.gz
+$ curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.1.3/argo-darwin-amd64.gz
 $ gunzip argo-darwin-amd64.gz
 $ chmod +x argo-darwin-amd64
 $ mv ./argo-darwin-amd64 /usr/local/bin/argo
@@ -21,7 +21,7 @@ $ argo version
 ### Linux
 
 ```bash
-$ curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.1.1/argo-darwin-amd64.gz
+$ curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.1.3/argo-darwin-amd64.gz
 $ gunzip argo-linux-amd64.gz
 $ chmod +x argo-linux-amd64
 $ mv ./argo-linux-amd64 /usr/local/bin/argo
@@ -48,7 +48,7 @@ $ aws eks --region us-east-1 update-kubeconfig --name hsi-spot
 $ kubectl config use-context eks_hsi-spot
 # lunch argo
 $ kubectl create ns argo
-# install 3.1.1
+# install 3.1.3
 $ kubectl apply -n argo -f manifests/install-argo.yaml
 # port forwarding for the local development
 $ kubectl -n argo port-forward deployment/argo-server 2746:2746
