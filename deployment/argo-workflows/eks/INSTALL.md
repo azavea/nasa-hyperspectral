@@ -108,3 +108,7 @@ curl https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-i
 ```bash
 kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/daemonset/container-insights-monitoring/cwagent/cwagent-daemonset.yaml
 ```
+
+## Auto Scaling
+
+For more details see https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html

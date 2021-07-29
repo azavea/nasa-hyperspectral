@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: workflow-
+spec:
+  entrypoint: workflow-template
+  parallelism: 2
+  arguments:
+    parameters:
+    - name: activator-input
+      value: |
+        ["s3://asi-prisma/L2D/PRS_L2D_STD_20200825024857_20200825024901_0001.zip"]
+
+  templates:
+  - name: workflow-template
+    dag:
+      tasks:
+      - name: activator
+        template: activator-template
+        arguments:
+          parameters:
+          - name: activator-input
+            value: "{{item}}"
+        withParam: "{{workflow.parameters.activator-input}}"
+
+  - name: activator-template
+    inputs:
+      parameters:
+      - name: activator-input
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-prisma:latest
+      imagePullPolicy: Always # IfNotPresent
+      env:
+      - name: STAC_API_URI
+        value: "https://franklin.nasa-hsi.azavea.com"
+      - name: GDAL_CACHEMAX
+        value: "40%"
+      command: [python, main.py, --prisma-uri]
+      args: ["{{inputs.parameters.activator-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/
+      resources:
+        requests:
+          cpu: 3000m
+          memory: 8G 
+        limits:
+          cpu: 3200m
+          memory: 12G 
+    outputs:
+      parameters:
+      - name: activator-output
+        valueFrom:
+          path: /tmp/activator-output.json
