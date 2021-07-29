@@ -5,7 +5,7 @@
 ### Get Started
 
 * Install [Docker](https://www.docker.com/) of the latest version
-* Install [KubeCtl](https://kubernetes.io/docs/tasks/tools/) of the latest version
+* Install [Kubectl](https://kubernetes.io/docs/tasks/tools/) of the latest version
   * (Optionally) Install [K8S Lens](https://k8slens.dev/) to simplify work with K8S cluster
 * Install [Argo CLI](https://github.com/argoproj/argo-workflows/releases/tag/v3.1.3) of the latest version
 * Install [iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
