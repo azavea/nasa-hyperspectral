@@ -27,7 +27,6 @@ A common set of arguments to use in development, to re-use the same temp dir and
 docker compose run --rm activator-aviris-l1 \
   --aviris-stac-id <stac-item-id> \
   --temp-dir /data \
-  --skip-large \
   --keep-temp-dir 
 ```
 
@@ -35,7 +34,7 @@ Alternatively, activator can be launched via the following command:
 
 ```shell
 docker compose run --rm activator-aviris-l1 \
-  --pipeline "{\"avirisStacId\":\"aviris_f130329t01p00r06_sc01\",\"avirisCollectionId\":\"aviris-collection\",\"stacApiUri\":\"http:\/\/host.docker.internal:9090\",\"s3Bucket\":\"aviris-data\",\"s3Prefix\":\"aviris-scene-cogs-l1\",\"tempDir\":\"\/data\",\"keepTempDir\":true,\"skipLarge\":true,\"force\":false}"
+  --pipeline "{\"avirisStacId\":\"aviris_f130329t01p00r06_sc01\",\"avirisCollectionId\":\"aviris-collection\",\"stacApiUri\":\"http:\/\/host.docker.internal:9090\",\"s3Bucket\":\"aviris-data\",\"s3Prefix\":\"aviris-scene-cogs-l1\",\"tempDir\":\"\/data\",\"keepTempDir\":true,\"force\":false}"
 ```
 
 or 

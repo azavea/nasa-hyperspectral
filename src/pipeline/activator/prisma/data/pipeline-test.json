@@ -1,0 +1,12 @@
+{
+  "prismaStacId": "",
+  "prismaCollectionId": "",
+  "stacApiUri": "http://host.docker.internal:9090",
+  "s3Bucket": "asi-prisma",
+  "s3Prefix": "prisma-scene-cogs",
+  "tempDir": "/data",
+  "prismaUri": "s3://asi-prisma/L2D/PRS_L2D_STD_20200825024857_20200825024901_0001.zip",
+  "keepTempDir": true,
+  "skipUpload": false,
+  "force": false
+}
