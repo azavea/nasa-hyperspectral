@@ -17,6 +17,9 @@ $ argo submit workflow-two.yaml --dry-run -o yaml
 # submit the workflow
 $ argo submit -n argo workflow-one.yaml --watch 
 $ argo submit -n argo workflow-two.yaml --watch 
+
+# syntax to pass input parameters (optional, can be replaced directly in the yaml file)
+$ argo submit -n argo workflow-aviris-l1-scene-id.yaml -p 'activator-input=["aviris_f130329t01p00r06_sc01"]' --watch
 ```
 
 ### S3 Credentials configuration

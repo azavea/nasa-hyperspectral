@@ -47,11 +47,23 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         # Login to Amazon ECR with the local Docker client.
         amazon_ecr_login
 
+        # Tag and publish the Aviris L1 activator.
+        docker tag "activator-aviris-l1:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/activator-aviris-l1:${GIT_COMMIT}"
+
+        docker push "${ECR_REGISTRY}/activator-aviris-l1:${GIT_COMMIT}"
+
         # Tag and publish the Aviris L2 activator.
         docker tag "activator-aviris-l2:${GIT_COMMIT}" \
             "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
 
         docker push "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
+
+        # Tag and publish the PRISMA activator.
+        docker tag "activator-prisma:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/activator-prisma:${GIT_COMMIT}"
+
+        docker push "${ECR_REGISTRY}/activator-prisma:${GIT_COMMIT}"
 
         # Tag and publish the COG Clip module.
         docker tag "cog-clip:${GIT_COMMIT}" \
