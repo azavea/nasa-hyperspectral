@@ -3,6 +3,12 @@ services:
   activator-aviris-l2:
     image: "activator-aviris-l2:${GIT_COMMIT:-latest}"
 
+  activator-aviris-l1:
+    image: "activator-aviris-l1:${GIT_COMMIT:-latest}"
+
+  activator-prisma:
+    image: "activator-prisma:${GIT_COMMIT:-latest}"
+
   cog-clip:
     image: "cog-clip:${GIT_COMMIT:-latest}"
 

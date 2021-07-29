@@ -42,9 +42,9 @@ COG_COLLECTION_EXTENSIONS = [
 COG_ITEM_EXTENSIONS = COG_COLLECTION_EXTENSIONS + \
     ['https://stac-extensions.github.io/projection/v1.0.0/schema.json']
 
-AVIRIS_L2_COG_COLLECTION = pystac.Collection(
-    "aviris-l2-cogs",
-    "AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
+AVIRIS_L1_COG_COLLECTION = pystac.Collection(
+    "aviris-l1-cogs",
+    "AVIRIS L1 Imagery converted to pixel-interleaved COGs",
     pystac.Extent(
         pystac.SpatialExtent([[-180, -90, 180, 90]]),
         pystac.TemporalExtent(
@@ -58,13 +58,13 @@ AVIRIS_L2_COG_COLLECTION = pystac.Collection(
     ),
     stac_extensions=COG_COLLECTION_EXTENSIONS
 )
-AVIRIS_L2_COG_COLLECTION.links = []
-AVIRIS_L2_COG_COLLECTION.properties = {}
+AVIRIS_L1_COG_COLLECTION.links = []
+AVIRIS_L1_COG_COLLECTION.properties = {}
 
 # Nanometers
 # STAC Requires Micrometers (x 0.001)
 # band -> frequency relation
-AVIRIS_L2_BANDS_FREQS_NANO = {
+AVIRIS_L1_BANDS_FREQS_NANO = {
     '1': 365.9136593,
     '10': 453.0496593,
     '100': 1283.2736593,
@@ -292,20 +292,20 @@ AVIRIS_L2_BANDS_FREQS_NANO = {
 }
 
 # sorted by bands
-AVIRIS_L2_BANDS_FREQS = [(b, f * 0.001)
-                         for b, f in sorted(AVIRIS_L2_BANDS_FREQS_NANO.items(), key=lambda x: x[0])]
+AVIRIS_L1_BANDS_FREQS = [(b, f * 0.001)
+                         for b, f in sorted(AVIRIS_L1_BANDS_FREQS_NANO.items(), key=lambda x: x[0])]
 # properties."hsi:wavelengths" = [],
-AVIRIS_L2_FREQS = [f for b, f in AVIRIS_L2_BANDS_FREQS]
+AVIRIS_L1_FREQS = [f for b, f in AVIRIS_L1_BANDS_FREQS]
 
-AVIRIS_L2_COG_COLLECTION.properties['eo:bands'] = [
-    {'name': b, 'center_wavelength': f} for (b, f) in AVIRIS_L2_BANDS_FREQS]
-AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_min'] = min(AVIRIS_L2_FREQS)
-AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_max'] = max(AVIRIS_L2_FREQS)
+AVIRIS_L1_COG_COLLECTION.properties['eo:bands'] = [
+    {'name': b, 'center_wavelength': f} for (b, f) in AVIRIS_L1_BANDS_FREQS]
+AVIRIS_L1_COG_COLLECTION.properties['hsi:wavelength_min'] = min(AVIRIS_L1_FREQS)
+AVIRIS_L1_COG_COLLECTION.properties['hsi:wavelength_max'] = max(AVIRIS_L1_FREQS)
 
 def activation_output(item_id: str):
     with open('/tmp/activator-output.json', 'w') as outfile:
         json.dump({
-            'sourceCollectionId': AVIRIS_L2_COG_COLLECTION.id,
+            'sourceCollectionId': AVIRIS_L1_COG_COLLECTION.id,
             'sourceItemId': item_id
         }, outfile)
 
@@ -356,11 +356,6 @@ def main():
         help="If provided, script does not delete temporary directory before script exits. Useful for debugging.",
     )
     parser.add_argument(
-        "--skip-large",
-        action="store_true",
-        help="If provided, script will not process any COG > 200 MB to keep processing times reasonable. Useful for debugging.",
-    )
-    parser.add_argument(
         "--force",
         action="store_true",
         help="If provided, force reingest StacItem even though this it is already present in the catalog.",
@@ -384,10 +379,10 @@ def main():
     item = stac_client.get_collection_item(
         args.aviris_collection_id, args.aviris_stac_id
     )
-    l2_asset = item.assets.get("https_refl", None)
-    if l2_asset is None:
+    l1_asset = item.assets.get("https", None)
+    if l1_asset is None:
         raise ValueError(
-            "STAC Item {} from {} has no asset 'https_refl'!".format(
+            "STAC Item {} from {} has no asset 'https'!".format(
                 args.aviris_stac_id, args.stac_api_uri
             )
         )
@@ -395,14 +390,14 @@ def main():
 
     # Create new COG STAC Item
     cog_item_id = "{}_{}_{}".format(
-        AVIRIS_L2_COG_COLLECTION.id,
+        AVIRIS_L1_COG_COLLECTION.id,
         item.properties.get("Name"),
         item.properties.get("Scene"),
     )
 
-    item.properties['eo:bands'] = AVIRIS_L2_COG_COLLECTION.properties['eo:bands']
-    item.properties['hsi:wavelength_min'] = AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_min']
-    item.properties['hsi:wavelength_max'] = AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_max']
+    item.properties['eo:bands'] = AVIRIS_L1_COG_COLLECTION.properties['eo:bands']
+    item.properties['hsi:wavelength_min'] = AVIRIS_L1_COG_COLLECTION.properties['hsi:wavelength_min']
+    item.properties['hsi:wavelength_max'] = AVIRIS_L1_COG_COLLECTION.properties['hsi:wavelength_max']
     item.properties.pop('layer:ids', None)
 
     cog_item = pystac.Item(
@@ -412,17 +407,17 @@ def main():
         item.datetime,
         item.properties,
         stac_extensions=COG_ITEM_EXTENSIONS,
-        collection=AVIRIS_L2_COG_COLLECTION.id,
+        collection=AVIRIS_L1_COG_COLLECTION.id,
     )
 
     # Create COG Collection if it doesn't exist
-    if not stac_client.has_collection(AVIRIS_L2_COG_COLLECTION.id):
-        stac_client.post_collection(AVIRIS_L2_COG_COLLECTION)
+    if not stac_client.has_collection(AVIRIS_L1_COG_COLLECTION.id):
+        stac_client.post_collection(AVIRIS_L1_COG_COLLECTION)
 
     if not args.force:
         # Exit early if COG STAC Item already exists
         try:
-            stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
+            stac_client.get_collection_item(AVIRIS_L1_COG_COLLECTION.id, cog_item_id)
             logger.info("STAC Item {} already exists. Exiting.".format(cog_item_id))
             activation_output(cog_item_id)
             return
@@ -434,18 +429,18 @@ def main():
     temp_dir.mkdir(parents=True, exist_ok=True)
     try:
         # Retrieve AVIRIS GZIP for matching scene name
-        local_archive = Path(temp_dir, Path(l2_asset.href).name)
+        local_archive = Path(temp_dir, Path(l1_asset.href).name)
         if local_archive.exists():
             logger.info("Using existing archive: {}".format(local_archive))
         else:
             logger.info(f'Downloading archive {local_archive}...')
-            gzip_https_url = l2_asset.href
+            gzip_https_url = l1_asset.href
             with DownloadProgressBar(unit='B', unit_scale=True, miniters=1, desc=gzip_https_url.split('/')[-1]) as t:
                 urllib.request.urlretrieve(
                     gzip_https_url, filename=local_archive, reporthook=t.update_to)
 
         # Retrieve file names from archive and extract if not already extracted to temp_dir
-        extract_path = Path(temp_dir, f'{scene_name}_l2')
+        extract_path = Path(temp_dir, f'{scene_name}_l1')
         with tarfile.open(local_archive, mode="r") as tar_gz_fp:
             logger.info("Retrieving filenames from {}".format(local_archive))
             with timing("Query archive"):
@@ -460,21 +455,12 @@ def main():
                     tar_gz_fp.extractall(extract_path)
 
         # Find HDR data files in unzipped package
-        hdr_files = list(filter(lambda x: x.endswith(".hdr"), tar_files))
+        hdr_files = list(filter(lambda x: x.endswith("ort_img.hdr"), tar_files))
         logger.info("HDR Files: {}".format(hdr_files))
         for idx, hdr_file_w_ext in enumerate(hdr_files):
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
             hdr_path = Path(extract_path, hdr_file_w_ext_path.with_suffix(""))
             cog_path = hdr_path.with_suffix(".tiff")
-
-            if args.skip_large and os.path.getsize(hdr_path) > 0.2 * GB:
-                file_mb = floor(os.path.getsize(hdr_path) / 1024 / 1024)
-                logger.info(
-                    "--skip-large provided. Skipping {} with size {}mb".format(
-                        hdr_path, file_mb
-                    )
-                )
-                continue
 
             # Convert HDR data to pixel interleaved COG with GDAL
             # NUM_THREADS only speeds up compression and overview generation
@@ -545,7 +531,7 @@ def main():
 
     # Add COG Item to AVIRIS L2 STAC Collection
     logger.info("POST Item {} to {}".format(cog_item.id, args.stac_api_uri))
-    item_data = stac_client.post_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item)
+    item_data = stac_client.post_collection_item(AVIRIS_L1_COG_COLLECTION.id, cog_item)
     if item_data.get('id', None):
         logger.info("Success: {}".format(item_data['id']))
         activation_output(item_data['id'])
