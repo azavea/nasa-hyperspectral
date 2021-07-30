@@ -16,7 +16,7 @@
   * `kubectl -n argo port-forward deployment/argo-server 2746:2746`
   * Page would be accesible by the address [https://localhost:2746/](https://localhost:2746/)
 * Run the Argo Submit command: 
-  * `argo submit -n argo workflow-aviris-l1-scene-id.yaml -p 'activator-input=["aviris_f130329t01p00r06_sc01"]' --watch`
+  * `argo submit -n argo workflow-aviris-l1-scene-id-gtiff.yaml -p 'activator-input=["aviris_f130329t01p00r06_sc01"]' --watch`
   * watch will attatch the argo cli output to the terminal session
 
 For more details read [INSTALL.md](./INSTALL.md)
