@@ -315,14 +315,14 @@ def main():
         vnir_error_path = create_geotiff(
             Path(temp_dir, "VNIR_PIXEL_L2_ERR_MATRIX.tiff"), vnir_errorT)
 
-        def key(path):
-            return f'prisma-scene-cogs/{product_name}{path.name}'
+        def key(path_string):
+            return f'prisma-scene-cogs/{product_name}{Path(path_string).name}'
 
         # prep all upload links
-        s3_uri_swir = f's3://{args.s3_bucket}/{key(Path(swir_path))}'
-        s3_uri_vnir = f's3://{args.s3_bucket}/{key(Path(vnir_path))}'
-        s3_uri_swir_error = f's3://{args.s3_bucket}/{key(Path(swir_error_path))}'
-        s3_uri_vnir_error = f's3://{args.s3_bucket}/{key(Path(vnir_error_path))}'
+        s3_uri_swir = f's3://{args.s3_bucket}/{key(swir_path)}'
+        s3_uri_vnir = f's3://{args.s3_bucket}/{key(vnir_path)}'
+        s3_uri_swir_error = f's3://{args.s3_bucket}/{key(swir_error_path)}'
+        s3_uri_vnir_error = f's3://{args.s3_bucket}/{key(vnir_error_path)}'
 
         upload_paths = [
             ('SWIR_Cube', swir_path, s3_uri_swir),
