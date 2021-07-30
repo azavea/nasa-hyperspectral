@@ -1,0 +1,8 @@
+awsRegion: us-east-1
+
+rbac:
+  create: true
+
+autoDiscovery:
+  clusterName: hsi-spot
+  enabled: true

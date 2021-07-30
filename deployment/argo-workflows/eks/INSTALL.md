@@ -111,4 +111,22 @@ kubectl apply -f https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch
 
 ## Auto Scaling
 
-For more details see https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html
+For more details see https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html and https://github.com/terraform-aws-modules/terraform-aws-eks/tree/v17.1.0/examples/irsa
+
+```bash
+$ helm repo add autoscaler https://kubernetes.github.io/autoscaler
+$ helm repo update
+$ helm install cluster-autoscaler --namespace kube-system autoscaler/cluster-autoscaler --values helm/autoscaler-chart-values.yaml
+```
+
+To verify that cluster-autoscaler has started, run:
+
+```bash
+$ kubectl --namespace=kube-system get pods -l "app.kubernetes.io/name=aws-cluster-autoscaler,app.kubernetes.io/instance=cluster-autoscaler"
+```
+
+To uninstall this chart use: 
+
+```bash
+$ helm uninstall cluster-autoscaler --namespace kube-system autoscaler/cluster-autoscaler
+```
