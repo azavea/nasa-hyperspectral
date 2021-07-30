@@ -115,6 +115,7 @@ For more details see:
 * https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html 
 * https://github.com/terraform-aws-modules/terraform-aws-eks/blob/v17.1.0/docs/autoscaling.md
 * https://github.com/terraform-aws-modules/terraform-aws-eks/tree/v17.1.0/examples/irsa
+* https://github.com/kubernetes/autoscaler/blob/cluster-autoscaler-1.21.0/charts/cluster-autoscaler/README.md
 
 ```bash
 $ helm repo add autoscaler https://kubernetes.github.io/autoscaler
