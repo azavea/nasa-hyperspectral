@@ -6,3 +6,7 @@ rbac:
 autoDiscovery:
   clusterName: hsi-spot
   enabled: true
+
+# should match the cluster K8S version
+image:
+  tag: v1.21.0
