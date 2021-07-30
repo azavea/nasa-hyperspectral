@@ -149,13 +149,13 @@ def main():
         default=os.environ.get("S3_PREFIX", "aviris-scene-cogs-l2"),
     )
     parser.add_argument(
-        "--temp-dir", 
-        type=str, 
+        "--temp-dir",
+        type=str,
         default=os.environ.get("TEMP_DIR", None)
     )
     parser.add_argument(
-        "--output-format", 
-        type=str, 
+        "--output-format",
+        type=str,
         default=os.environ.get("GDAL_OUTPUT_FORMAT", "COG")
     )
     parser.add_argument(
@@ -299,7 +299,7 @@ def main():
                 format=args.output_format
             )
             logger.info(f'Converting {str(path)} to {cog_path}...')
-            # NOTE: 
+            # NOTE:
             # We can't directly write TIFFs on S3 as the result of the gdal.Warp operation
             # see: https://github.com/OSGeo/gdal/issues/1189
             with timing("GDAL Warp"):
@@ -315,14 +315,14 @@ def main():
         vnir_error_path = create_geotiff(
             Path(temp_dir, "VNIR_PIXEL_L2_ERR_MATRIX.tiff"), vnir_errorT)
 
-        def key(name):
-            return f'prisma-scene-cogs/{product_name}{name}'
+        def key(path):
+            return f'prisma-scene-cogs/{product_name}{path.name}'
 
         # prep all upload links
-        s3_uri_swir = f's3://{args.s3_bucket}/{key(swir_path)}'
-        s3_uri_vnir = f's3://{args.s3_bucket}/{key(vnir_path)}'
-        s3_uri_swir_error = f's3://{args.s3_bucket}/{key(swir_error_path)}'
-        s3_uri_vnir_error = f's3://{args.s3_bucket}/{key(vnir_error_path)}'
+        s3_uri_swir = f's3://{args.s3_bucket}/{key(Path(swir_path))}'
+        s3_uri_vnir = f's3://{args.s3_bucket}/{key(Path(vnir_path))}'
+        s3_uri_swir_error = f's3://{args.s3_bucket}/{key(Path(swir_error_path))}'
+        s3_uri_vnir_error = f's3://{args.s3_bucket}/{key(Path(vnir_error_path))}'
 
         upload_paths = [
             ('SWIR_Cube', swir_path, s3_uri_swir),
@@ -420,6 +420,7 @@ def main():
     else:
         logger.error(f'Failure: {item_data}')
         return -1
+
 
 if __name__ == "__main__":
     main()
