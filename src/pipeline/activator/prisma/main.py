@@ -316,7 +316,7 @@ def main():
             Path(temp_dir, "VNIR_PIXEL_L2_ERR_MATRIX.tiff"), vnir_errorT)
 
         def key(path_string):
-            return f'prisma-scene-cogs/{product_name}{Path(path_string).name}'
+            return f'prisma-scene-cogs/{product_name}/{Path(path_string).name}'
 
         # prep all upload links
         s3_uri_swir = f's3://{args.s3_bucket}/{key(swir_path)}'
