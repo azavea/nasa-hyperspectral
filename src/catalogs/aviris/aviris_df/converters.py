@@ -143,6 +143,8 @@ def aviris_series_to_item(s2_scenes_map, series):
             description="AVIRIS data archive of atmospheric corrected imagery for this scene.",
             media_type="application/gzip",
         ).to_dict()
+    else: 
+        properties["has_refl"] = False
 
     return pd.Series(
         {
