@@ -75,7 +75,7 @@ spec:
       imagePullPolicy: Always # IfNotPresent
       env:
       - name: GDAL_CACHEMAX
-        value: "50%"
+        value: "30%"
       - name: GDAL_WARP_MEMORY_LIMIT
         value: "4000"
       command: [python, main.py, --pipeline-uri]

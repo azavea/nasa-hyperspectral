@@ -34,7 +34,7 @@ spec:
       - name: STAC_API_URI
         value: "https://franklin.nasa-hsi.azavea.com"
       - name: GDAL_CACHEMAX
-        value: "50%"
+        value: "30%"
       - name: GDAL_WARP_MEMORY_LIMIT
         value: "4000"
       command: [python, main.py, --aviris-stac-id]
