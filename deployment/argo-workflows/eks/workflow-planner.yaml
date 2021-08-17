@@ -1,0 +1,119 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: workflow-
+spec:
+  entrypoint: workflow-template
+  parallelism: 2
+  arguments:
+    parameters:
+    - name: planner-input
+      value: |
+        {
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -114.887217,
+                  33.498289
+                ],
+                [
+                  -114.819923,
+                  33.66972
+                ],
+                [
+                  -116.769931,
+                  34.187606
+                ],
+                [
+                  -116.833779,
+                  34.015078
+                ],
+                [
+                  -114.887217,
+                  33.498289
+                ]
+              ]
+            ]
+          },
+          "datetime": "1993-10-12T00:00:00Z/2021-10-14T00:00:00Z",
+          "wavelengths": {
+            "min": 0.36,
+            "max": 0.46
+          },
+          "collection": "aviris-classic", 
+          "stacApiUri": "https://franklin.nasa-hsi.azavea.com"
+        }
+
+  templates:
+  - name: workflow-template
+    dag:
+      tasks:
+      - name: planner
+        template: planner-template
+        arguments:
+          parameters:
+            - name: planner-input
+              value: "{{workflow.parameters.planner-input}}"
+
+      - name: activator
+        template: activator-template
+        arguments:
+          parameters:
+          - name: activator-input
+            value: "{{item}}"
+        withParam: "{{tasks.planner.outputs.parameters.planner-output}}"
+
+  - name: planner-template
+    inputs:
+      parameters:
+      - name: planner-input
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/planner:latest
+      imagePullPolicy: Always # IfNotPresent
+      command: [python, main.py, --pipeline]
+      args: ["{{inputs.parameters.planner-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/
+      resources:
+        requests:
+          cpu: 500m
+          memory: 512M 
+        limits:
+          cpu: 500m
+          memory: 512M
+    outputs:
+      parameters:
+      - name: planner-output
+        valueFrom:
+          path: /tmp/planner-output.json
+
+  - name: activator-template
+    inputs:
+      parameters:
+      - name: activator-input
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l1:latest
+      imagePullPolicy: Always # IfNotPresent
+      env:
+      - name: STAC_API_URI
+        value: "https://franklin.nasa-hsi.azavea.com"
+      - name: GDAL_CACHEMAX
+        value: "30%"
+      - name: GDAL_OUTPUT_FORMAT
+        value: "GTiff"
+      command: [python, main.py, --aviris-stac-id]
+      args: ["{{inputs.parameters.activator-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/
+      resources:
+        requests:
+          cpu: 3000m
+          memory: 8G 
+        limits:
+          cpu: 3200m
+          memory: 12G 
+    outputs:
+      parameters:
+      - name: activator-output
+        valueFrom:
+          path: /tmp/activator-output.json
