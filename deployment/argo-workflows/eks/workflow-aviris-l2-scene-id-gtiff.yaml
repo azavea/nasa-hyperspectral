@@ -35,6 +35,8 @@ spec:
         value: "https://franklin.nasa-hsi.azavea.com"
       - name: GDAL_CACHEMAX
         value: "30%"
+      - name: GDAL_OUTPUT_FORMAT
+        value: "GTiff"
       command: [python, main.py, --aviris-stac-id]
       args: ["{{inputs.parameters.activator-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/
