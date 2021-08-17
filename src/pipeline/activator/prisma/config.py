@@ -2,6 +2,7 @@ import logging
 import json
 from s3uri import S3Uri
 import boto3
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,7 @@ class CliConfig:
                 'prismaCollectionId', self.AVIRIS_ARCHIVE_COLLECTION_ID)
             self.prisma_path = args_json.get('prismaPath', None)
             self.prisma_uri = args_json.get('prismaUri', None)
-            self.stac_api_uri = args_json.get('stacApiUri', 'http://franklin:9090')
+            self.stac_api_uri = args_json.get('stacApiUri', os.environ.get("STAC_API_URI", "http://franklin:9090"))
             self.s3_bucket = args_json.get('s3Bucket', 'aviris-data')
             self.s3_prefix = args_json.get('s3Prefix', 'aviris-scene-cogs-l2')
             self.temp_dir = args_json.get('tempDir', None)

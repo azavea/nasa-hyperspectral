@@ -2,6 +2,7 @@ import logging
 import json
 from s3uri import S3Uri
 import boto3
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class CliConfig:
             self.aviris_stac_id = args_json['avirisStacId']
             self.aviris_collection_id = args_json.get(
                 'avirisCollectionId', self.AVIRIS_ARCHIVE_COLLECTION_ID)
-            self.stac_api_uri = args_json.get('stacApiUri', 'http://franklin:9090')
+            self.stac_api_uri = args_json.get('stacApiUri', os.environ.get("STAC_API_URI", "http://franklin:9090"))
             self.s3_bucket = args_json.get('s3Bucket', 'aviris-data')
             self.s3_prefix = args_json.get('s3Prefix', 'aviris-scene-cogs-l1')
             self.temp_dir = args_json.get('tempDir', None)
