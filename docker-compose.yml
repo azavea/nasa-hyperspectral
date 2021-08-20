@@ -78,6 +78,23 @@ services:
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
 
+  activator-sentinel-s2:
+    image: activator-sentinel-s2
+    build:
+      context: ./src/pipeline/activator/sentinel-s2
+    environment:
+      - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
+      - S3_BUCKET=sentinel-s2-data-dev-${USER}
+      - AWS_PROFILE=${AWS_PROFILE:-nasa}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - AWS_REQUEST_PAYER=requester 
+      - GDAL_DISABLE_READDIR_ON_OPEN=YES 
+    volumes:
+      - ./src/pipeline/activator/sentinel-s2:/usr/local/src
+      - ./pipeline-data:/data
+      - $HOME/.aws:/root/.aws:ro
+      - conda-pkg-cache:/opt/conda/pkgs
+
   cog-clip:
     image: cog-clip
     build:

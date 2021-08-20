@@ -20,7 +20,7 @@ import rasterio.warp
 import requests
 from osgeo import gdal, osr
 
-def gather_sentinel(filename: str, output_s3_uri: str, paths: dict[str, str], working_dir: str = '/tmp', delete: bool = True):
+def gather_sentinel(filename: str, output_s3_uri: str, paths: dict, working_dir: str = '/tmp', delete: bool = True):
     codes = []
 
     kind = 'L2A'

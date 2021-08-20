@@ -22,7 +22,7 @@ class CliConfig:
             self.sentinel_collection_id = args_json.get('sentinelCollectionId', self.SENTINEL_ARCHIVE_COLLECTION_ID)
             self.stac_api_uri = args_json.get('stacApiUri', os.environ.get("STAC_API_URI", "http://franklin:9090"))
             self.stac_api_uri_sentinel = args_json.get('stacApiUriSentinel', os.environ.get("STAC_API_URI_SENTINEL", "https://earth-search.aws.element84.com/v0"))
-            self.s3_bucket = args_json.get('s3Bucket', 'sentinel-s2-l2a-nasa')
+            self.s3_bucket = args_json.get('s3Bucket', 'sentinel-s2-data')
             self.s3_prefix = args_json.get('s3Prefix', 'sentinel-s2-cogs')
             self.temp_dir = args_json.get('tempDir', None)
             self.keep_temp_dir = args_json.get('keepTempDir', False)

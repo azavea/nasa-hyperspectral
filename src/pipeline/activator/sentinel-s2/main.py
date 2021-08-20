@@ -173,7 +173,7 @@ def main():
     )
     
     parser.add_argument(
-        "--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "aviris-data")
+        "--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "sentinel-s2-data")
     )
     parser.add_argument(
         "--s3-prefix",
@@ -300,7 +300,7 @@ def main():
         except requests.exceptions.HTTPError:
             pass
 
-    _, s3_uri = gather_sentinel(f'{cog_item_id}.tiff', f's3://sentinel-s2-l2a-nasa/{sentintel_path}/', bands_map)
+    _, s3_uri = gather_sentinel(f'{cog_item_id}.tiff', f's3://{args.s3_bucket}/{args.s3_prefix}/{sentintel_path}/', bands_map)
     
     # Add assets to COG STAC Item
     idx = 0

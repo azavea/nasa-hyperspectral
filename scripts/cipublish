@@ -77,6 +77,16 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         docker push "${ECR_REGISTRY}/activator-prisma:${GIT_COMMIT}"
         docker push "${ECR_REGISTRY}/activator-prisma:latest"
 
+        # Tag and publish the Sentinel activator.
+        docker tag "activator-sentinel-s2:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/activator-sentinel-s2:${GIT_COMMIT}"
+
+        docker tag "activator-sentinel-s2:${GIT_COMMIT}" \
+            "${ECR_REGISTRY}/activator-sentinel-s2:latest"   
+
+        docker push "${ECR_REGISTRY}/activator-sentinel-s2:${GIT_COMMIT}"
+        docker push "${ECR_REGISTRY}/activator-sentinel-s2:latest"
+
         # Tag and publish the COG Clip module.
         docker tag "cog-clip:${GIT_COMMIT}" \
             "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
