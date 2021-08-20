@@ -1,6 +1,6 @@
 #!/bin/bash
 
-IMAGE_NAME="aviris-l2-${USER}:latest"
+IMAGE_NAME="sentinel-s2-${USER}:latest"
 ACCOUNT_ID=$(aws sts get-caller-identity --output text --query 'Account')
 AWS_REGION="us-east-1"
 
