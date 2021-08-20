@@ -1,0 +1,11 @@
+{
+  "sentinelStacId": "S2B_9JYJ_20210817_0_L2A",
+  "sentinelCollectionId": "sentinel-s2-l2a",
+  "stacApiUri": "https://earth-search.aws.element84.com/v0",
+  "s3Bucket": "sentinel-s2-l2a-nasa",
+  "s3Prefix": "sentinel-s2-cogs",
+  "tempDir": "/data",
+  "keepTempDir": true,
+  "skipUpload": false,
+  "force": false
+}
