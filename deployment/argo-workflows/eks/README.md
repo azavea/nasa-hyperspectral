@@ -42,6 +42,8 @@ $ argo submit -n argo workflow-two.yaml --watch
 
 # syntax to pass input parameters (optional, can be replaced directly in the yaml file)
 $ argo submit -n argo workflow-aviris-l1-scene-id.yaml -p 'activator-input=["aviris_f130329t01p00r06_sc01"]' --watch
+
+$ argo submit -n argo workflow-sentinel-2s-scene-id.yaml -p 'activator-input=["S2B_23XNK_20210819_0_L2A"]' --watch
 ```
 
 ### S3 Credentials configuration
