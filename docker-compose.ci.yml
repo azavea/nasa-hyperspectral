@@ -9,6 +9,9 @@ services:
   activator-prisma:
     image: "activator-prisma:${GIT_COMMIT:-latest}"
 
+  activator-sentinel-s2:
+    image: "activator-sentinel-s2:${GIT_COMMIT:-latest}"
+
   cog-clip:
     image: "cog-clip:${GIT_COMMIT:-latest}"
 
