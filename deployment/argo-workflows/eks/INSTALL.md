@@ -134,3 +134,21 @@ To uninstall this chart use:
 ```bash
 $ helm uninstall cluster-autoscaler --namespace kube-system autoscaler/cluster-autoscaler
 ```
+
+## Default EC2 Configurations
+
+```tf
+eks_cluster_name             = "hsi-spot"
+eks_workers_instance_type    = "m4.xlarge"
+eks_workers_spot_price       = "0.078"
+```
+
+```tf
+eks_cluster_name             = "hsi-spot"
+eks_workers_instance_type    = "t3.small"
+eks_workers_spot_price       = "0.0068"
+```
+
+```bash
+aws s3 cp deployment/terraform/nasahyperspectral-staging-config-us-east-1.tfvars s3://nasahyperspectral-staging-config-us-east-1/terraform/terraform.tfvars
+```
