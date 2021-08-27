@@ -4,12 +4,12 @@ metadata:
   generateName: workflow-
 spec:
   entrypoint: workflow-template
-  parallelism: 2
+  parallelism: 40
   arguments:
     parameters:
     - name: activator-input
       value: |
-        ["aviris_f130329t01p00r06_sc01"]
+        ["S2B_23XNK_20210819_0_L2A"]
 
   templates:
   - name: workflow-template
@@ -33,8 +33,6 @@ spec:
       env:
       - name: STAC_API_URI
         value: "https://franklin.nasa-hsi.azavea.com"
-      - name: GDAL_CACHEMAX
-        value: "30%"
       - name: GDAL_OUTPUT_FORMAT
         value: "GTiff"
       - name: AWS_REQUEST_PAYER
@@ -46,11 +44,11 @@ spec:
       # https://argoproj.github.io/argo-workflows/resource-duration/
       resources:
         requests:
-          cpu: 3000m
-          memory: 8G 
+          cpu: 600m
+          memory: 1G
         limits:
-          cpu: 3200m
-          memory: 12G 
+          cpu: 1200m
+          memory: 4G 
     outputs:
       parameters:
       - name: activator-output
