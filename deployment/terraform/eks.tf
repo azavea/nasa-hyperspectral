@@ -40,6 +40,7 @@ module "eks" {
       instance_type                 = var.eks_workers_instance_type
       additional_userdata           = "workers group"
       asg_desired_capacity          = var.eks_workers_desired_capacity
+      asg_min_size                  = var.eks_workers_min_size
       asg_max_size                  = var.eks_workers_max_size
       kubelet_extra_args            = "--node-labels=node.kubernetes.io/lifecycle=spot"
       suspended_processes           = ["AZRebalance"]

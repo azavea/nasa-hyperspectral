@@ -329,6 +329,11 @@ variable "eks_workers_desired_capacity" {
   type    = number
 }
 
+variable "eks_workers_min_size" {
+  default = 1
+  type    = number
+}
+
 variable "eks_workers_max_size" {
   default = 1
   type    = number
