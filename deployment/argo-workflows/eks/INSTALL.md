@@ -141,12 +141,18 @@ $ helm uninstall cluster-autoscaler --namespace kube-system autoscaler/cluster-a
 eks_cluster_name             = "hsi-spot"
 eks_workers_instance_type    = "m4.xlarge"
 eks_workers_spot_price       = "0.078"
+eks_workers_desired_capacity = 1 # 10
+eks_workers_min_size         = 1 # 10
+eks_workers_max_size         = 1 # 10
 ```
 
 ```tf
 eks_cluster_name             = "hsi-spot"
 eks_workers_instance_type    = "t3.small"
 eks_workers_spot_price       = "0.0068"
+eks_workers_desired_capacity = 1 # 10
+eks_workers_min_size         = 1 # 10
+eks_workers_max_size         = 1 # 10
 ```
 
 ```bash
