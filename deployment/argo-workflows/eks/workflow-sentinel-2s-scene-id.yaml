@@ -4,7 +4,7 @@ metadata:
   generateName: workflow-
 spec:
   entrypoint: workflow-template
-  parallelism: 40
+  parallelism: 30
   arguments:
     parameters:
     - name: activator-input
@@ -44,11 +44,11 @@ spec:
       # https://argoproj.github.io/argo-workflows/resource-duration/
       resources:
         requests:
-          cpu: 600m
-          memory: 1G
+          cpu: 1200m
+          memory: 8G
         limits:
           cpu: 1200m
-          memory: 4G 
+          memory: 8G 
     outputs:
       parameters:
       - name: activator-output
