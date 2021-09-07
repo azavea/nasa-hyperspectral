@@ -1,6 +1,6 @@
 import logging
 import json
-from s3uri import S3Uri
+from activator_utils.s3uri import S3Uri
 import boto3
 
 logger = logging.getLogger(__name__)

@@ -51,7 +51,8 @@ services:
   activator-aviris-l1:
     image: activator-aviris-l1
     build:
-      context: ./src/pipeline/activator/aviris-l1
+      context: ./src/pipeline/activator/
+      dockerfile: ./src/pipeline/activator/aviris-l1/Dockerfile
     environment:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
       - S3_BUCKET=aviris-data-dev-${USER}
@@ -59,6 +60,7 @@ services:
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
       - ./src/pipeline/activator/aviris-l1:/usr/local/src
+      - ./src/pipeline/activator/activator_utils/:/usr/local/src/activator_utils/
       - ./pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs

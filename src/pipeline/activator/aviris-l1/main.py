@@ -18,8 +18,8 @@ import requests
 import urllib.request
 import json
 
-from progress import ProgressPercentage, timing, warp_callback, DownloadProgressBar
-from stac_client import STACClient
+from activator_utils.progress import ProgressPercentage, timing, warp_callback, DownloadProgressBar
+from activator_utils.stac_client import STACClient
 
 from random import randint
 from time import sleep

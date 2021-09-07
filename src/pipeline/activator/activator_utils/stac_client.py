@@ -14,6 +14,15 @@ class STACClient:
         """
         self.stac_api_url = str(stac_api_url)
 
+    def get_collection(self, collection_id):
+        """ GET item pystac.Collection from STAC API collection_id """
+        url = "{}/collections/{}".format(
+            self.stac_api_url, collection_id
+        )
+        response = requests.get(url)
+        response.raise_for_status()
+        return pystac.Collection.from_dict(response.json())
+
     def get_collection_item(self, collection_id, item_id):
         """ GET item pystac.Item from STAC API collection_id """
         url = "{}/collections/{}/items/{}".format(
@@ -34,6 +43,7 @@ class STACClient:
         """ POST collection pystac.Collection to STAC API """
         collection_dict = collection.to_dict()
         collection_dict['type'] = 'Collection'
+        collection_dict['stac_version'] = '1.0.0'
         response = requests.post(
             "{}/collections".format(self.stac_api_url),
             headers={"Content-Type": "application/json"},

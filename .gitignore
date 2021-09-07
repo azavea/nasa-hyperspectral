@@ -25,3 +25,7 @@ __pycache__
 .ipynb_checkpoints
 src/hyperspectral/notebooks/ECOSTRESS/*
 src/hyperspectral/notebooks/data/*
+src/pipeline/activator/aviris-l1/activator_utils/
+src/pipeline/activator/aviris-l2/activator_utils/
+src/pipeline/activator/prisma/activator_utils/
+src/pipeline/activator/sentinel-s2/activator_utils/
