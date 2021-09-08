@@ -353,7 +353,7 @@ def main():
     parser.add_argument(
         "--s3-prefix",
         type=str,
-        default=os.environ.get("S3_PREFIX", "aviris-scene-cogs"),
+        default=os.environ.get("S3_PREFIX"),
     )
     parser.add_argument(
         "--temp-dir", 

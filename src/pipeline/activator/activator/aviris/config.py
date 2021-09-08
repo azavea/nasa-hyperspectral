@@ -49,7 +49,6 @@ class CliConfig:
                 with open(args.pipeline_uri, 'r') as file:
                     args_json = file.read().replace('\n', '')
                     from_json(args_json)
-
         elif args.pipeline:
             args_json = args.pipeline
             from_json(args_json)
@@ -61,6 +60,8 @@ class CliConfig:
             self.level = L2 if self.l2 else L1
             self.s3_bucket = args.s3_bucket
             self.s3_prefix = args.s3_prefix
+            if not self.s3_prefix:
+                self.s3_prefix = f'aviris-scene-cogs-{self.level}'
             self.temp_dir = args.temp_dir
             self.keep_temp_dir = args.keep_temp_dir
             self.skip_large = args.skip_large
