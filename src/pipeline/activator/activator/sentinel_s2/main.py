@@ -25,7 +25,7 @@ from activator.utils.stac_client import STACClient
 from random import randint
 from time import sleep
 
-from gather import gather_sentinel
+from .gather import gather_sentinel
 
 # set a configurable logging level for the entire app
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()

@@ -21,6 +21,8 @@ services:
       - AWS_REGION
     ports:
       - "9090:9090"
+    depends_on: 
+      - "database"
 
   catalogs-aviris:
     image: nasa-hsi-catalogs-aviris
@@ -62,6 +64,8 @@ services:
       - ./pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
+    depends_on:
+      - "franklin"
 
   activator-prisma:
     image: activator
