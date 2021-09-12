@@ -35,6 +35,21 @@ services:
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
 
+  activator:
+    image: activator
+    build:
+      context: ./src/pipeline/activator/
+    environment:
+      - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
+      - S3_BUCKET=aviris-data-dev-${USER}
+      - AWS_PROFILE=${AWS_PROFILE:-nasa}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./src/pipeline/activator:/usr/local/src
+      - ./pipeline-data:/data
+      - $HOME/.aws:/root/.aws:ro
+      - conda-pkg-cache:/opt/conda/pkgs
+
   activator-aviris:
     image: activator
     command: ["python", "activator/aviris/main.py"]
@@ -52,7 +67,7 @@ services:
       - conda-pkg-cache:/opt/conda/pkgs
     depends_on:
       - "franklin"
-  
+
   activator-prisma:
     image: activator
     command: ["python", "activator/prisma/main.py"]

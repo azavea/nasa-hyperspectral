@@ -19,11 +19,11 @@ pushd ../../../
 GIT_COMMIT="${GIT_COMMIT}" docker compose \
   -f docker-compose.yml \
   -f docker-compose.ci.yml \
-  build activator-aviris-l2 cog-clip
+  build activator cog-clip
 popd
 
-# Tag the Aviris L2 activator.
-docker tag "activator-aviris-l2:${GIT_COMMIT}" "activator-aviris-l2:latest"
+# Tag the Aviris activator.
+docker tag "activator:${GIT_COMMIT}" "activator:latest"
 
 # Tag the COG Clip module.
 docker tag "cog-clip:${GIT_COMMIT}" "cog-clip:latest"

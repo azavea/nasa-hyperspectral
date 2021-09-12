@@ -1,10 +1,13 @@
 version: "3.8"
 services:
-  activator-aviris-l2:
-    image: "activator-aviris-l2:${GIT_COMMIT:-latest}"
+  activator:
+    image: "activator:${GIT_COMMIT:-latest}"
+
+  activator-aviris:
+    image: "activator-aviris:${GIT_COMMIT:-latest}"
 
   activator-aviris-l1:
-    image: "activator-aviris-l1:${GIT_COMMIT:-latest}"
+    image: "activator-aviris:${GIT_COMMIT:-latest}"
 
   activator-prisma:
     image: "activator-prisma:${GIT_COMMIT:-latest}"

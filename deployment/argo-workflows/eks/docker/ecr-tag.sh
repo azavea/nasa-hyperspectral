@@ -30,12 +30,12 @@ function amazon_ecr_login() {
 # Login to Amazon ECR with the local Docker client.
 amazon_ecr_login
 
-# Tag the Aviris L2 activator.
-docker tag "activator-aviris-l2:${GIT_COMMIT}" "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
-docker tag "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}" "${ECR_REGISTRY}/activator-aviris-l2:latest"
+# Tag the Aviris activator.
+docker tag "activator:${GIT_COMMIT}" "${ECR_REGISTRY}/activator:${GIT_COMMIT}"
+docker tag "${ECR_REGISTRY}/activator:${GIT_COMMIT}" "${ECR_REGISTRY}/activator:latest"
 
-echo "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
-echo "${ECR_REGISTRY}/activator-aviris-l2:latest"
+echo "${ECR_REGISTRY}/activator:${GIT_COMMIT}"
+echo "${ECR_REGISTRY}/activator:latest"
 
 # Tag the COG Clip module.
 docker tag "cog-clip:${GIT_COMMIT}" "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
