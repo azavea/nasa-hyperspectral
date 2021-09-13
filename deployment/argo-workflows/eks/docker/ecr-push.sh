@@ -30,9 +30,9 @@ function amazon_ecr_login() {
 # Login to Amazon ECR with the local Docker client.
 amazon_ecr_login
 
-# Push the Aviris L2 activator.
-docker push "${ECR_REGISTRY}/activator-aviris-l2:${GIT_COMMIT}"
-docker push "${ECR_REGISTRY}/activator-aviris-l2:latest"
+# Push the Aviris activator.
+docker push "${ECR_REGISTRY}/activator:${GIT_COMMIT}"
+docker push "${ECR_REGISTRY}/activator:latest"
 
 # Push the COG Clip module.
 docker push "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
