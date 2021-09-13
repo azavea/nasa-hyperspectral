@@ -8,7 +8,7 @@ import tarfile
 from tempfile import mkdtemp
 from urllib.parse import urlparse
 import logging
-from .config import CliConfig
+from .config import CliConfig, L1, L2
 
 import boto3
 from boto3.s3.transfer import TransferConfig
@@ -42,29 +42,10 @@ COG_COLLECTION_EXTENSIONS = [
 COG_ITEM_EXTENSIONS = COG_COLLECTION_EXTENSIONS + \
     ['https://stac-extensions.github.io/projection/v1.0.0/schema.json']
 
-AVIRIS_L2_COG_COLLECTION = pystac.Collection(
-    "aviris-l2-cogs",
-    "AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs",
-    pystac.Extent(
-        pystac.SpatialExtent([[-180, -90, 180, 90]]),
-        pystac.TemporalExtent(
-            [
-                [
-                    datetime(2014, 1, 1, tzinfo=timezone.utc),
-                    datetime(2020, 1, 1, tzinfo=timezone.utc),
-                ]
-            ]
-        ),
-    ),
-    stac_extensions=COG_COLLECTION_EXTENSIONS
-)
-AVIRIS_L2_COG_COLLECTION.links = []
-AVIRIS_L2_COG_COLLECTION.properties = {}
-
 # Nanometers
 # STAC Requires Micrometers (x 0.001)
 # band -> frequency relation
-AVIRIS_L2_BANDS_FREQS_NANO = {
+AVIRIS_BANDS_FREQS_NANO = {
     '1': 365.9136593,
     '10': 453.0496593,
     '100': 1283.2736593,
@@ -292,20 +273,47 @@ AVIRIS_L2_BANDS_FREQS_NANO = {
 }
 
 # sorted by bands
-AVIRIS_L2_BANDS_FREQS = [(b, f * 0.001)
-                         for b, f in sorted(AVIRIS_L2_BANDS_FREQS_NANO.items(), key=lambda x: x[0])]
+AVIRIS_BANDS_FREQS = [(b, f * 0.001)
+                      for b, f in sorted(AVIRIS_BANDS_FREQS_NANO.items(), key=lambda x: x[0])]
 # properties."hsi:wavelengths" = [],
-AVIRIS_L2_FREQS = [f for b, f in AVIRIS_L2_BANDS_FREQS]
+AVIRIS_FREQS = [f for b, f in AVIRIS_BANDS_FREQS]
 
-AVIRIS_L2_COG_COLLECTION.properties['eo:bands'] = [
-    {'name': b, 'center_wavelength': f} for (b, f) in AVIRIS_L2_BANDS_FREQS]
-AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_min'] = min(AVIRIS_L2_FREQS)
-AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_max'] = max(AVIRIS_L2_FREQS)
+def get_aviris_cog_collection(level):
+    if level not in [L1, L2]:
+        raise Exception(f'{level} is not a valid level.')
+    description = (
+        'AVIRIS L2 Refl Imagery converted to pixel-interleaved COGs' if level == L2 else
+        'AVIRIS L1 Imagery converted to pixel-interleaved COGs')
+    collection = pystac.Collection(
+        f'aviris-{level}-cogs',
+        description,
+        pystac.Extent(
+            pystac.SpatialExtent([[-180, -90, 180, 90]]),
+            pystac.TemporalExtent(
+                [
+                    [
+                        datetime(2014, 1, 1, tzinfo=timezone.utc),
+                        datetime(2020, 1, 1, tzinfo=timezone.utc),
+                    ]
+                ]
+            ),
+        ),
+        stac_extensions=COG_COLLECTION_EXTENSIONS
+    )
+    collection.links = []
+    collection.properties = {}
+    collection.properties['eo:bands'] = [
+        {'name': b, 'center_wavelength': f} for (b, f) in AVIRIS_BANDS_FREQS]
+    collection.properties['hsi:wavelength_min'] = min(AVIRIS_FREQS)
+    collection.properties['hsi:wavelength_max'] = max(AVIRIS_FREQS)
 
-def activation_output(item_id: str):
+    return collection
+
+
+def activation_output(item_id: str, collection_id: str):
     with open('/tmp/activator-output.json', 'w') as outfile:
         json.dump({
-            'sourceCollectionId': AVIRIS_L2_COG_COLLECTION.id,
+            'sourceCollectionId': collection_id,
             'sourceItemId': item_id
         }, outfile)
 
@@ -345,7 +353,7 @@ def main():
     parser.add_argument(
         "--s3-prefix",
         type=str,
-        default=os.environ.get("S3_PREFIX", "aviris-scene-cogs-l2"),
+        default=os.environ.get("S3_PREFIX"),
     )
     parser.add_argument(
         "--temp-dir", 
@@ -372,6 +380,11 @@ def main():
         action="store_true",
         help="If provided, force reingest StacItem even though this it is already present in the catalog.",
     )
+    parser.add_argument(
+        "--l2",
+        action="store_true",
+        help="If provided, use L2 imagery instead of L1.",
+    )
 
     try:
         warpMemoryLimit = int(os.environ.get("GDAL_WARP_MEMORY_LIMIT", None))
@@ -387,29 +400,30 @@ def main():
     s3 = boto3.client("s3")
     stac_client = STACClient(args.stac_api_uri)
 
+    cog_collection = get_aviris_cog_collection(args.level)
+
     # GET STAC Item from AVIRIS Catalog
     item = stac_client.get_collection_item(
         args.aviris_collection_id, args.aviris_stac_id
     )
-    l2_asset = item.assets.get("https_refl", None)
-    if l2_asset is None:
+
+    asset_key = 'https_refl' if args.l2 else 'https'
+    asset = item.assets.get(asset_key, None)
+    if asset is None:
         raise ValueError(
-            "STAC Item {} from {} has no asset 'https_refl'!".format(
-                args.aviris_stac_id, args.stac_api_uri
-            )
-        )
+            f'STAC Item {args.aviris_stac_id} from {args.stac_api_uri} has no asset "{asset_key}"!')
     scene_name = item.properties.get("Name")
 
     # Create new COG STAC Item
     cog_item_id = "{}_{}_{}".format(
-        AVIRIS_L2_COG_COLLECTION.id,
+        cog_collection.id,
         item.properties.get("Name"),
         item.properties.get("Scene"),
     )
 
-    item.properties['eo:bands'] = AVIRIS_L2_COG_COLLECTION.properties['eo:bands']
-    item.properties['hsi:wavelength_min'] = AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_min']
-    item.properties['hsi:wavelength_max'] = AVIRIS_L2_COG_COLLECTION.properties['hsi:wavelength_max']
+    item.properties['eo:bands'] = cog_collection.properties['eo:bands']
+    item.properties['hsi:wavelength_min'] = cog_collection.properties['hsi:wavelength_min']
+    item.properties['hsi:wavelength_max'] = cog_collection.properties['hsi:wavelength_max']
     item.properties.pop('layer:ids', None)
 
     cog_item = pystac.Item(
@@ -419,19 +433,19 @@ def main():
         item.datetime,
         item.properties,
         stac_extensions=COG_ITEM_EXTENSIONS,
-        collection=AVIRIS_L2_COG_COLLECTION.id,
+        collection=cog_collection.id,
     )
 
     # Create COG Collection if it doesn't exist
-    if not stac_client.has_collection(AVIRIS_L2_COG_COLLECTION.id):
-        stac_client.post_collection(AVIRIS_L2_COG_COLLECTION)
+    if not stac_client.has_collection(cog_collection.id):
+        stac_client.post_collection(cog_collection)
 
     if not args.force:
         # Exit early if COG STAC Item already exists
         try:
-            stac_client.get_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item_id)
-            logger.info("STAC Item {} already exists. Exiting.".format(cog_item_id))
-            activation_output(cog_item_id)
+            stac_client.get_collection_item(cog_collection.id, cog_item_id)
+            logger.info(f'STAC Item {cog_item_id} already exists. Exiting.')
+            activation_output(cog_item_id, cog_collection.id)
             return
         except requests.exceptions.HTTPError:
             pass
@@ -441,33 +455,34 @@ def main():
     temp_dir.mkdir(parents=True, exist_ok=True)
     try:
         # Retrieve AVIRIS GZIP for matching scene name
-        local_archive = Path(temp_dir, Path(l2_asset.href).name)
+        local_archive = Path(temp_dir, Path(asset.href).name)
         if local_archive.exists():
-            logger.info("Using existing archive: {}".format(local_archive))
+            logger.info(f'Using existing archive: {local_archive}')
         else:
             logger.info(f'Downloading archive {local_archive}...')
-            gzip_https_url = l2_asset.href
+            gzip_https_url = asset.href
             with DownloadProgressBar(unit='B', unit_scale=True, miniters=1, desc=gzip_https_url.split('/')[-1]) as t:
                 urllib.request.urlretrieve(
                     gzip_https_url, filename=local_archive, reporthook=t.update_to)
 
         # Retrieve file names from archive and extract if not already extracted to temp_dir
-        extract_path = Path(temp_dir, f'{scene_name}_l2')
+        extract_path = Path(temp_dir, f'{scene_name}_{args.level}')
         with tarfile.open(local_archive, mode="r") as tar_gz_fp:
-            logger.info("Retrieving filenames from {}".format(local_archive))
+            logger.info(f'Retrieving filenames from {local_archive}')
             with timing("Query archive"):
                 tar_files = tar_gz_fp.getnames()
-            # logger.info("Files: {}".format(tar_files))
+            logger.info(f"Files: {tar_files}")
 
             if extract_path.exists():
-                logger.info("Skipping extract, exists at {}".format(extract_path))
+                logger.info(f'Skipping extract, exists at {extract_path}')
             else:
-                logger.info("Extracting {} to {}".format(local_archive, extract_path))
+                logger.info(f"Extracting {local_archive} to {extract_path}")
                 with timing("Extract"):
                     tar_gz_fp.extractall(extract_path)
 
         # Find HDR data files in unzipped package
-        hdr_files = list(filter(lambda x: x.endswith(".hdr"), tar_files))
+        hdr_ext = '.hdr' if args.l2 else 'ort_img.hdr'
+        hdr_files = [tf for tf in tar_files if tf.endswith(hdr_ext)]
         logger.info("HDR Files: {}".format(hdr_files))
         for idx, hdr_file_w_ext in enumerate(hdr_files):
             hdr_file_w_ext_path = Path(hdr_file_w_ext)
@@ -497,7 +512,7 @@ def main():
                 warpMemoryLimit=warpMemoryLimit,
                 format=args.output_format
             )
-            logger.info("Converting {} to {}...".format(hdr_path, cog_path))
+            logger.info(f"Converting {hdr_path} to {cog_path}...")
             with timing("GDAL Warp"):
                 gdal.Warp(str(cog_path), str(hdr_path), options=warp_opts)
 
@@ -516,8 +531,8 @@ def main():
                 str(item.properties.get("Name")),
                 cog_path.name,
             )
-            s3_uri = "s3://{}/{}".format(args.s3_bucket, key)
-            logger.info("Uploading {} to {}".format(cog_path, s3_uri))
+            s3_uri = f's3://{args.s3_bucket}/{key}'
+            logger.info(f"Uploading {cog_path} to {s3_uri}")
             s3.upload_file(
                 str(cog_path),
                 args.s3_bucket,
@@ -528,8 +543,8 @@ def main():
             cog_metadata_path = cog_path.with_suffix(".tiff.aux.xml")
             if cog_metadata_path.exists():
                 metadata_key = Path(args.s3_prefix, cog_metadata_path.name)
-                metadata_s3_uri = "s3://{}/{}".format(args.s3_bucket, metadata_key)
-                logger.info("Uploading {} to {}".format(cog_metadata_path, metadata_s3_uri))
+                metadata_s3_uri = f's3://{args.s3_bucket}/{metadata_key}'
+                logger.info(f'Uploading {cog_metadata_path} to {metadata_s3_uri}')
                 s3.upload_file(
                     str(cog_metadata_path), args.s3_bucket, str(metadata_key)
                 )
@@ -541,7 +556,7 @@ def main():
             )
             if cog_metadata_path.exists():
                 cog_item.add_asset(
-                    "metadata_{}".format(idx),
+                    f'metadata_{idx}',
                     pystac.Asset(
                         metadata_s3_uri,
                         media_type=pystac.MediaType.XML,
@@ -550,17 +565,17 @@ def main():
                 )
     finally:
         if not args.keep_temp_dir:
-            logger.info("Removing temp dir: {}".format(temp_dir))
+            logger.info(f"Removing temp dir: {temp_dir}")
             shutil.rmtree(temp_dir, ignore_errors=True)
 
     # Add COG Item to AVIRIS L2 STAC Collection
-    logger.info("POST Item {} to {}".format(cog_item.id, args.stac_api_uri))
-    item_data = stac_client.post_collection_item(AVIRIS_L2_COG_COLLECTION.id, cog_item)
+    logger.info(f"POST Item {cog_item.id} to {args.stac_api_uri}")
+    item_data = stac_client.post_collection_item(cog_collection.id, cog_item)
     if item_data.get('id', None):
-        logger.info("Success: {}".format(item_data['id']))
-        activation_output(item_data['id'])
+        logger.info(f"Success: {item_data['id']}")
+        activation_output(item_data['id'], cog_collection.id)
     else:
-        logger.error("Failure: {}".format(item_data))
+        logger.error(f"Failure: {item_data}")
         return -1
 
 
