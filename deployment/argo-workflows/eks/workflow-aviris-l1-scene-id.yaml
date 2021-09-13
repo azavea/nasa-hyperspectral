@@ -28,7 +28,7 @@ spec:
       parameters:
       - name: activator-input
     container:
-      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l1:latest
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
       imagePullPolicy: Always # IfNotPresent
       env:
       - name: STAC_API_URI
@@ -37,7 +37,7 @@ spec:
         value: "30%"
       - name: GDAL_WARP_MEMORY_LIMIT
         value: "4000"
-      command: [python, main.py, --aviris-stac-id]
+      command: [python, -m, activator.aviris.main, --aviris-stac-id]
       args: ["{{inputs.parameters.activator-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/
       resources:

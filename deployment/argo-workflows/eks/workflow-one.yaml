@@ -50,9 +50,9 @@ spec:
       parameters:
       - name: activator-input
     container:
-      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-aviris-l2:latest
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
       imagePullPolicy: Always # IfNotPresent
-      command: [python, main.py, --pipeline-uri]
+      command: [python, -m, activator.aviris.main, --l2, --pipeline-uri]
       args: ["{{inputs.parameters.activator-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/
       resources:
