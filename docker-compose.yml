@@ -9,8 +9,24 @@ services:
       - POSTGRES_DB=franklin
 
   franklin:
-    image: quay.io/azavea/franklin:c93f2ff
+    image: quay.io/azavea/franklin:f31b639
     command: ["serve", "--with-transactions"]
+    environment:
+      - ENVIRONMENT=development
+      - DB_HOST=database
+      - DB_NAME=franklin
+      - DB_USER=franklin
+      - DB_PASSWORD=franklin
+      - AWS_PROFILE
+      - AWS_REGION
+    ports:
+      - "9090:9090"
+    depends_on: 
+      - "database"
+
+  migrate:
+    image: quay.io/azavea/franklin:f31b639
+    command: ["migrate"]
     environment:
       - ENVIRONMENT=development
       - DB_HOST=database

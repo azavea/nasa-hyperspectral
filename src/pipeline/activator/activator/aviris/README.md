@@ -44,7 +44,7 @@ or
 
 ```shell
 docker compose run --rm activator-aviris \
-  --pipeline-uri /usr/local/src/data/l1/pipeline-test.json
+  --pipeline-uri /usr/local/src/activator/aviris/data/l1/pipeline-test.json
 ```
 
 `/data` is a mounted Docker volume that can be reused across container executions for development.

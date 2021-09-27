@@ -1,12 +1,16 @@
+import os
+
 import unittest 
 from .utils import run_command
 
 
 class AvirisTest(unittest.TestCase):
     def test_l1(self):
+        cwd = os.path.dirname(os.path.abspath(__file__))
+
         cmd = [
             'python', '-m', 'activator.aviris.main',
-            '--aviris-stac-id', 'aviris_f130329t01p00r06_sc01'
+            '--pipeline-uri', os.path.join(cwd, 'data', 'pipeline-test.json')
         ]
         retcode = run_command(cmd)
         self.assertEqual(retcode, 0)
