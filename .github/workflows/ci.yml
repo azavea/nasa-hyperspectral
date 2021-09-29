@@ -57,7 +57,7 @@ jobs:
 
       - run: ./scripts/cibuild
         env:
-          AWS_PROFILE=""
+          AWS_PROFILE: ""
 
       - run: ./scripts/cipublish
         if: github.ref == 'refs/heads/master'
