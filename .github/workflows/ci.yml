@@ -56,6 +56,8 @@ jobs:
         run: ./scripts/test-argo
 
       - run: ./scripts/cibuild
+        env:
+          AWS_PROFILE=""
 
       - run: ./scripts/cipublish
         if: github.ref == 'refs/heads/master'
