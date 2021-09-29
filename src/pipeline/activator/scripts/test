@@ -17,6 +17,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     if [[ "${1:-}" == "--help" ]]; then
         usage
     else
+        unset AWS_PROFILE
         python -m unittest discover tests/
     fi
 fi
