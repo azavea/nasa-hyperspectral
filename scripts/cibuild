@@ -10,7 +10,7 @@ function usage() {
     echo -n \
         "Usage: $(basename "$0")
 Build application for staging or a release.
-"
+"   
 }
 
 if [[ -n "${GIT_COMMIT}" ]]; then
@@ -24,6 +24,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         usage
     else
         ./scripts/update
+        echo AWS_DEFAULT_REGION $AWS_DEFAULT_REGION
         ./scripts/test
 
         # Build the COG Clip module fat assembly jar
