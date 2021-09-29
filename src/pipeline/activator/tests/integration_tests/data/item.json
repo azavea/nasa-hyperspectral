@@ -1,5 +1,5 @@
 {
-    "id": "aviris_f130329t01p00r06_sc01",
+    "id": "tiny_scene",
     "stac_version": "1.0.0",
     "stac_extensions": [],
     "type": "Feature",
@@ -43,7 +43,7 @@
             "type": "application/json"
         },
         {
-            "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f130329t01p00r06_sc01",
+            "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/tiny_scene",
             "rel": "self",
             "type": "application/json"
         },
@@ -56,7 +56,7 @@
     ],
     "assets": {
         "https_refl": {
-            "href": "https://popo.jpl.nasa.gov/avcl/y13_data/f130329t01p00r06_refl.tar.gz",
+            "href": "https://nasahyperspectral-test.s3.us-east-1.amazonaws.com/integration-tests/aviris/tiny_scene.tar.gz",
             "title": "https_refl",
             "description": "AVIRIS data archive of atmospheric corrected imagery for this scene.",
             "roles": [],
@@ -84,7 +84,7 @@
             "type": "image/jpeg"
         },
         "https": {
-            "href": "https://popo.jpl.nasa.gov/avcl/y13_data/f130329t01p00r06.tar.gz",
+            "href": "https://aviris-data-dev-lfishgold.s3.us-east-1.amazonaws.com/tiny_scene.tar.gz",
             "title": "https",
             "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
             "roles": [],
@@ -109,7 +109,7 @@
     "properties": {
         "YY": 13,
         "Run": 6,
-        "Name": "f130329t01p00r06",
+        "Name": "tiny_scene",
         "Tape": "t01",
         "Year": 2013,
         "Scene": "sc01",
@@ -126,7 +126,7 @@
             "aviris-classic"
         ],
         "Pixel Size": 14.4,
-        "Flight Scene": "f130329t01p00r06_sc01",
+        "Flight Scene": "tiny_scene_sc01",
         "Investigator": "Robert Green",
         "Solar Azimuth": 140.15,
         "Number of Lines": 13139,

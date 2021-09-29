@@ -444,6 +444,8 @@ def main():
         # Exit early if COG STAC Item already exists
         try:
             stac_client.get_collection_item(cog_collection.id, cog_item_id)
+            print(cog_collection.id)
+            print(cog_item_id)
             logger.info(f'STAC Item {cog_item_id} already exists. Exiting.')
             activation_output(cog_item_id, cog_collection.id)
             return

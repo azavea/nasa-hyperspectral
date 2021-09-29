@@ -6,5 +6,5 @@
   "s3Prefix": "aviris-scene-cogs-l1",
   "tempDir": "/data",
   "keepTempDir": true,
-  "force": false
+  "force": true
 }

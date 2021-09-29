@@ -22,6 +22,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
             run --rm --no-deps shellcheck \
             scripts/*
 
+        # Test activators
         docker-compose \
             run --rm activator \
             scripts/test
