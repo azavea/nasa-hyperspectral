@@ -23,6 +23,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
             scripts/*
 
         # Test activators
+        echo "AWS_REGION in test: " "${AWS_REGION}"
         docker-compose \
             run --rm activator \
             scripts/test
