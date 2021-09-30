@@ -24,9 +24,6 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         usage
     else
         ./scripts/update
-        # xxx hack
-        unset AWS_PROFILE
-
         ./scripts/test
 
         # Build the COG Clip module fat assembly jar

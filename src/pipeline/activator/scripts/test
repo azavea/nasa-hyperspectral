@@ -17,7 +17,8 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     if [[ "${1:-}" == "--help" ]]; then
         usage
     else
-        echo "AWS_REGION in activator/scripts/test: " "${AWS_REGION}"
+        # TODO only do this if running in CI
+        unset AWS_PROFILE
         python -m unittest discover tests/
     fi
 fi
