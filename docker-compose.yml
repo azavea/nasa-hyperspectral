@@ -59,6 +59,9 @@ services:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
       - S3_BUCKET=aviris-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
       - ./src/pipeline/activator:/usr/local/src
@@ -78,6 +81,9 @@ services:
       - S3_BUCKET=aviris-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     volumes:
       - ./src/pipeline/activator:/usr/local/src
       - ./pipeline-data:/data

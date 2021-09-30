@@ -24,13 +24,9 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         usage
     else
         ./scripts/update
-        # XXX hack
-        # export AWS_ACCESS_KEY_ID
-        # export AWS_SECRET_ACCESS_KEY
-        # export AWS_REGION
+        # xxx hack
         unset AWS_PROFILE
-        
-        echo "AWS_REGION in cibuild: " "${AWS_REGION}"
+
         ./scripts/test
 
         # Build the COG Clip module fat assembly jar
