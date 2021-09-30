@@ -29,6 +29,8 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         export AWS_SECRET_ACCESS_KEY
         export AWS_REGION
         unset AWS_PROFILE
+        
+        echo "AWS_REGION in cibuild: " "${AWS_REGION}"
         ./scripts/test
 
         # Build the COG Clip module fat assembly jar
