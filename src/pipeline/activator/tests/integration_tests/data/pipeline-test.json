@@ -1,0 +1,11 @@
+{
+  "avirisStacId": "tiny_scene",
+  "avirisCollectionId": "aviris-classic",
+  "stacApiUri": "http://franklin:9090",
+  "s3Bucket": "aviris-data-dev",
+  "s3Prefix": "aviris-scene-cogs-l1",
+  "tempDir": "/data",
+  "keepTempDir": true,
+  "force": false,
+  "skipLarge": true
+}

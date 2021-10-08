@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+if [[ -n "${NASA_HSI_DEBUG}" ]]; then
+    set -x
+fi
+
+function usage() {
+    echo -n \
+        "Usage: $(basename "$0")
+Run tests for Python activators.
+"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+    if [[ "${1:-}" == "--help" ]]; then
+        usage
+    else
+        # TODO only do this if running in CI
+        if [ "$CI" == "true" ]; then
+            unset AWS_PROFILE
+        fi
+
+        python -m unittest discover tests/
+    fi
+fi

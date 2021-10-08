@@ -9,7 +9,7 @@ services:
       - POSTGRES_DB=franklin
 
   franklin:
-    image: quay.io/azavea/franklin:c93f2ff
+    image: quay.io/azavea/franklin:f31b639
     command: ["serve", "--with-transactions"]
     environment:
       - ENVIRONMENT=development
@@ -21,6 +21,24 @@ services:
       - AWS_REGION
     ports:
       - "9090:9090"
+    depends_on: 
+      - "database"
+
+  migrate:
+    image: quay.io/azavea/franklin:f31b639
+    command: ["migrate"]
+    environment:
+      - ENVIRONMENT=development
+      - DB_HOST=database
+      - DB_NAME=franklin
+      - DB_USER=franklin
+      - DB_PASSWORD=franklin
+      - AWS_PROFILE
+      - AWS_REGION
+    ports:
+      - "9090:9090"
+    depends_on: 
+      - "database"
 
   catalogs-aviris:
     image: nasa-hsi-catalogs-aviris
@@ -33,55 +51,67 @@ services:
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
 
-  activator-aviris-l2:
-    image: activator-aviris-l2
+  activator:
+    image: activator
     build:
-      context: ./src/pipeline/activator/aviris-l2
+      context: ./src/pipeline/activator/
     environment:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
       - S3_BUCKET=aviris-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
+      - CI
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
-      - ./src/pipeline/activator/aviris-l2:/usr/local/src
+      - ./src/pipeline/activator:/usr/local/src
       - ./pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
+    depends_on:
+      - "franklin"
 
-  activator-aviris-l1:
-    image: activator-aviris-l1
+  activator-aviris:
+    image: activator
+    command: ["python", "activator/aviris/main.py"]
     build:
-      context: ./src/pipeline/activator/aviris-l1
+      context: ./src/pipeline/activator/
     environment:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
       - S3_BUCKET=aviris-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
     volumes:
-      - ./src/pipeline/activator/aviris-l1:/usr/local/src
+      - ./src/pipeline/activator:/usr/local/src
       - ./pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
 
   activator-prisma:
-    image: activator-prisma
+    image: activator
+    command: ["python", "activator/prisma/main.py"]
     build:
-      context: ./src/pipeline/activator/prisma
+      context: ./src/pipeline/activator/
     environment:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
       - S3_BUCKET=prisma-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
     volumes:
-      - ./src/pipeline/activator/prisma:/usr/local/src
+      - ./src/pipeline/activator:/usr/local/src
       - ./pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
 
   activator-sentinel-s2:
-    image: activator-sentinel-s2
+    image: activator
+    command: ["python", "activator/sentinel_s2/main.py"]
     build:
-      context: ./src/pipeline/activator/sentinel-s2
+      context: ./src/pipeline/activator/
     environment:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
       - S3_BUCKET=sentinel-s2-data-dev-${USER}
@@ -90,7 +120,7 @@ services:
       - AWS_REQUEST_PAYER=requester 
       - GDAL_DISABLE_READDIR_ON_OPEN=YES 
     volumes:
-      - ./src/pipeline/activator/sentinel-s2:/usr/local/src
+      - ./src/pipeline/activator:/usr/local/src
       - ./pipeline-data:/data
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
@@ -98,7 +128,7 @@ services:
   cog-clip:
     image: cog-clip
     build:
-      context: ./src/pipeline/activator/cog-clip
+      context: ./src/pipeline/cog-clip
     environment:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
       - TARGET_S3_URI=${TARGET_S3_URI:-s3://nasahyperspectral-test/activator-clip-cogs/}

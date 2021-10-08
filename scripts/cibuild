@@ -10,7 +10,7 @@ function usage() {
     echo -n \
         "Usage: $(basename "$0")
 Build application for staging or a release.
-"
+"   
 }
 
 if [[ -n "${GIT_COMMIT}" ]]; then
@@ -24,12 +24,10 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         usage
     else
         ./scripts/update
-
-        # COG Clip module tests
         ./scripts/test
 
         # Build the COG Clip module fat assembly jar
-        pushd ./src/pipeline/activator/cog-clip
+        pushd ./src/pipeline/cog-clip
         ./sbt assembly
         popd
         

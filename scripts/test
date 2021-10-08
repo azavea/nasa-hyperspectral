@@ -22,6 +22,11 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
             run --rm --no-deps shellcheck \
             scripts/*
 
+        # Test activators
+        docker-compose \
+            run --rm activator \
+            scripts/test
+
         # Lint Python
         # docker-compose \
         #     run --rm --no-deps \
@@ -29,7 +34,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
 
         # build and test cog-clip assembly
         # we don't need bloop, sbt uses .bsp
-        pushd ./src/pipeline/activator/cog-clip
+        pushd ./src/pipeline/cog-clip
         ./sbt test
         popd
     fi

@@ -1,0 +1,51 @@
+{
+    "type": "Collection",
+    "stac_version": "1.0.0",
+    "stac_extensions": [],
+    "id": "aviris-classic",
+    "description": "AVIRIS is an acronym for the Airborne Visible InfraRed Imaging Spectrometer. AVIRIS is a premier instrument in the realm of Earth Remote Sensing. It is a unique optical sensor that delivers calibrated images of the upwelling spectral radiance in 224 contiguous spectral channels (also called bands) with wavelengths from 400 to 2500 nanometers (nm). AVIRIS has been flown on four aircraft platforms: NASA's ER-2 jet, Twin Otter International's turboprop, Scaled Composites' Proteus, and NASA's WB-57. The ER-2 flies at approximately 20 km above sea level, at about 730 km/hr. The Twin Otter aircraft flies at 4km above ground level at 130km/hr. AVIRIS has flown all across the US, plus Canada and Europe. This catalog contains all AVIRIS missions from 2006 - 2019.",
+    "keywords": [],
+    "license": "proprietary",
+    "providers": [],
+    "extent": {
+        "spatial": {
+            "bbox": [
+                [
+                    -171.842003,
+                    18.57471,
+                    -68.34333199999999,
+                    56.173981999999995
+                ]
+            ]
+        },
+        "temporal": {
+            "interval": [
+                [
+                    "2006-04-26T17:52:00Z",
+                    "2019-10-01T21:22:00Z"
+                ]
+            ]
+        }
+    },
+    "summaries": {},
+    "properties": {},
+    "links": [
+        {
+            "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/tiles",
+            "rel": "tiles",
+            "type": "application/json",
+            "title": "Tile URLs for Collection"
+        },
+        {
+            "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items",
+            "rel": "items",
+            "type": "application/json"
+        },
+        {
+            "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+            "rel": "self",
+            "type": "application/json"
+        }
+    ],
+    "assets": {}
+}

@@ -28,14 +28,14 @@ spec:
       parameters:
       - name: activator-input
     container:
-      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator-prisma:latest
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
       imagePullPolicy: Always # IfNotPresent
       env:
       - name: STAC_API_URI
         value: "https://franklin.nasa-hsi.azavea.com"
       - name: GDAL_CACHEMAX
         value: "40%"
-      command: [python, main.py, --prisma-uri]
+      command: [python, -m, activator.prisma.main, --prisma-uri]
       args: ["{{inputs.parameters.activator-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/
       resources:

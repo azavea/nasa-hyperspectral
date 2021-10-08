@@ -55,6 +55,12 @@ jobs:
       - name: Argo Workflows dry run
         run: ./scripts/test-argo
 
+      - name: Start Franklin
+        run: ./scripts/server
+        
+      - name: Run migrations for Franklin
+        run: ./scripts/migrate
+
       - run: ./scripts/cibuild
 
       - run: ./scripts/cipublish
