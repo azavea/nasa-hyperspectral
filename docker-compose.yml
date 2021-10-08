@@ -59,6 +59,7 @@ services:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
       - S3_BUCKET=aviris-data-dev-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
+      - CI
       - AWS_REGION
       - AWS_ACCESS_KEY_ID
       - AWS_SECRET_ACCESS_KEY

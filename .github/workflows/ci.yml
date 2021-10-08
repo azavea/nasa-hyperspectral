@@ -59,7 +59,7 @@ jobs:
         run: ./scripts/server
         
       - name: Run migrations for Franklin
-        run: ./scripts/console migrate
+        run: ./scripts/migrate
 
       - run: ./scripts/cibuild
 

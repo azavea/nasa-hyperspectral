@@ -15,8 +15,7 @@ s3 = boto3.client('s3')
 
 def open_json(path):
     with open(path) as file:
-        return json.load(file)
-
+        return json.dumps(json.load(file))
 
 class AvirisTest(unittest.TestCase):
     def test_l1(self):
@@ -25,17 +24,20 @@ class AvirisTest(unittest.TestCase):
         # run quickly.
         requests.post(
             'http://franklin:9090/collections/', 
-            open_json(join(data_dir, 'collection.json')))
+            data=open_json(join(data_dir, 'collection.json')), 
+            headers={'Content-Type':'application/json'})
+        
         requests.post(
             'http://franklin:9090/collections/aviris-classic/items/',
-            open_json(join(data_dir, 'item.json')))
+            data=open_json(join(data_dir, 'item.json')),
+            headers={'Content-Type':'application/json'})
 
         # Delete the item and COG from S3 which may have been created during a 
         # previous run of this test.
         requests.delete(
             'http://franklin:9090/collections/aviris-l1-cogs/items/'
             'aviris-l1-cogs_tiny_scene_sc01')
-        img_bucket = 'aviris-data'
+        img_bucket = 'aviris-data-dev'
         img_object = 'aviris-scene-cogs-l1/2013/tiny_scene/ort_img_cog.tiff'
         s3.delete_object(Bucket=img_bucket, Key=img_object)
 
@@ -52,7 +54,7 @@ class AvirisTest(unittest.TestCase):
         scene_dict = requests.get(
             'http://franklin:9090/collections/aviris-l1-cogs/items/'
             'aviris-l1-cogs_tiny_scene_sc01').json()
-        exp_scene_dict = open_json(join(data_dir, 'aviris_l1_cog_item.json'))
+        exp_scene_dict = json.loads(open_json(join(data_dir, 'aviris_l1_cog_item.json')))
         self.assertDictEqual(scene_dict, exp_scene_dict)
 
         img_path = '/data/ort_img_cog.tiff'

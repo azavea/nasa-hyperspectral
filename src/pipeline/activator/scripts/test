@@ -18,7 +18,10 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
         usage
     else
         # TODO only do this if running in CI
-        unset AWS_PROFILE
+        if [ "$CI" == "true" ]; then
+            unset AWS_PROFILE
+        fi
+
         python -m unittest discover tests/
     fi
 fi

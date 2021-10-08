@@ -10,7 +10,7 @@ fi
 eval $(minikube docker-env)
 
 # Build the COG Clip module fat assembly jar
-pushd ../../../src/pipeline/activator/cog-clip
+pushd ../../../src/pipeline/cog-clip
 ./sbt assembly
 popd
 

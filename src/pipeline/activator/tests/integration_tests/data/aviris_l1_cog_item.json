@@ -56,7 +56,7 @@
     ],
     "assets": {
         "cog_0": {
-            "href": "s3://aviris-data/aviris-scene-cogs-l1/2013/tiny_scene/ort_img_cog.tiff",
+            "href": "s3://aviris-data-dev/aviris-scene-cogs-l1/2013/tiny_scene/ort_img_cog.tiff",
             "roles": [
                 "data"
             ],
