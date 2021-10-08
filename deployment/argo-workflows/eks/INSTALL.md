@@ -138,21 +138,23 @@ $ helm uninstall cluster-autoscaler --namespace kube-system autoscaler/cluster-a
 ## Default EC2 Configurations
 
 ```tf
+# By default it is used for the autoscaling group
 eks_cluster_name             = "hsi-spot"
 eks_workers_instance_type    = "m4.xlarge"
-eks_workers_spot_price       = "0.078"
-eks_workers_desired_capacity = 1 # 10
-eks_workers_min_size         = 1 # 10
-eks_workers_max_size         = 1 # 10
+eks_workers_spot_price       = "0.082"
+eks_workers_desired_capacity = 0
+eks_workers_min_size         = 0
+eks_workers_max_size         = 10
 ```
 
 ```tf
+# A small worker to keep EKS alive
 eks_cluster_name             = "hsi-spot"
 eks_workers_instance_type    = "t3.small"
 eks_workers_spot_price       = "0.0068"
-eks_workers_desired_capacity = 1 # 10
-eks_workers_min_size         = 1 # 10
-eks_workers_max_size         = 1 # 10
+eks_workers_desired_capacity = 1
+eks_workers_min_size         = 1
+eks_workers_max_size         = 1
 ```
 
 ```bash
