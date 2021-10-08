@@ -35,6 +35,18 @@ module "eks" {
 
   worker_groups = [
     {
+      name                          = "worker-small-group-spot"
+      spot_price                    = "0.0068"
+      instance_type                 = "t3.small"
+      additional_userdata           = "workers group"
+      asg_desired_capacity          = "1"
+      asg_min_size                  = "1"
+      asg_max_size                  = "1"
+      kubelet_extra_args            = "--node-labels=node.kubernetes.io/lifecycle=spot"
+      suspended_processes           = ["AZRebalance"]
+      additional_security_group_ids = [aws_security_group.worker_group_management.id]
+    },
+    {
       name                          = "worker-group-spot"
       spot_price                    = var.eks_workers_spot_price
       instance_type                 = var.eks_workers_instance_type
@@ -45,6 +57,18 @@ module "eks" {
       kubelet_extra_args            = "--node-labels=node.kubernetes.io/lifecycle=spot"
       suspended_processes           = ["AZRebalance"]
       additional_security_group_ids = [aws_security_group.worker_group_management.id]
+      tags                          = [
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/enabled"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/${var.eks_cluster_name}"
+          "propagate_at_launch" = "false"
+          "value"               = "owned"
+        }
+      ]
     }
   ]
 
