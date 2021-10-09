@@ -144,7 +144,7 @@ eks_workers_instance_type    = "m4.xlarge"
 eks_workers_spot_price       = "0.082"
 eks_workers_desired_capacity = 0
 eks_workers_min_size         = 0
-eks_workers_max_size         = 10
+eks_workers_max_size         = 30
 ```
 
 ```tf
