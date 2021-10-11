@@ -35,8 +35,6 @@ spec:
         value: "https://franklin.nasa-hsi.azavea.com"
       - name: GDAL_CACHEMAX
         value: "30%"
-      - name: GDAL_WARP_MEMORY_LIMIT
-        value: "4000"
       command: [python, -m, activator.aviris.main, --aviris-stac-id]
       args: ["{{inputs.parameters.activator-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/

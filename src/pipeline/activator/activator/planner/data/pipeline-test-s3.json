@@ -1,0 +1,36 @@
+{
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+      [
+        [
+          -114.887217,
+          33.498289
+        ],
+        [
+          -114.819923,
+          33.66972
+        ],
+        [
+          -116.769931,
+          34.187606
+        ],
+        [
+          -116.833779,
+          34.015078
+        ],
+        [
+          -114.887217,
+          33.498289
+        ]
+      ]
+    ]
+  },
+  "datetime": "1993-10-12T00:00:00Z/2021-10-14T00:00:00Z",
+  "wavelengths": {
+    "min": 0.36,
+    "max": 0.46
+  },
+  "collection": "aviris-classic", 
+  "stacApiUri": "https://franklin.nasa-hsi.azavea.com"
+}

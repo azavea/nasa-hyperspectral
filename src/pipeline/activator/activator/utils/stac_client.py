@@ -1,7 +1,7 @@
 import json
-
 import pystac
 import requests
+import shapely
 
 
 class STACClient:
@@ -63,3 +63,54 @@ class STACClient:
         )
         response.raise_for_status()
         return response.json()
+
+    def search_items(self, geometry, datetime, wavelengths, collection_id):
+        stac_api_url = "{}/search/".format(self.stac_api_url)
+
+        count = 0
+        has_next = True
+        while has_next:
+            feature_collection = self.search_items_page(geometry, datetime, wavelengths, collection_id, stac_api_url)
+
+            for item in feature_collection['features']: 
+                yield item
+
+            count += len(feature_collection['features'])
+
+            links = feature_collection.get('links', None)
+            if links == None:
+                has_next = False
+            else:
+                next_links = [link['href'] for link in links if link['rel'] == 'next']
+                if len(next_links) == 0:
+                    has_next = False
+                else:
+                    stac_api_url = next_links[0]
+
+    def search_items_page(self, geometry, datetime, wavelengths, collection_id, stac_api_url):
+        """ POST search items by aoi, datetime, wavelengths and collection_id """
+        data = {
+            'datetime': datetime,
+            'collections': [collection_id]
+        }
+
+        if geometry != None:
+            data['intersects'] = shapely.geometry.mapping(geometry)
+
+        if wavelengths is not None:
+            data['query'] = {
+                'hsi:wavelength_min': {
+                    'gte': wavelengths['min']
+                },
+                'hsi:wavelength_max': {
+                    'lte': wavelengths['max']
+                }
+            }
+
+        response = requests.post(
+            stac_api_url,
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(data)
+        )
+        response.raise_for_status()
+        return response.json() 

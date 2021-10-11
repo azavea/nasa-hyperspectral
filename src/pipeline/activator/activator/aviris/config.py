@@ -2,12 +2,12 @@ import logging
 import json
 from activator.utils.s3uri import S3Uri
 import boto3
+import os
 
 logger = logging.getLogger(__name__)
 
 L1 = 'l1'
 L2 = 'l2'
-
 
 class CliConfig:
     AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-classic"
@@ -23,7 +23,7 @@ class CliConfig:
             self.aviris_stac_id = args_json['avirisStacId']
             self.aviris_collection_id = args_json.get(
                 'avirisCollectionId', self.AVIRIS_ARCHIVE_COLLECTION_ID)
-            self.stac_api_uri = args_json.get('stacApiUri', 'http://franklin:9090')
+            self.stac_api_uri = args_json.get('stacApiUri', os.environ.get("STAC_API_URI", "http://franklin:9090"))
             self.s3_bucket = args_json.get('s3Bucket', 'aviris-data')
             self.l2 = args_json.get(L2, False)
             self.level = L2 if self.l2 else L1
