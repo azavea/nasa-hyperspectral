@@ -147,18 +147,11 @@ def cli_parser():
     return parser
 
 
-def main():
-
-    args = cli_parser().parse_args()
-
-    stac_client = STACClient(args.stac_api_uri)
-
-    cog_collection = get_planet_cog_collection(args.num_bands)
-
+def get_download_link(num_bands, planet_id, planet_api_uri, planet_api_key):
     logger.info('Requesting status of imagery')
-    result = requests.get(
-        args.planet_api_uri.format(source_collection_id(args.num_bands), args.planet_id),
-        auth=HTTPBasicAuth(args.planet_api_key, ''))
+    result = requests.get(planet_api_uri.format(
+        source_collection_id(num_bands), planet_id),
+                          auth=HTTPBasicAuth(planet_api_key, ''))
     result = result.json()
 
     logger.info('(Re)activating and getting download link')
@@ -166,9 +159,8 @@ def main():
     self_link = links['_self']
     activation_link = links['activate']
     result = requests.get(activation_link,
-                          auth=HTTPBasicAuth(args.planet_api_key, ''))
-    result = requests.get(self_link,
-                          auth=HTTPBasicAuth(args.planet_api_key, ''))
+                          auth=HTTPBasicAuth(planet_api_key, ''))
+    result = requests.get(self_link, auth=HTTPBasicAuth(planet_api_key, ''))
     result = result.json()
     is_active = result['status'] == 'active'
 
@@ -177,23 +169,37 @@ def main():
     else:
         download_link = result['location']
 
+    return download_link
+
+
+def download_from_planet(download_link,
+                         planet_id,
+                         planet_api_key,
+                         temp_dir,
+                         download):
+    filename_tiff = f'/{temp_dir}/{planet_id}.tiff'
     logger.info(f'Downloading imagery to {filename_tiff}')
-    filename_tiff = f'/{args.temp_dir}/{args.planet_id}.tiff'
-    if args.download:
+    if download:
         data = requests.get(download_link,
-                            auth=HTTPBasicAuth(args.planet_api_key, ''),
+                            auth=HTTPBasicAuth(planet_api_key, ''),
                             stream=True)
         with open(filename_tiff, 'wb') as f:
             data.raw.decode_content = True
             shutil.copyfileobj(data.raw, f)
         os.system(f'gdaladdo {filename_tiff}')
+    return filename_tiff
 
-    logger.info(f'Uploading imagery to {s3_uri}')
+
+def upload_to_s3(filename_tiff, s3_bucket, s3_prefix, upload):
     filename = filename_tiff.split('/')[-1]
-    s3_uri = f's3://{args.s3_bucket}/{args.s3_prefix}/{filename}'
-    if args.upload:
+    s3_uri = f's3://{s3_bucket}/{s3_prefix}/{filename}'
+    logger.info(f'Uploading imagery to {s3_uri}')
+    if upload:
         os.system(f'aws s3 cp {filename_tiff} {s3_uri}')
+    return s3_uri
 
+
+def generate_stac_item(filename_tiff, cog_collection, planet_id, s3_uri):
     logger.info(f'Using gdalinfo to get metadata')
     filename_json = filename_tiff.replace('.tiff', '.json')
     os.system(f'gdalinfo -proj4 -json {filename_tiff} > {filename_json}')
@@ -202,7 +208,9 @@ def main():
 
     logger.info(f'Organizing metadata')
     tifftag_datetime = data.get('metadata').get('').get('TIFFTAG_DATETIME')
-    year, month, day = [int(n) for n in tifftag_datetime.split(' ')[0].split(':')]
+    year, month, day = [
+        int(n) for n in tifftag_datetime.split(' ')[0].split(':')
+    ]
     dt = datetime(year, month, day, tzinfo=timezone.utc)
     polygon = data.get('wgs84Extent')
     coords = polygon.get('coordinates')
@@ -218,7 +226,7 @@ def main():
     }
 
     logger.info(f'Creating new cog item')
-    cog_item = pystac.Item(args.planet_id,
+    cog_item = pystac.Item(planet_id,
                            polygon,
                            bbox,
                            dt,
@@ -229,18 +237,39 @@ def main():
         'tiff_0',
         pystac.Asset(s3_uri, media_type=pystac.MediaType.COG, roles=['data']))
 
+    return cog_item
+
+
+def update_franklin(cog_item, cog_collection, stac_api_uri, update):
     logger.info('Updating Franklin')
-    if False and args.update:  # XXX
+    stac_client = STACClient(stac_api_uri)
+    if False and update:  # XXX
         if not stac_client.has_collection(cog_collection.id):
             stac_client.post_collection(cog_collection)
-        logger.info(f"POST Item {cog_item.id} to {args.stac_api_uri}")
-        item_data = stac_client.post_collection_item(cog_collection.id, cog_item)
+        logger.info(f"POST Item {cog_item.id} to {stac_api_uri}")
+        item_data = stac_client.post_collection_item(cog_collection.id,
+                                                     cog_item)
         if item_data.get('id', None):
             logger.info(f"Success: {item_data['id']}")
             activation_output(item_data['id'], cog_collection.id)
         else:
-            logger.error(f"Failure: {item_data}")
-            return -1
+            raise Exception(f"Failure: {item_data}")
+
+
+def main():
+    args = cli_parser().parse_args()
+    cog_collection = get_planet_cog_collection(args.num_bands)
+    download_link = get_download_link(args.num_bands, args.planet_id,
+                                      args.planet_api_uri, args.planet_api_key)
+    filename_tiff = download_from_planet(download_link, args.planet_id,
+                                         args.planet_api_key, args.temp_dir,
+                                         args.download)
+    s3_uri = upload_to_s3(filename_tiff, args.s3_bucket, args.s3_prefix,
+                          args.upload)
+    cog_item = generate_stac_item(filename_tiff, cog_collection,
+                                  args.planet_id, s3_uri)
+    update_franklin(cog_item, cog_collection, args.stac_api_uri, args.update)
+
 
 if __name__ == "__main__":
     main()
