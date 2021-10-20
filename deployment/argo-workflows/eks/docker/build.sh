@@ -8,7 +8,7 @@ fi
 
 # Build the COG Clip module fat assembly jar
 pushd ../../../src/pipeline/cog-clip
-# ./sbt assembly
+./sbt assembly
 popd
 
 pushd ../../../
@@ -16,7 +16,7 @@ pushd ../../../
 GIT_COMMIT="${GIT_COMMIT}" docker compose \
   -f docker-compose.yml \
   -f docker-compose.ci.yml \
-  build activator # cog-clip
+  build activator cog-clip
 popd
 
 # Tag the activator.
