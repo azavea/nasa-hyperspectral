@@ -147,6 +147,28 @@ def cli_parser():
     return parser
 
 
+def to_snake(word):
+    return ''.join(['_' + letter.lower() if letter.isupper() else letter for letter in word])
+
+
+def pipeline_arguments(args):
+    filename_pipeline = None
+    if args.pipeline_uri:
+        filename_pipeline = '/tmp/pipeline.json'
+        os.system(f'aws s3 cp {args.pipeline_uri} {filename_pipeline}')
+    elif args.pipeline:
+        filename_pipeline = args.pipeline
+
+    if filename_pipeline is not None:
+        with open(filename_pipeline, 'r') as file:
+            args_json = json.loads(file.read().replace('\n', ''))
+        for k in args_json:
+            k2 = to_snake(k)
+            setattr(args, k2, args_json.get(k))
+
+    return args
+
+
 def get_download_link(num_bands, planet_id, planet_api_uri, planet_api_key):
     logger.info('Requesting status of imagery')
     result = requests.get(planet_api_uri.format(
@@ -258,6 +280,7 @@ def update_franklin(cog_item, cog_collection, stac_api_uri, update):
 
 def main():
     args = cli_parser().parse_args()
+    args = pipeline_arguments(args)
     cog_collection = get_planet_cog_collection(args.num_bands)
     download_link = get_download_link(args.num_bands, args.planet_id,
                                       args.planet_api_uri, args.planet_api_key)
