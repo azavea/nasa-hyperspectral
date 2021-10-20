@@ -127,7 +127,7 @@ def cli_parser():
     parser.add_argument("--output-format", type=str, default=os.environ.get("GDAL_OUTPUT_FORMAT", "COG"))
     parser.add_argument("--pipeline", type=str, help="JSON with instructions")
     parser.add_argument("--pipeline-uri", type=str, help="A URI to JSON with instructions")
-    parser.add_argument("--planet-api-key", type=str)
+    parser.add_argument("--planet-api-key", type=str, default=os.environ.get("PLANET_API_KEY", None))
     parser.add_argument("--planet-api-uri", type=str, default="https://api.planet.com/data/v1/item-types/{}/items/{}/assets")
     parser.add_argument("--planet-id", type=str, help="Planet Image ID")
     parser.add_argument("--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "sentinel-s2-data"))  # sic

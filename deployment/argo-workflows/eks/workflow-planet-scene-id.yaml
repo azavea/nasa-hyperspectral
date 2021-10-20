@@ -27,6 +27,13 @@ spec:
     inputs:
       parameters:
       - name: activator-input
+    # https://argoproj.github.io/argo-workflows/fields/#backoff
+    retryStrategy:
+      limit: "10"
+      backoff:
+        duration: "10m" # Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
+        factor: "2"
+        # maxDuration: "1m" Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
       imagePullPolicy: Always # IfNotPresent
@@ -39,7 +46,12 @@ spec:
         value: "requester"
       - name: GDAL_DISABLE_READDIR_ON_OPEN
         value: "YES" 
-      command: [python, -m, activator.planet.main, --sentinel-stac-id]
+      - name: PLANET_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: planet
+            key: api-key
+      command: [python, -m, activator.planet.main, --planet-id]
       args: ["{{inputs.parameters.activator-input}}"]
       # https://argoproj.github.io/argo-workflows/resource-duration/
       resources:
