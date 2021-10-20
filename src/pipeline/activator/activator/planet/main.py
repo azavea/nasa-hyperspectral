@@ -131,7 +131,7 @@ def cli_parser():
     parser.add_argument("--planet-api-key", type=str, default=os.environ.get("PLANET_API_KEY", None))
     parser.add_argument("--planet-api-uri", type=str, default="https://api.planet.com/data/v1/item-types/{}/items/{}/assets")
     parser.add_argument("--planet-id", type=str, help="Planet Image ID")
-    parser.add_argument("--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "sentinel-s2-data"))  # sic
+    parser.add_argument("--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "planet-data-hsi"))  # sic
     parser.add_argument("--s3-prefix", type=str, default=os.environ.get("S3_PREFIX", "planet-scene-cogs"))
     parser.add_argument("--stac-api-uri", type=str, default=os.environ.get("STAC_API_URI", "http://franklin:9090"))
     parser.add_argument("--temp-dir", type=str, default='/tmp')
@@ -268,7 +268,7 @@ def generate_stac_item(filename_tiff, cog_collection, planet_id, s3_uri):
 def update_franklin(cog_item, cog_collection, stac_api_uri, update):
     logger.info('Updating Franklin')
     stac_client = STACClient(stac_api_uri)
-    if False and update:  # XXX
+    if update:
         if not stac_client.has_collection(cog_collection.id):
             stac_client.post_collection(cog_collection)
         logger.info(f"POST Item {cog_item.id} to {stac_api_uri}")

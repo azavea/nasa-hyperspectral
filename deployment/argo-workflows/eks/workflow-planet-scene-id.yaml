@@ -9,7 +9,7 @@ spec:
     parameters:
     - name: activator-input
       value: |
-        ["S2B_23XNK_20210819_0_L2A"]
+        ["20160831_143848_0c79"]
 
   templates:
   - name: workflow-template
