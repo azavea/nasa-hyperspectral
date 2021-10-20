@@ -11,6 +11,7 @@ from random import randint
 from tempfile import mkdtemp
 from time import sleep
 from urllib.parse import urlparse
+from pyproj import CRS
 
 import dateutil.parser
 import pystac
@@ -199,7 +200,7 @@ def download_from_planet(download_link,
                          planet_api_key,
                          temp_dir,
                          download):
-    filename_tiff = f'/{temp_dir}/{planet_id}.tiff'
+    filename_tiff = f'{temp_dir}/{planet_id}.tiff'
     logger.info(f'Downloading imagery to {filename_tiff}')
     if download:
         data = requests.get(download_link,
@@ -236,6 +237,7 @@ def generate_stac_item(filename_tiff, cog_collection, planet_id, s3_uri):
     dt = datetime(year, month, day, tzinfo=timezone.utc)
     polygon = data.get('wgs84Extent')
     coords = polygon.get('coordinates')
+    crs = CRS.from_string(data.get('coordinateSystem').get('proj4'))
     while len(coords) == 1:
         coords = coords[0]
     ys = [y for (y, x) in coords]
@@ -245,6 +247,7 @@ def generate_stac_item(filename_tiff, cog_collection, planet_id, s3_uri):
         'eo:bands': cog_collection.properties['eo:bands'],
         'hsi:wavelength_min': cog_collection.properties['hsi:wavelength_min'],
         'hsi:wavelength_min': cog_collection.properties['hsi:wavelength_min'],
+        'proj:epsg': crs.to_authority()[-1],
     }
 
     logger.info(f'Creating new cog item')
