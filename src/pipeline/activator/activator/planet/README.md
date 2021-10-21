@@ -1,6 +1,6 @@
-# AVIRIS L2 Reflectance Imagery Activator
+# Planet Imagery Activator
 
-Given a STAC Item Id from the AVIRIS Catalog, convert the raw data to a COG and upload to S3.
+Given a Planet ID (probably obtained by prior use of the Planet API), take the imagery, add overviews, upload to S3, and update Franklin.
 
 ## Development
 
@@ -9,26 +9,26 @@ Given a STAC Item Id from the AVIRIS Catalog, convert the raw data to a COG and 
 If you don't have one already, create a development S3 bucket to store your output:
 
 ```shell
-./scripts/console activator-sentinel-s2
+./scripts/console activator-planet
 aws s3api create-bucket --bucket "${S3_BUCKET}"
 ```
 
 ### Run Locally
 
 ```shell
-docker compose run --rm activator-sentinel-s2 --sentinel-stac-id <stac-item-id>
+docker compose run --rm activator-planet --planet-id <planet-id>
 # or for usage instructions
-docker compose run --rm activator-sentinel-s2 --help
+docker compose run --rm activator-planet --help
 ```
 
 A common set of arguments to use in development, to re-use the same temp dir and skip large files, is:
 
 ```shell
-docker compose run --rm activator-sentinel-s2 --sentinel-stac-id S2B_23XNK_20210819_0_L2A
+docker compose run --rm activator-planet --planet-id '20160831_143848_0c79'
 ```
 
 Alternatively, activator can be launched without docker:
 
 ```shell
-python3 main.py --sentinel-stac-id S2B_23XNK_20210819_0_L2A
+python3 main.py --planet-id '20160831_143848_0c79'
 ```

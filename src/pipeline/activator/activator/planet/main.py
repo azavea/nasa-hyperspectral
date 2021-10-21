@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import shutil
+import sys
 import urllib.request
 from datetime import datetime, timezone
 from math import floor
@@ -11,12 +12,12 @@ from random import randint
 from tempfile import mkdtemp
 from time import sleep
 from urllib.parse import urlparse
-from pyproj import CRS
 
 import dateutil.parser
 import pystac
 import requests
 from activator.utils.stac_client import STACClient
+from pyproj import CRS
 from requests.auth import HTTPBasicAuth
 
 # set a configurable logging level for the entire app
@@ -188,7 +189,8 @@ def get_download_link(num_bands, planet_id, planet_api_uri, planet_api_key):
     is_active = result['status'] == 'active'
 
     if not is_active:
-        raise Exception('Imagery inactive')
+        logger.info('Imagery inactive, exiting with code -42')
+        sys.exit(-42)
     else:
         download_link = result['location']
 

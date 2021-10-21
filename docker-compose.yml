@@ -132,7 +132,7 @@ services:
       context: ./src/pipeline/activator/
     environment:
       - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
-      - S3_BUCKET=sentinel-s2-data-dev-${USER}
+      - S3_BUCKET=planet-data-hsi-${USER}
       - AWS_PROFILE=${AWS_PROFILE:-nasa}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - AWS_REQUEST_PAYER=requester
