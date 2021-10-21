@@ -131,7 +131,7 @@ def cli_parser():
     parser.add_argument("--planet-api-key", type=str, default=os.environ.get("PLANET_API_KEY", None))
     parser.add_argument("--planet-api-uri", type=str, default="https://api.planet.com/data/v1/item-types/{}/items/{}/assets")
     parser.add_argument("--planet-id", type=str, help="Planet Image ID")
-    parser.add_argument("--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "planet-data-hsi"))  # sic
+    parser.add_argument("--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "planet-data-hsi"))
     parser.add_argument("--s3-prefix", type=str, default=os.environ.get("S3_PREFIX", "planet-scene-cogs"))
     parser.add_argument("--stac-api-uri", type=str, default=os.environ.get("STAC_API_URI", "http://franklin:9090"))
     parser.add_argument("--temp-dir", type=str, default='/tmp')
