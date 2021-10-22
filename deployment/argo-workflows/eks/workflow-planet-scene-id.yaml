@@ -27,13 +27,14 @@ spec:
     inputs:
       parameters:
       - name: activator-input
-    # https://argoproj.github.io/argo-workflows/fields/#backoff
     retryStrategy:
       limit: "10"
+      expression: "asInt(lastRetry.exitCode) == -42"
+      # https://argoproj.github.io/argo-workflows/fields/#backoff
       backoff:
         duration: "10m" # Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
         factor: "2"
-        # maxDuration: "1m" Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
+        maxDuration: "1d"
     container:
       image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
       imagePullPolicy: Always # IfNotPresent

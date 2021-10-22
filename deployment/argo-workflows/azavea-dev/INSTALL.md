@@ -2,16 +2,18 @@
 
 ![Argo Workflows](https://argoproj.github.io/argo-workflows/assets/argo.png)
 
-In all examples we use Argo Workflows 3.1.1, since we are interested in some of new argo workflows features, see https://blog.argoproj.io/argo-workflows-v3-1-is-coming-1fb1c1091324
+~~In all examples we use Argo Workflows 3.1.1, since we are interested in some of new argo workflows features, see https://blog.argoproj.io/argo-workflows-v3-1-is-coming-1fb1c1091324~~
+
+Argo Workflows 3.2.x+ version is required (for conditional retries support).
 
 ## Argo CLI instructions
 
-For details see: https://github.com/argoproj/argo-workflows/releases/tag/v3.1.1
+For details see: https://github.com/argoproj/argo-workflows/releases/tag/v3.2.2
 
 ### Mac
 
 ```bash
-$ curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.1.1/argo-darwin-amd64.gz
+$ curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.2.2/argo-darwin-amd64.gz
 $ gunzip argo-darwin-amd64.gz
 $ chmod +x argo-darwin-amd64
 $ mv ./argo-darwin-amd64 /usr/local/bin/argo
@@ -21,7 +23,7 @@ $ argo version
 ### Linux
 
 ```bash
-$ curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.1.1/argo-darwin-amd64.gz
+$ curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v3.2.2/argo-darwin-amd64.gz
 $ gunzip argo-linux-amd64.gz
 $ chmod +x argo-linux-amd64
 $ mv ./argo-linux-amd64 /usr/local/bin/argo
@@ -47,8 +49,8 @@ This is the summary of the official [Argo Workflows Quick Start](https://argopro
 $ kubectl config use-context azavea-dev
 # lunch argo
 $ kubectl create ns argo
-# install 3.1.1
-$ kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj/argo-workflows/v3.1.1/manifests/quick-start-postgres.yaml
+# install 3.2.2
+$ kubectl apply -n argo -f https://raw.githubusercontent.com/argoproj/argo-workflows/v3.2.2/manifests/quick-start-postgres.yaml
 # On GKE, you may need to grant your account the ability to create new clusterroles
 # kubectl create clusterrolebinding YOURNAME-cluster-admin-binding --clusterrole=cluster-admin --user=YOUREMAIL@gmail.com
 # port forwarding for the local development
