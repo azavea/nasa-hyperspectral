@@ -170,6 +170,20 @@ def pipeline_arguments(args):
     return args
 
 
+def check_for_item(cog_collection_id, cog_item_id, stac_api_uri):
+    try:
+        stac_client = STACClient(stac_api_uri)
+        stac_client.get_collection_item(cog_collection_id, cog_item_id)
+        logger.info(
+            f'STAC Item {cog_item_id} already exists in {cog_collection_id}')
+        return True
+    except requests.exceptions.HTTPError:
+        logger.info(
+            f'STAC Item {cog_item_id} does not already exist in {cog_collection_id}'
+        )
+        return False
+
+
 def get_download_link(num_bands, planet_id, planet_api_uri, planet_api_key):
     logger.info('Requesting status of imagery')
     result = requests.get(planet_api_uri.format(
@@ -286,6 +300,12 @@ def main():
     args = cli_parser().parse_args()
     args = pipeline_arguments(args)
     cog_collection = get_planet_cog_collection(args.num_bands)
+
+    already_exists = check_for_item(cog_collection.id, args.planet_id,
+                                    args.stac_api_uri)
+    if already_exists:
+        sys.exit(0)
+
     download_link = get_download_link(args.num_bands, args.planet_id,
                                       args.planet_api_uri, args.planet_api_key)
     filename_tiff = download_from_planet(download_link, args.planet_id,
