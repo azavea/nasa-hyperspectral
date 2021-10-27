@@ -1,0 +1,7 @@
+{
+  "planetId": "20160831_143848_0c79",
+  "stacApiUri": "http://host.docker.internal:9090",
+  "s3Bucket": "planet-data-hsi",
+  "s3Prefix": "planet-scene-cogs",
+  "tempDir": "/data"
+}

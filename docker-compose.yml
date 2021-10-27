@@ -125,6 +125,24 @@ services:
       - $HOME/.aws:/root/.aws:ro
       - conda-pkg-cache:/opt/conda/pkgs
 
+  activator-planet:
+    image: activator
+    command: ["python", "activator/planet/main.py"]
+    build:
+      context: ./src/pipeline/activator/
+    environment:
+      - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
+      - S3_BUCKET=planet-data-hsi-${USER}
+      - AWS_PROFILE=${AWS_PROFILE:-nasa}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - AWS_REQUEST_PAYER=requester
+      - GDAL_DISABLE_READDIR_ON_OPEN=YES
+    volumes:
+      - ./src/pipeline/activator:/usr/local/src
+      - ./pipeline-data:/data
+      - $HOME/.aws:/root/.aws:ro
+      - conda-pkg-cache:/opt/conda/pkgs
+
   cog-clip:
     image: cog-clip
     build:
