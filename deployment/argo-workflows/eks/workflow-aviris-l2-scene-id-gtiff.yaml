@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: workflow-
+spec:
+  entrypoint: workflow-template
+  parallelism: 2
+  arguments:
+    parameters:
+    - name: activator-input
+      value: |
+        ["aviris_f130329t01p00r06_sc01"]
+
+  templates:
+  - name: workflow-template
+    dag:
+      tasks:
+      - name: activator
+        template: activator-template
+        arguments:
+          parameters:
+          - name: activator-input
+            value: "{{item}}"
+        withParam: "{{workflow.parameters.activator-input}}"
+
+  - name: activator-template
+    inputs:
+      parameters:
+      - name: activator-input
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
+      imagePullPolicy: Always # IfNotPresent
+      env:
+      - name: STAC_API_URI
+        value: "https://franklin.nasa-hsi.azavea.com"
+      - name: GDAL_CACHEMAX
+        value: "30%"
+      - name: GDAL_OUTPUT_FORMAT
+        value: "GTiff"
+      command: [python, -m, activator.aviris.main, --l2, --aviris-stac-id]
+      args: ["{{inputs.parameters.activator-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/
+      resources:
+        requests:
+          cpu: 3000m
+          memory: 8G 
+        limits:
+          cpu: 3200m
+          memory: 12G 
+    outputs:
+      parameters:
+      - name: activator-output
+        valueFrom:
+          path: /tmp/activator-output.json
