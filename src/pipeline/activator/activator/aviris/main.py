@@ -461,7 +461,7 @@ def main():
         if local_archive.exists():
             logger.info(f'Using existing archive: {local_archive}')
         else:
-            logger.info(f'Downloading archive {local_archive}...')
+            logger.info(f'Downloading {asset.href} archive {local_archive}...')
             gzip_https_url = asset.href
             with DownloadProgressBar(unit='B', unit_scale=True, miniters=1, desc=gzip_https_url.split('/')[-1]) as t:
                 urllib.request.urlretrieve(

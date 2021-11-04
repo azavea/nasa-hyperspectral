@@ -74,7 +74,7 @@ services:
 
   activator-aviris:
     image: activator
-    command: ["python", "activator/aviris/main.py"]
+    entrypoint: [python, -m, activator.aviris.main]
     build:
       context: ./src/pipeline/activator/
     environment:
@@ -93,7 +93,7 @@ services:
 
   activator-prisma:
     image: activator
-    command: ["python", "activator/prisma/main.py"]
+    entrypoint: [python, -m, activator.prisma.main]
     build:
       context: ./src/pipeline/activator/
     environment:
@@ -109,7 +109,7 @@ services:
 
   activator-sentinel-s2:
     image: activator
-    command: ["python", "activator/sentinel_s2/main.py"]
+    entrypoint: [python, -m, activator.sentinel_s2.main]
     build:
       context: ./src/pipeline/activator/
     environment:
@@ -127,7 +127,7 @@ services:
 
   activator-planet:
     image: activator
-    command: ["python", "activator/planet/main.py"]
+    entrypoint: [python, -m, activator.planet.main]
     build:
       context: ./src/pipeline/activator/
     environment:
