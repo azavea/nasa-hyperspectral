@@ -28,8 +28,6 @@ logging.basicConfig(
     level=LOG_LEVEL)
 logger = logging.getLogger(__name__)
 
-GB = 1024**3
-
 COG_COLLECTION_EXTENSIONS = [
     'https://stac-extensions.github.io/eo/v1.0.0/schema.json',
     'https://github.com/azavea/nasa-hyperspectral/tree/master/docs/stac/hsi/json-schema/schema.json'
@@ -123,9 +121,7 @@ def get_planet_cog_collection(num_bands: int = 4):
 
 def cli_parser():
     parser = argparse.ArgumentParser()
-    # parser.add_argument("--force", action="store_true", help="If provided, force reingest StacItem even though this it is already present in the catalog.")
     parser.add_argument("--num-bands", type=int, default=4, choices=[4, 5], help="The desired number of bands (PSScene4Band or REOrthoTile)")
-    # parser.add_argument("--output-format", type=str, default=os.environ.get("GDAL_OUTPUT_FORMAT", "COG"))
     parser.add_argument("--pipeline", type=str, help="JSON with instructions")
     parser.add_argument("--pipeline-uri", type=str, help="A URI to JSON with instructions")
     parser.add_argument("--planet-api-key", type=str, default=os.environ.get("PLANET_API_KEY", None))
