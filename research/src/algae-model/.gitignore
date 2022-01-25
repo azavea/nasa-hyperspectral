@@ -1,0 +1,13 @@
+rastervision/*.zip
+data/pth/old/*
+scripts/*.json
+*.pyc
+*.pth
+*.txt
+*.npz
+*.csv
+*.query
+*.result
+*.results
+*.tif
+*.tiff

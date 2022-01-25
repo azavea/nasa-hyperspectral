@@ -1,0 +1,547 @@
+{
+    "type": "FeatureCollection",
+    "context": {
+        "returned": 4,
+        "matched": 4
+    },
+    "features": [
+        {
+            "id": "aviris_f100828t01p00r13_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -82.690449,
+                            27.325134
+                        ],
+                        [
+                            -82.535782,
+                            27.374696
+                        ],
+                        [
+                            -82.733924,
+                            27.866038
+                        ],
+                        [
+                            -82.889167,
+                            27.81623
+                        ],
+                        [
+                            -82.690449,
+                            27.325134
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -82.889167,
+                27.325134000000002,
+                -82.535782,
+                27.866038
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f100828t01p00r13_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100828t01p00r13_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100828t01p00r13_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100828t01p00r13_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y10_data/f100828t01p00r13.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_10.cgi?step=view_flightlog&flight_id=f100828t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100828t01p00r13_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 10,
+                "Run": 13,
+                "Name": "f100828t01p00r13",
+                "Tape": "t01",
+                "Year": 2010,
+                "Scene": "sc01",
+                "Flight": 100828,
+                "GEO Ver": "ort",
+                "RDN Ver": "b",
+                "Comments": "",
+                "NASA Log": "102027",
+                "Rotation": 19,
+                "Flight ID": "f100828t01",
+                "Site Name": "Fort DeSoto cal site",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.9,
+                "Flight Scene": "f100828t01p00r13_sc01",
+                "Investigator": "Roger Clark",
+                "Solar Azimuth": 245.87,
+                "Number of Lines": 3424,
+                "Solar Elevation": 54.57,
+                "File Size (Bytes)": 1750076416,
+                "Number of Samples": 963,
+                "Max Scene Elevation": 0.0,
+                "Min Scene Elevation": 0.0,
+                "Mean Scene Elevation": 0.0,
+                "Gzip File Size (Bytes)": 725883824,
+                "datetime": "2010-08-28T19:42:00Z"
+            }
+        },
+        {
+            "id": "aviris_f100830t01p00r19_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -82.720789,
+                            27.232671
+                        ],
+                        [
+                            -82.588884,
+                            27.25507
+                        ],
+                        [
+                            -82.713254,
+                            27.838189
+                        ],
+                        [
+                            -82.845818,
+                            27.815642
+                        ],
+                        [
+                            -82.720789,
+                            27.232671
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -82.84581800000001,
+                27.232671000000003,
+                -82.588884,
+                27.838189
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f100830t01p00r19_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100830t01p00r19_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100830t01p00r19_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100830t01p00r19_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y10_data/f100830t01p00r19.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_10.cgi?step=view_flightlog&flight_id=f100830t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100830t01p00r19_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 10,
+                "Run": 19,
+                "Name": "f100830t01p00r19",
+                "Tape": "t01",
+                "Year": 2010,
+                "Scene": "sc01",
+                "Flight": 100830,
+                "GEO Ver": "ort",
+                "RDN Ver": "b",
+                "Comments": "NW to SE",
+                "NASA Log": "102027",
+                "Rotation": 10,
+                "Flight ID": "f100830t01",
+                "Site Name": "Florida Coast and Fort DeSoto FL cal site",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.6,
+                "Flight Scene": "f100830t01p00r19_sc01",
+                "Investigator": "Roger Clark",
+                "Solar Azimuth": 232.93,
+                "Number of Lines": 3963,
+                "Solar Elevation": 61.88,
+                "File Size (Bytes)": 1733692416,
+                "Number of Samples": 802,
+                "Max Scene Elevation": 0.0,
+                "Min Scene Elevation": 0.0,
+                "Mean Scene Elevation": 0.0,
+                "Gzip File Size (Bytes)": 961373721,
+                "datetime": "2010-08-30T19:01:00Z"
+            }
+        },
+        {
+            "id": "aviris_f100831t01p00r09_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -82.077985,
+                            26.369403
+                        ],
+                        [
+                            -81.968554,
+                            26.432076
+                        ],
+                        [
+                            -82.466248,
+                            27.131914
+                        ],
+                        [
+                            -82.576042,
+                            27.068848
+                        ],
+                        [
+                            -82.077985,
+                            26.369403
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -82.576042,
+                26.369403000000002,
+                -81.968554,
+                27.131914000000002
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f100831t01p00r09_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100831t01p00r09_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100831t01p00r09_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100831t01p00r09_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y10_data/f100831t01p00r09.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_10.cgi?step=view_flightlog&flight_id=f100831t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100831t01p00r09_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 10,
+                "Run": 9,
+                "Name": "f100831t01p00r09",
+                "Tape": "t01",
+                "Year": 2010,
+                "Scene": "sc01",
+                "Flight": 100831,
+                "GEO Ver": "ort",
+                "RDN Ver": "b",
+                "Comments": "",
+                "NASA Log": "",
+                "Rotation": 32,
+                "Flight ID": "f100831t01",
+                "Site Name": "Gulf of Mexico",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.5,
+                "Flight Scene": "f100831t01p00r09_sc01",
+                "Investigator": "Roger Clark",
+                "Solar Azimuth": 180.47,
+                "Number of Lines": 5575,
+                "Solar Elevation": 71.87,
+                "File Size (Bytes)": 2398227456,
+                "Number of Samples": 785,
+                "Max Scene Elevation": 0.0,
+                "Min Scene Elevation": 0.0,
+                "Mean Scene Elevation": 0.0,
+                "Gzip File Size (Bytes)": 1362292096,
+                "datetime": "2010-08-31T17:30:00Z"
+            }
+        },
+        {
+            "id": "aviris_f100831t01p00r10_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -81.694514,
+                            25.723973
+                        ],
+                        [
+                            -81.583164,
+                            25.771592
+                        ],
+                        [
+                            -81.833002,
+                            26.24895
+                        ],
+                        [
+                            -81.944691,
+                            26.201133
+                        ],
+                        [
+                            -81.694514,
+                            25.723973
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -81.944691,
+                25.723973,
+                -81.583164,
+                26.24895
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f100831t01p00r10_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100831t01p00r10_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100831t01p00r10_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100831t01p00r10_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y10_data/f100831t01p00r10.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_10.cgi?step=view_flightlog&flight_id=f100831t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100831t01p00r10_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 10,
+                "Run": 10,
+                "Name": "f100831t01p00r10",
+                "Tape": "t01",
+                "Year": 2010,
+                "Scene": "sc01",
+                "Flight": 100831,
+                "GEO Ver": "ort",
+                "RDN Ver": "b",
+                "Comments": "",
+                "NASA Log": "",
+                "Rotation": 25,
+                "Flight ID": "f100831t01",
+                "Site Name": "Marco Island cal site",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.6,
+                "Flight Scene": "f100831t01p00r10_sc01",
+                "Investigator": "Roger Clark",
+                "Solar Azimuth": 189.54,
+                "Number of Lines": 3524,
+                "Solar Elevation": 72.41,
+                "File Size (Bytes)": 1450576896,
+                "Number of Samples": 745,
+                "Max Scene Elevation": 0.0,
+                "Min Scene Elevation": 0.0,
+                "Mean Scene Elevation": 0.0,
+                "Gzip File Size (Bytes)": 860185300,
+                "datetime": "2010-08-31T17:39:00Z"
+            }
+        }
+    ],
+    "links": [],
+    "stac_version": "1.0.0"
+}
