@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "item-schema.json#",
+  "$id": "https://github.com/azavea/nasa-hyperspectral/tree/master/docs/stac/hsi/json-schema/schema.json",
   "title": "Layer Extension",
   "description": "STAC Layer Item Extension Spec",
   "allOf": [
