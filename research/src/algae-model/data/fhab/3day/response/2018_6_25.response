@@ -1,0 +1,295 @@
+{
+    "type": "FeatureCollection",
+    "context": {
+        "returned": 2,
+        "matched": 2
+    },
+    "features": [
+        {
+            "id": "aviris_f180625t01p00r06_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -115.038418,
+                            32.931312
+                        ],
+                        [
+                            -114.924615,
+                            33.156013
+                        ],
+                        [
+                            -119.401004,
+                            34.65671
+                        ],
+                        [
+                            -119.504873,
+                            34.428152
+                        ],
+                        [
+                            -115.038418,
+                            32.931312
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -119.504873,
+                32.931312,
+                -114.92461499999999,
+                34.65671
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f180625t01p00r06_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "https_refl": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y18_data/f180625t01p00r06_refl.tar.gz",
+                    "title": "https_refl",
+                    "description": "AVIRIS data archive of atmospheric corrected imagery for this scene.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y18_RGB/f180625t01p00r06_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y18_KML/f180625t01p00r06_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y18_RGB/f180625t01p00r06_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y18_data/f180625t01p00r06.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_18.cgi?step=view_flightlog&flight_id=f180625t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y18_KML/f180625t01p00r06_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 18,
+                "Run": 6,
+                "Name": "f180625t01p00r06",
+                "Tape": "t01",
+                "Year": 2018,
+                "Scene": "sc01",
+                "Flight": 180625,
+                "GEO Ver": "ort",
+                "RDN Ver": "e",
+                "Comments": "NW to SE",
+                "NASA Log": "142003",
+                "Rotation": 68,
+                "has_refl": true,
+                "Flight ID": "f180625t01",
+                "Site Name": "Southern California Box Line 5 (SC5)",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 15.5,
+                "Flight Scene": "f180625t01p00r06_sc01",
+                "Investigator": "Robert Green",
+                "Solar Azimuth": 103.78,
+                "Number of Lines": 28779,
+                "Solar Elevation": 61.76,
+                "File Size (Bytes)": 25911033856,
+                "Number of Samples": 1749,
+                "Max Scene Elevation": 1898.13,
+                "Min Scene Elevation": -69.33,
+                "Mean Scene Elevation": 485.25,
+                "Gzip File Size (Bytes)": 7821106403,
+                "datetime": "2018-06-25T17:51:00Z"
+            }
+        },
+        {
+            "id": "aviris_f180625t01p00r08_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -115.16262,
+                            32.902733
+                        ],
+                        [
+                            -115.056004,
+                            33.114051
+                        ],
+                        [
+                            -119.469643,
+                            34.590518
+                        ],
+                        [
+                            -119.567037,
+                            34.375654
+                        ],
+                        [
+                            -115.16262,
+                            32.902733
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -119.56703700000001,
+                32.902733000000005,
+                -115.056004,
+                34.590517999999996
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f180625t01p00r08_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "https_refl": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y18_data/f180625t01p00r08_refl.tar.gz",
+                    "title": "https_refl",
+                    "description": "AVIRIS data archive of atmospheric corrected imagery for this scene.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y18_RGB/f180625t01p00r08_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y18_KML/f180625t01p00r08_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y18_RGB/f180625t01p00r08_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y18_data/f180625t01p00r08.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_18.cgi?step=view_flightlog&flight_id=f180625t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y18_KML/f180625t01p00r08_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 18,
+                "Run": 8,
+                "Name": "f180625t01p00r08",
+                "Tape": "t01",
+                "Year": 2018,
+                "Scene": "sc01",
+                "Flight": 180625,
+                "GEO Ver": "ort",
+                "RDN Ver": "e",
+                "Comments": "NW to SE",
+                "NASA Log": "142003",
+                "Rotation": 68,
+                "has_refl": true,
+                "Flight ID": "f180625t01",
+                "Site Name": "Southern California Box Line 6 (SC6)",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 15.7,
+                "Flight Scene": "f180625t01p00r08_sc01",
+                "Investigator": "Robert Green",
+                "Solar Azimuth": 133.9,
+                "Number of Lines": 28021,
+                "Solar Elevation": 75.75,
+                "File Size (Bytes)": 23511957504,
+                "Number of Samples": 1623,
+                "Max Scene Elevation": 1713.02,
+                "Min Scene Elevation": -70.72,
+                "Mean Scene Elevation": 409.27,
+                "Gzip File Size (Bytes)": 7829459346,
+                "datetime": "2018-06-25T19:07:00Z"
+            }
+        }
+    ],
+    "links": [],
+    "stac_version": "1.0.0"
+}

@@ -1,0 +1,145 @@
+{
+    "type": "FeatureCollection",
+    "context": {
+        "returned": 1,
+        "matched": 1
+    },
+    "features": [
+        {
+            "id": "aviris_f100506t01p00r22_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -87.563948,
+                            30.211845
+                        ],
+                        [
+                            -87.56519,
+                            30.428447
+                        ],
+                        [
+                            -89.30619,
+                            30.409299
+                        ],
+                        [
+                            -89.301127,
+                            30.192861
+                        ],
+                        [
+                            -87.563948,
+                            30.211845
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -89.30619,
+                30.192860999999997,
+                -87.563948,
+                30.428447
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f100506t01p00r22_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100506t01p00r22_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100506t01p00r22_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_RGB/f100506t01p00r22_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y10_data/f100506t01p00r22.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_10.cgi?step=view_flightlog&flight_id=f100506t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y10_KML/f100506t01p00r22_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 10,
+                "Run": 22,
+                "Name": "f100506t01p00r22",
+                "Tape": "t01",
+                "Year": 2010,
+                "Scene": "sc01",
+                "Flight": 100506,
+                "GEO Ver": "ort",
+                "RDN Ver": "b",
+                "Comments": "",
+                "NASA Log": "102023",
+                "Rotation": 90,
+                "Flight ID": "f100506t01",
+                "Site Name": "GC12-d1",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.6,
+                "Flight Scene": "f100506t01p00r22_sc01",
+                "Investigator": "Ira Leifer",
+                "Solar Azimuth": 264.48,
+                "Number of Lines": 10077,
+                "Solar Elevation": 43.24,
+                "File Size (Bytes)": 7605321728,
+                "Number of Samples": 1447,
+                "Max Scene Elevation": 9.04,
+                "Min Scene Elevation": -0.04,
+                "Mean Scene Elevation": 0.8,
+                "Gzip File Size (Bytes)": 1931015036,
+                "datetime": "2010-05-06T21:07:00Z"
+            }
+        }
+    ],
+    "links": [],
+    "stac_version": "1.0.0"
+}

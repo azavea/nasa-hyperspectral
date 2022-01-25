@@ -1,0 +1,153 @@
+{
+    "type": "FeatureCollection",
+    "context": {
+        "returned": 1,
+        "matched": 1
+    },
+    "features": [
+        {
+            "id": "aviris_f170507t01p00r07_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -82.751096,
+                            27.786181
+                        ],
+                        [
+                            -82.535556,
+                            27.758438
+                        ],
+                        [
+                            -82.297436,
+                            29.196248
+                        ],
+                        [
+                            -82.515893,
+                            29.224253
+                        ],
+                        [
+                            -82.751096,
+                            27.786181
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -82.75109599999999,
+                27.758438,
+                -82.297436,
+                29.224253000000004
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f170507t01p00r07_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "https_refl": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y17_data/f170507t01p00r07_refl.tar.gz",
+                    "title": "https_refl",
+                    "description": "AVIRIS data archive of atmospheric corrected imagery for this scene.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170507t01p00r07_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170507t01p00r07_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170507t01p00r07_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y17_data/f170507t01p00r07.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_17.cgi?step=view_flightlog&flight_id=f170507t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170507t01p00r07_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 17,
+                "Run": 7,
+                "Name": "f170507t01p00r07",
+                "Tape": "t01",
+                "Year": 2017,
+                "Scene": "sc01",
+                "Flight": 170507,
+                "GEO Ver": "ort",
+                "RDN Ver": "e",
+                "Comments": "",
+                "NASA Log": "",
+                "Rotation": -9,
+                "has_refl": true,
+                "Flight ID": "f170507t01",
+                "Site Name": "TBD",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 15.9,
+                "Flight Scene": "f170507t01p00r07_sc01",
+                "Investigator": "",
+                "Solar Azimuth": 104.19,
+                "Number of Lines": 10128,
+                "Solar Elevation": 57.78,
+                "File Size (Bytes)": 7147949056,
+                "Number of Samples": 1351,
+                "Max Scene Elevation": 53.74,
+                "Min Scene Elevation": -0.27,
+                "Mean Scene Elevation": 16.54,
+                "Gzip File Size (Bytes)": 2738230443,
+                "datetime": "2017-05-07T15:16:00Z"
+            }
+        }
+    ],
+    "links": [],
+    "stac_version": "1.0.0"
+}

@@ -1,0 +1,34 @@
+[
+    {
+        "catalog": "catalog_f100506t01p00r23rdn.zip",
+        "imagery": "f100506t01p00r23rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+        "catalog": "catalog_f100506t01p00r24rdn.zip",
+        "imagery": "f100506t01p00r24rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+        "catalog": "catalog_f100510t01p00r09rdn.zip",
+        "imagery": "f100510t01p00r09rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+        "catalog": "catalog_f100707t01p00r03.zip",
+        "imagery": "f100707t01p00r03rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+        "catalog": "catalog_f100830t01p00r19.zip",
+        "imagery": "f100830t01p00r19rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+        "catalog": "catalog_f100831t01p00r08.zip",
+        "imagery": "f100831t01p00r08rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+        "catalog": "catalog_f100831t01p00r09.zip",
+        "imagery": "f100831t01p00r09rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+        "catalog": "catalog_f180627t01p00r05.zip",
+        "imagery": "f180627t01p00r05rdn_e_sc01_ort_img_tiff.tiff"
+    }
+]

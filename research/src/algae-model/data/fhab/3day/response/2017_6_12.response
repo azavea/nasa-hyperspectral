@@ -1,0 +1,681 @@
+{
+    "type": "FeatureCollection",
+    "context": {
+        "returned": 5,
+        "matched": 5
+    },
+    "features": [
+        {
+            "id": "aviris_f170613t01p00r08_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -121.460418,
+                            37.088292
+                        ],
+                        [
+                            -121.241941,
+                            37.181316
+                        ],
+                        [
+                            -122.578445,
+                            39.138654
+                        ],
+                        [
+                            -122.801197,
+                            39.043205
+                        ],
+                        [
+                            -121.460418,
+                            37.088292
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -122.801197,
+                37.088291999999996,
+                -121.241941,
+                39.138653999999995
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f170613t01p00r08_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r08_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r08_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r08_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y17_data/f170613t01p00r08.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_17.cgi?step=view_flightlog&flight_id=f170613t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r08_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 17,
+                "Run": 8,
+                "Name": "f170613t01p00r08",
+                "Tape": "t01",
+                "Year": 2017,
+                "Scene": "sc01",
+                "Flight": 170613,
+                "GEO Ver": "ort",
+                "RDN Ver": "e",
+                "Comments": "Clear",
+                "NASA Log": "142003",
+                "Rotation": 29,
+                "Flight ID": "f170613t01",
+                "Site Name": "Bay Area Box Line 9 (BA56)",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.0,
+                "Flight Scene": "f170613t01p00r08_sc01",
+                "Investigator": "Robert Green",
+                "Solar Azimuth": 136.74,
+                "Number of Lines": 15423,
+                "Solar Elevation": 70.75,
+                "File Size (Bytes)": 11051076608,
+                "Number of Samples": 1375,
+                "Max Scene Elevation": 1155.5,
+                "Min Scene Elevation": -0.09,
+                "Mean Scene Elevation": 400.4,
+                "Gzip File Size (Bytes)": 4222849913,
+                "datetime": "2017-06-13T19:11:00Z"
+            }
+        },
+        {
+            "id": "aviris_f170613t01p00r09_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -121.408133,
+                            36.974525
+                        ],
+                        [
+                            -121.281625,
+                            37.028483
+                        ],
+                        [
+                            -122.661769,
+                            39.049731
+                        ],
+                        [
+                            -122.790824,
+                            38.994323
+                        ],
+                        [
+                            -121.408133,
+                            36.974525
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -122.790824,
+                36.974525,
+                -121.281625,
+                39.049731
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f170613t01p00r09_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r09_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r09_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r09_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y17_data/f170613t01p00r09.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_17.cgi?step=view_flightlog&flight_id=f170613t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r09_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 17,
+                "Run": 9,
+                "Name": "f170613t01p00r09",
+                "Tape": "t01",
+                "Year": 2017,
+                "Scene": "sc01",
+                "Flight": 170613,
+                "GEO Ver": "ort",
+                "RDN Ver": "e",
+                "Comments": "5% clouds at north end of line",
+                "NASA Log": "142003",
+                "Rotation": 29,
+                "Flight ID": "f170613t01",
+                "Site Name": "Bay Area Box Line 8 (BA55)",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.0,
+                "Flight Scene": "f170613t01p00r09_sc01",
+                "Investigator": "Robert Green",
+                "Solar Azimuth": 152.06,
+                "Number of Lines": 15932,
+                "Solar Elevation": 73.58,
+                "File Size (Bytes)": 6881283072,
+                "Number of Samples": 798,
+                "Max Scene Elevation": 1158.74,
+                "Min Scene Elevation": -0.01,
+                "Mean Scene Elevation": 392.59,
+                "Gzip File Size (Bytes)": 4336099163,
+                "datetime": "2017-06-13T19:35:00Z"
+            }
+        },
+        {
+            "id": "aviris_f170613t01p00r10_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -121.622668,
+                            36.891136
+                        ],
+                        [
+                            -121.495494,
+                            36.945738
+                        ],
+                        [
+                            -122.841646,
+                            38.910167
+                        ],
+                        [
+                            -122.971274,
+                            38.854141
+                        ],
+                        [
+                            -121.622668,
+                            36.891136
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -122.971274,
+                36.891135999999996,
+                -121.495494,
+                38.910167
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f170613t01p00r10_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r10_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r10_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r10_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y17_data/f170613t01p00r10.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_17.cgi?step=view_flightlog&flight_id=f170613t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r10_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 17,
+                "Run": 10,
+                "Name": "f170613t01p00r10",
+                "Tape": "t01",
+                "Year": 2017,
+                "Scene": "sc01",
+                "Flight": 170613,
+                "GEO Ver": "ort",
+                "RDN Ver": "e",
+                "Comments": "Clear",
+                "NASA Log": "142003",
+                "Rotation": 29,
+                "Flight ID": "f170613t01",
+                "Site Name": "Bay Area Box Line 6 (BA53)",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.1,
+                "Flight Scene": "f170613t01p00r10_sc01",
+                "Investigator": "Robert Green",
+                "Solar Azimuth": 170.21,
+                "Number of Lines": 15405,
+                "Solar Elevation": 75.12,
+                "File Size (Bytes)": 6677662720,
+                "Number of Samples": 799,
+                "Max Scene Elevation": 1038.97,
+                "Min Scene Elevation": 0.0,
+                "Mean Scene Elevation": 166.6,
+                "Gzip File Size (Bytes)": 4227061065,
+                "datetime": "2017-06-13T19:58:00Z"
+            }
+        },
+        {
+            "id": "aviris_f170613t01p00r11_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -121.459295,
+                            36.775224
+                        ],
+                        [
+                            -121.275012,
+                            36.854079
+                        ],
+                        [
+                            -122.783379,
+                            39.062132
+                        ],
+                        [
+                            -122.971688,
+                            38.980966
+                        ],
+                        [
+                            -121.459295,
+                            36.775224
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -122.97168799999999,
+                36.775224,
+                -121.27501200000002,
+                39.062132
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f170613t01p00r11_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r11_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r11_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r11_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y17_data/f170613t01p00r11.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_17.cgi?step=view_flightlog&flight_id=f170613t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r11_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 17,
+                "Run": 11,
+                "Name": "f170613t01p00r11",
+                "Tape": "t01",
+                "Year": 2017,
+                "Scene": "sc01",
+                "Flight": 170613,
+                "GEO Ver": "ort",
+                "RDN Ver": "e",
+                "Comments": "5% clouds at north end of line",
+                "NASA Log": "142003",
+                "Rotation": 29,
+                "Flight ID": "f170613t01",
+                "Site Name": "Bay Area Box Line 7 (BA54)",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.0,
+                "Flight Scene": "f170613t01p00r11_sc01",
+                "Investigator": "Robert Green",
+                "Solar Azimuth": 193.85,
+                "Number of Lines": 17410,
+                "Solar Elevation": 74.9,
+                "File Size (Bytes)": 10662054912,
+                "Number of Samples": 1165,
+                "Max Scene Elevation": 1076.01,
+                "Min Scene Elevation": 0.0,
+                "Mean Scene Elevation": 312.39,
+                "Gzip File Size (Bytes)": 4848159249,
+                "datetime": "2017-06-13T20:24:00Z"
+            }
+        },
+        {
+            "id": "aviris_f170613t01p00r12_sc01",
+            "stac_version": "1.0.0",
+            "stac_extensions": [],
+            "type": "Feature",
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [
+                    [
+                        [
+                            -121.732289,
+                            36.788522
+                        ],
+                        [
+                            -121.572523,
+                            36.854512
+                        ],
+                        [
+                            -122.975385,
+                            38.984073
+                        ],
+                        [
+                            -123.138585,
+                            38.916211
+                        ],
+                        [
+                            -121.732289,
+                            36.788522
+                        ]
+                    ]
+                ]
+            },
+            "bbox": [
+                -123.138585,
+                36.788522,
+                -121.572523,
+                38.984072999999995
+            ],
+            "links": [
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic",
+                    "rel": "collection",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com/collections/aviris-classic/items/aviris_f170613t01p00r12_sc01",
+                    "rel": "self",
+                    "type": "application/json"
+                },
+                {
+                    "href": "https://franklin.nasa-hsi.azavea.com",
+                    "rel": "root",
+                    "type": "application/json",
+                    "title": "Welcome to Franklin"
+                }
+            ],
+            "assets": {
+                "rgb": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r12_sc01_RGB.jpeg",
+                    "title": "rgb",
+                    "description": "Full resolution RGB image captured by the flight",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "kml_overlay": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r12_sc01_overlay_KML.kml",
+                    "title": "kml_overlay",
+                    "description": "KML file describing the bounding box of the flight",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                },
+                "rgb_small": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_RGB/f170613t01p00r12_sc01_RGB-W200.jpg",
+                    "title": "rgb_small",
+                    "description": "A lower resolution thumbnail of the same image as the 'rgb' asset.",
+                    "roles": [],
+                    "type": "image/jpeg"
+                },
+                "https": {
+                    "href": "https://popo.jpl.nasa.gov/avcl/y17_data/f170613t01p00r12.tar.gz",
+                    "title": "https",
+                    "description": "AVIRIS data archive. The file size is described by the 'Gzip File Size' property.",
+                    "roles": [],
+                    "type": "application/gzip"
+                },
+                "flight_log": {
+                    "href": "http://aviris.jpl.nasa.gov/cgi/flights_17.cgi?step=view_flightlog&flight_id=f170613t01",
+                    "title": "flight_log",
+                    "description": "HTML page with table listing the runs for this flight.",
+                    "roles": [],
+                    "type": "text/html"
+                },
+                "kml_outline": {
+                    "href": "http://aviris.jpl.nasa.gov/aviris_locator/y17_KML/f170613t01p00r12_sc01_outline_KML.kml",
+                    "title": "kml_outline",
+                    "description": "KML file describing the flight outline",
+                    "roles": [],
+                    "type": "application/vnd.google-earth.kml+xml"
+                }
+            },
+            "collection": "aviris-classic",
+            "properties": {
+                "YY": 17,
+                "Run": 12,
+                "Name": "f170613t01p00r12",
+                "Tape": "t01",
+                "Year": 2017,
+                "Scene": "sc01",
+                "Flight": 170613,
+                "GEO Ver": "ort",
+                "RDN Ver": "e",
+                "Comments": "Clear",
+                "NASA Log": "142003",
+                "Rotation": 28,
+                "Flight ID": "f170613t01",
+                "Site Name": "Bay Area Box Line 5 (BA52)",
+                "layer:ids": [
+                    "aviris-classic"
+                ],
+                "Pixel Size": 16.2,
+                "Flight Scene": "f170613t01p00r12_sc01",
+                "Investigator": "Robert Green",
+                "Solar Azimuth": 212.13,
+                "Number of Lines": 16453,
+                "Solar Elevation": 73.15,
+                "File Size (Bytes)": 8669236224,
+                "Number of Samples": 990,
+                "Max Scene Elevation": 825.4,
+                "Min Scene Elevation": -0.64,
+                "Mean Scene Elevation": 102.33,
+                "Gzip File Size (Bytes)": 4468257991,
+                "datetime": "2017-06-13T20:48:00Z"
+            }
+        }
+    ],
+    "links": [],
+    "stac_version": "1.0.0"
+}
