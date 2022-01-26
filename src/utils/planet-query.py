@@ -33,17 +33,19 @@ def activate_id(num_bands, planet_id, planet_api_uri, planet_api_key):
     result = result.json()
 
     logger.info('(Re)activating and getting download link')
-    links = result['analytic']['_links']
-    self_link = links['_self']
-    activation_link = links['activate']
-    result = requests.get(activation_link,
-                          auth=HTTPBasicAuth(planet_api_key, ''))
-    result = requests.get(self_link, auth=HTTPBasicAuth(planet_api_key, ''))
-    result = result.json()
-    is_active = result['status'] == 'active'
+    try:
+        links = result['analytic']['_links']
+        self_link = links['_self']
+        activation_link = links['activate']
+        result = requests.get(activation_link,
+                              auth=HTTPBasicAuth(planet_api_key, ''))
+        result = requests.get(self_link, auth=HTTPBasicAuth(planet_api_key, ''))
+        result = result.json()
+        is_active = result['status'] == 'active'
 
-    return {'id': planet_id, 'is_active': is_active}
-
+        return {'id': planet_id, 'is_active': is_active}
+    except:
+        return None
 
 def cli_parser():
     parser = argparse.ArgumentParser()
@@ -137,6 +139,7 @@ if __name__ == "__main__":
 
     if args.activate:
         planet_ids = [activate_fn(planet_id) for planet_id in planet_ids]
+        planet_ids = [planet_id for planet_id in planet_ids if planet_id is not None]
 
     if args.id_list:
         with open(args.id_list, "w") as f:
