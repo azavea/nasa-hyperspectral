@@ -11,3 +11,5 @@ See the `notebooks` directory for examples.
 **math**: Provides some useful utilities, notably robust PCA
 
 **target**: Target detection functions, including matched filters
+
+**unmixing**: Provides robust successive projection algorithm for automatic endmember selection
