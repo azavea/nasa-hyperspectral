@@ -1,5 +1,5 @@
 variable "project" {
-  default = "NASA Hyperspectral"
+  default = "NASA Hyperspectral Super"
   type    = string
 }
 
@@ -8,7 +8,7 @@ locals {
 }
 
 variable "environment" {
-  default = "Staging"
+  default = "Staging-super"
   type    = string
 }
 

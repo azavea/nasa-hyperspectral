@@ -33,7 +33,7 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
     if [[ -n "${NASA_HSI_SETTINGS_BUCKET}" ]]; then
         pushd "${TERRAFORM_DIR}"
 
-        aws s3 cp "s3://${NASA_HSI_SETTINGS_BUCKET}/terraform/terraform.tfvars" "${NASA_HSI_SETTINGS_BUCKET}.tfvars"
+        # aws s3 cp "s3://${NASA_HSI_SETTINGS_BUCKET}/terraform/terraform.tfvars" "${NASA_HSI_SETTINGS_BUCKET}.tfvars"
 
         case "$1" in
         plan)
@@ -41,9 +41,10 @@ if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
             rm -rf .terraform terraform.tfstate*
             terraform init \
                 -backend-config="bucket=${NASA_HSI_SETTINGS_BUCKET}" \
-                -backend-config="key=terraform/state"
+                -backend-config="key=terraform/state-super"
 
-            terraform plan \
+            # -destroy
+            terraform plan -destroy \
                 -var="image_tag=${GIT_COMMIT}" \
                 -var-file="${NASA_HSI_SETTINGS_BUCKET}.tfvars" \
                 -out="${NASA_HSI_SETTINGS_BUCKET}.tfplan"

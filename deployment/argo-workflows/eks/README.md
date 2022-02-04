@@ -53,3 +53,9 @@ Controlled via IAM roles, see [eks-iam.tf](../../terraform/eks-iam.tf)
 ### Configure ECR Registry Access
 
 Controlled via default EKS IAM roles
+
+### Retrieve KubeConfig
+
+```
+aws eks --region us-east-1 update-kubeconfig --name hsi-spot-super
+```
