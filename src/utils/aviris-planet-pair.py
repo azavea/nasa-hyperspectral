@@ -49,6 +49,7 @@ if __name__ == '__main__':
 
     matches = []
 
+    # curl 'https://franklin.nasa-hsi.azavea.com/collections/planet-4band-cogs/items/?limit=1000'
     with open(args.planet_scenes, 'r') as f:
         planet = [feature_to_shapely(feature) for feature in json.load(f).get('features')]
         if args.ignore_year:
@@ -56,6 +57,7 @@ if __name__ == '__main__':
                 s.dt = s.dt.replace(year = 1776)
     strtree = STRtree(planet)
 
+    # curl 'https://franklin.nasa-hsi.azavea.com/collections/aviris-l1-cogs/items/?limit=1000'
     with open(args.aviris_scenes, 'r') as f:
         aviris = [feature_to_shapely(feature) for feature in json.load(f).get('features')]
         if args.ignore_year:
