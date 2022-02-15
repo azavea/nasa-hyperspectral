@@ -3,6 +3,7 @@
 import argparse
 import json
 import pprint
+import copy
 
 from datetime import datetime, timedelta
 from dateutil import parser
@@ -69,17 +70,22 @@ if __name__ == '__main__':
         aviris = list(filter(lambda s: s.ide in aviris_ids, aviris))
 
     for aviris_scene in aviris:
+        uncovered = copy.copy(aviris_scene)
         planet_scenes = [s for s in strtree.query(aviris_scene) if predicate(s, aviris_scene, delta)]
         for s in planet_scenes:
             s.size = aviris_scene.intersection(s).area
+            uncovered = uncovered.difference(s)
         planet_scenes.sort(key=lambda s: -s.size)
         if planet_scenes:
             match = {
                 'id': aviris_scene.ide,
                 'datetime': aviris_scene.dt.isoformat(),
-                'matches': [shapely_to_dict(s) for s in planet_scenes]
+                'matches': [shapely_to_dict(s) for s in planet_scenes],
+                'pct_covered': 1.0 - uncovered.area / aviris_scene.area
             }
             matches.append(match)
+
+    matches.sort(key=lambda m: -m.get('pct_covered'))
 
     if args.output:
         with open(args.output, 'w') as f:
