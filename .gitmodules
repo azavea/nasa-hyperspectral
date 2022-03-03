@@ -1,0 +1,3 @@
+[submodule "docs/stac-spec/hsi"]
+	path = docs/stac-spec/hsi
+	url = git@github.com:stac-extensions/hsi.git
