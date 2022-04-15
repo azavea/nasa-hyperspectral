@@ -1,0 +1,38 @@
+[
+    {
+	"catalog": "cog-exports/f658151e-f11e-433b-8c56-ac2554c7884b/catalog.zip",
+	"imagery": "f100830t01p00r19rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+	"catalog": "cog-exports/5f117ad8-e802-4e9b-b37e-70ab544a9c0d/catalog.zip",
+	"imagery": "f100523t01p00r16rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+	"catalog": "cog-exports/8559165f-1712-4ce4-bc09-be0c202d2995/catalog.zip",
+	"imagery": "f100523t01p00r17rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+	"catalog": "cog-exports/ed833b3a-8473-4c9c-8816-954721516b2a/catalog.zip",
+	"imagery": "f100831t01p00r08rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+	"catalog": "cog-exports/881b84d3-0908-441e-aab2-fd67e075bbc2/catalog.zip",
+	"imagery": "f100513t01p00r07rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+	"catalog": "cog-exports/c54414f4-3d33-4dfa-9dd8-b6a294c3a0d1/catalog.zip",
+	"imagery": "f100518t01p00r06rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+	"catalog": "cog-exports/d6d74fbf-22b7-4c10-b96f-8752d2b1a81e/catalog.zip",
+	"imagery": "f100831t01p00r09rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+	"catalog": "cog-exports/ea3cc048-4549-4c25-8395-b0db141641f0/catalog.zip",
+	"imagery": "f100707t01p00r03rdn_b_sc01_ort_img_tiff.tiff"
+    },
+    {
+	"catalog": "cog-exports/8a331ddd-f5d3-407f-a19c-4a9cae57da80/catalog.zip",
+	"imagery": "f100523t01p00r15rdn_b_sc01_ort_img_tiff.tiff"
+    }
+]

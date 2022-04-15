@@ -1,6 +1,8 @@
 # flake8: noqa
 
 import hashlib
+import re
+
 from functools import partial
 
 from pystac.stac_io import DefaultStacIO, StacIO
@@ -48,7 +50,7 @@ def root_of_tarball(tarball: str) -> str:
     return catalog_root
 
 
-def hrefs_from_catalog(catalog: Catalog) -> Tuple[str, str]:
+def hrefs_from_catalog(catalog: Catalog, N: int = None) -> Tuple[str, str]:
 
     def find_label_collection(c):
         return 'label' in str.lower(c.description)
@@ -58,11 +60,26 @@ def hrefs_from_catalog(catalog: Catalog) -> Tuple[str, str]:
     label_items = list(labels.get_items())
 
     label_hrefs = []
+    imagery_hrefs = []
     for item in label_items:
+        try:
+            imagery = item.get_links('source')[0]
+            imagery.resolve_stac_object()
+            imagery_href = imagery.target.assets.get('cog').href
+        except:
+            imagery_href = None
         label_href = pystac_workaround(item.assets.get('data').href)
         label_hrefs.append(label_href)
+        if imagery_href.startswith('./'):
+            imagery_href = re.sub('^\.\/[0-9]+-', './', imagery_href)
+        imagery_href = imagery_href.replace('14060at01p00r17', '140603t01p00r17')
+        imagery_hrefs.append(imagery_href)
 
-    return label_hrefs
+    if N is not None:
+        N = int(N)
+        label_hrefs = [label_hrefs[N]]
+        imagery_hrefs = [imagery_hrefs[N]]
+    return (label_hrefs, imagery_hrefs)
 
 
 def hrefs_to_sceneconfig(
@@ -84,7 +101,7 @@ def hrefs_to_sceneconfig(
     label_vector_source = GeoJSONVectorSourceConfig(
         uri=labels,
         class_id_to_filter=class_id_filter_dict,
-        default_class_id=1)
+        default_class_id=0xff)
     label_raster_source = RasterizedSourceConfig(
         vector_source=label_vector_source,
         rasterizer_config=RasterizerConfig(background_class_id=0,
@@ -103,7 +120,8 @@ def get_scenes(
     class_id_filter_dict: dict,
     catalog_dir: str, imagery_dir: str,
     train_crops: List[CropOffsets] = [],
-    val_crops: List[CropOffsets] = []
+    val_crops: List[CropOffsets] = [],
+    N: int = None
 ) -> Tuple[List[SceneConfig], List[SceneConfig]]:
 
     train_scenes = []
@@ -114,27 +132,34 @@ def get_scenes(
             catalog = catalog.strip()
             catalog = f'{catalog_dir}/{catalog}'
             catalog = catalog.replace('s3://', '/vsizip/vsis3/')
-            labelss = hrefs_from_catalog(Catalog.from_file(root_of_tarball(catalog)))
+            (labelss, imagerys) = hrefs_from_catalog(Catalog.from_file(root_of_tarball(catalog)), N)
             imagery_name = imagery = catalog_imagery.get('imagery')
-            imagery = imagery.strip()
-            imagery = f'{imagery_dir}/{imagery}'
-            if '.zip' in imagery:
-                imagery = imagery.replace('s3://', '/vsizip/vsis3/')
+            if imagery_name is not None:
+                imagery = imagery.strip()
+                imagery = f'{imagery_dir}/{imagery}'
+                if '.zip' in imagery:
+                    imagery = imagery.replace('s3://', '/vsizip/vsis3/')
+                else:
+                    imagery = imagery.replace('s3://', '/vsis3/')
+                imagerys = [imagery]*len(labelss)
             else:
-                imagery = imagery.replace('s3://', '/vsis3/')
+                imagerys = map(lambda i: i.replace('_rgb',''), imagerys)
+                if not imagery_dir.endswith('/'):
+                    imagery_dir = imagery_dir + '/'
+                imagerys = list(map(lambda i: i.replace('./', imagery_dir), imagerys))
             h = hashlib.sha256(catalog.encode()).hexdigest()
-            print('imagery', imagery)
+            del imagery
+            print('imagery', imagerys)
             print('labels', labelss)
 
             make_scene = partial(hrefs_to_sceneconfig,
-                                 imagery=imagery,
                                  class_id_filter_dict=class_id_filter_dict)
-            for j, labels in enumerate(labelss):
+            for j, (labels, imagery) in enumerate(zip(labelss, imagerys)):
                 for i, crop in enumerate(train_crops):
-                    scene = make_scene(name=f'{h}-train-{i}-{j}', extent_crop=crop, labels=labels)
+                    scene = make_scene(name=f'{h}-train-{i}-{j}', extent_crop=crop, imagery=imagery, labels=labels)
                     train_scenes.append(scene)
                 for i, crop in enumerate(val_crops):
-                    scene = make_scene(name=f'{h}-val-{i}-{j}', extent_crop=crop, labels=labels)
+                    scene = make_scene(name=f'{h}-val-{i}-{j}', extent_crop=crop, imagery=imagery, labels=labels)
                     val_scenes.append(scene)
     return train_scenes, val_scenes
 
@@ -142,23 +167,36 @@ def get_scenes(
 def get_config(runner,
                root_uri,
                json,
+               dataset,
                catalog_dir='/vsizip//workdir', imagery_dir='/opt/data',
-               chip_sz=512):
+               chip_sz=512,
+               N=None):
 
     chip_sz = int(chip_sz)
 
-    class_config = ClassConfig(
-        names=['algal_bloom', 'normal_water',
-               'cloud', 'cloud_shadow', 'other'],
-        colors=['green', 'blue', 'white', 'gray', 'brown'])
-
-    class_id_filter_dict = {
-        0: ['==', 'default', 'Algal bloom'],
-        1: ['==', 'default', 'Non-algal-bloomed water'],
-        2: ['==', 'default', 'Cloud'],
-        3: ['==', 'default', 'Cloud shadow'],
-        4: ['==', 'default', 'Other'],
-    }
+    if dataset == 'cloud':
+        class_config = ClassConfig(
+            names=['algal_bloom', 'normal_water',
+                   'cloud', 'cloud_shadow', 'other'],
+            colors=['green', 'blue', 'white', 'gray', 'brown'])
+        class_id_filter_dict = {
+            0: ['==', 'default', 'Algal bloom'],
+            1: ['==', 'default', 'Non-algal-bloomed water'],
+            2: ['==', 'default', 'Cloud'],
+            3: ['==', 'default', 'Cloud shadow'],
+            0xff: ['==', 'default', 'Other '],
+        }
+    elif dataset == 'tree':
+        class_config = ClassConfig(
+            names=['green_stage', 'red_stage', 'other'],
+            colors=['green', 'brown', 'cyan'])
+        class_id_filter_dict = {
+            0: ['==', 'default', "Green stage conifer"],
+            1: ['==', 'default', "Red stage conifer"],
+            0xff: ['==', 'default', "Other"],
+        }
+    else:
+        raise Exception()
 
     train_crops = []
     val_crops = []
@@ -179,7 +217,7 @@ def get_config(runner,
                         class_id_filter_dict,
                         catalog_dir, imagery_dir,
                         train_crops=train_crops,
-                        val_crops=val_crops)
+                        val_crops=val_crops, N=N)
 
     train_scenes, validation_scenes = scenes
 
