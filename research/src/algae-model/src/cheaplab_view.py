@@ -16,6 +16,7 @@ from rasterio.windows import Window
 
 def cli_parser():
     parser = argparse.ArgumentParser()
+    parser.add_argument('--architecture', required=True, type=str, choices=['algae', 'algae-github', 'cloud'])
     parser.add_argument('--chunksize', required=False, type=int, default=256)
     parser.add_argument('--device', required=False, type=str, default='cuda', choices=['cuda', 'cpu'])
     parser.add_argument('--infile', required=True, type=str, nargs='+')
@@ -23,9 +24,6 @@ def cli_parser():
     parser.add_argument('--prescale', required=False, type=int, default=1)
     parser.add_argument('--pth-load', required=True, type=str)
     parser.add_argument('--window-size', required=False, type=int, default=32)
-
-    parser.add_argument('--classifier-from-github', required=False, dest='classifier_from_github', action='store_true')
-    parser.set_defaults(classifier_from_github=False)
 
     parser.add_argument('--ndwi-mask', required=False, dest='ndwi_mask', action='store_true')
     parser.set_defaults(ndwi_mask=False)
@@ -44,26 +42,36 @@ if __name__ == '__main__':
     n = args.window_size
 
     device = torch.device(args.device)
-    if args.classifier_from_github:
+    if args.architecture == 'algae-github':
         model = torch.hub.load('jamesmcclain/algae-classifier:df888fa9c383c976faecada5bef7844afe53cba7',
                                'make_algae_model',
                                in_channels=[4, 12, 224],
                                prescale=args.prescale,
                                backbone_str='resnet18',
                                pretrained=False)
-    else:
+    elif args.architecture == 'algae':
         from algae import make_algae_model
         model = make_algae_model(
             in_channels=[4, 12, 224],
             prescale=args.prescale,
             backbone_str='resnet18',
             pretrained=False)
-    state = torch.load(args.pth_load)
-    for key in list(state.keys()):
-        if 'cheaplab' not in key:
-            state.pop(key)
-    model.load_state_dict(state, strict=False)
-    model = model.cheaplab
+    elif args.architecture == 'cloud':
+        from cloud import make_cloud_model
+        model = make_cloud_model(in_channels=[224], preshrink=1)
+    else:
+        raise Exception()
+
+    if args.architecture == 'cloud':
+        model.load_state_dict(torch.load(args.pth_load), strict=True)
+    elif 'algae' in args.architectures:
+        state = torch.load(args.pth_load)
+        for key in list(state.keys()):
+            if 'cheaplab' not in key:
+                state.pop(key)
+        model.load_state_dict(state, strict=False)
+        model = model.cheaplab
+
     model.to(device)
     model.eval()
 
@@ -154,12 +162,16 @@ if __name__ == '__main__':
                 if windows.sum() == 0:
                     continue
                 windows = torch.from_numpy(windows).to(dtype=torch.float32, device=device)
-                prob = torch.sigmoid(model[str(bandcount)](windows))
+                if args.architecture == 'cloud':
+                    prob = torch.sigmoid(model(windows)[0])
+                elif 'algae' in args.architecture:
+                    prob = torch.sigmoid(model[str(bandcount)](windows))
 
                 for k, (i, j) in enumerate(batch):
                     data_out[:, j:(j + n), i:(i + n)] = prob[k]
 
             # Bring results back to CPU
+            data_out = data_out.softmax(dim=0)
             data_out = data_out.cpu().numpy()
 
         # Write results to file
