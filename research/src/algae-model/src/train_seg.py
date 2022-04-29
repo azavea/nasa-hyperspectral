@@ -242,6 +242,7 @@ if __name__ == '__main__':
                         cloud_pred = out[0][:, 1, :, :] - out[0][:, 0, :, :]
                         loss = obj_bce(cloud_pred, cloud_gt.to(device))
 
+                # XXX treating train and val sets the same
                 if not math.isnan(loss.item()):
                     losses.append(loss.item())
                     loss.backward()

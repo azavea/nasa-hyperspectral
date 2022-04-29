@@ -75,8 +75,7 @@ class CloudModel(torch.nn.Module):
             torch.unsqueeze(torch.amax(bgs, dim=1), dim=1)
         ]
         out = torch.cat(out, dim=1)
-        # goodness = entropy_function(out[:, 0, :, :]) + entropy_function(out[:, 1, :, :])
-        goodness = None
+        goodness = entropy_function(out[:,0,:,:] - out[:,1,:,:])
 
         return (out, goodness)
 
