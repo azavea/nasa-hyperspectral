@@ -74,7 +74,7 @@ variable "rds_allocated_storage" {
 }
 
 variable "rds_engine_version" {
-  default = 12.4
+  default = 12.8
   type    = number
 }
 
