@@ -9,3 +9,5 @@ h5py==3.3.0
 pyproj==3.1.0
 shapely==1.7.1
 rasterio==1.2.1
+pytorch-cpu=1.9.0
+torchvision-cpu=0.9.1
