@@ -226,7 +226,7 @@ def main():
         logger.info(f"Removing temp dir: {args.temp_dir}")
         shutil.rmtree(args.temp_dir, ignore_errors=True)
 
-    # This is here for debuggin purposes, do not delete.
+    # This is here for debugging purposes, do not delete.
     def delete_collection_item(collection_id, item_id):
         """ DELETE item pystac.Item from STAC API collection_id """
         url = "{}/collections/{}/items/{}".format(

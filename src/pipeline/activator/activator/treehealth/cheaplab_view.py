@@ -58,7 +58,10 @@ def compute(args):
         from cloud import make_cloud_model
         model = make_cloud_model(in_channels=[224], preshrink=1)
     elif args.architecture == 'tree':
-        from .tree import make_tree_model
+        try:
+            from .tree import make_tree_model
+        except:
+            from tree import make_tree_model
         model = make_tree_model(preshrink=1)
     else:
         raise Exception()
