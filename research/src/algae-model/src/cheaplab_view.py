@@ -31,11 +31,9 @@ def cli_parser():
     return parser
 
 
-if __name__ == '__main__':
-
+def compute(args):
     warnings.filterwarnings('ignore')
 
-    args = cli_parser().parse_args()
     logging.basicConfig(stream=sys.stderr, level=logging.INFO, format='%(asctime)-15s %(message)s')
     log = logging.getLogger()
 
@@ -186,3 +184,8 @@ if __name__ == '__main__':
         data_out[nodata_mask == 0] = magic_nodata
         with rio.open(outfile, 'w', **out_raw_profile) as outfile_raw_ds:
             outfile_raw_ds.write(data_out)
+
+
+if __name__ == '__main__':
+    args = cli_parser().parse_args()
+    compute(args)
