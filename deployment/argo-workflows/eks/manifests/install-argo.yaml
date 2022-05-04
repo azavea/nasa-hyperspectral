@@ -689,7 +689,6 @@ metadata:
   annotations:
     workflows.argoproj.io/description: |
       This is the minimum recommended permissions needed if you want to use the agent, e.g. for HTTP or plugin templates.
-
       If <= v3.2 you must replace `workflowtasksets/status` with `patch workflowtasksets`.
   name: agent
 rules:
@@ -1216,7 +1215,6 @@ metadata:
   annotations:
     workflows.argoproj.io/description: |
       This service is deprecated. It will be removed in v3.4.
-
       https://github.com/argoproj/argo-workflows/issues/8441
   labels:
     app: workflow-controller
