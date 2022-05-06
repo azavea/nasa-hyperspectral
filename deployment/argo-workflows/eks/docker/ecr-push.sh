@@ -32,8 +32,8 @@ amazon_ecr_login
 
 # Push the Aviris activator.
 docker push "${ECR_REGISTRY}/activator:${GIT_COMMIT}"
-# docker push "${ECR_REGISTRY}/activator:latest"
+docker push "${ECR_REGISTRY}/activator:latest"
 
 # Push the COG Clip module.
 docker push "${ECR_REGISTRY}/cog-clip:${GIT_COMMIT}"
-# docker push "${ECR_REGISTRY}/cog-clip:latest"
+docker push "${ECR_REGISTRY}/cog-clip:latest"
