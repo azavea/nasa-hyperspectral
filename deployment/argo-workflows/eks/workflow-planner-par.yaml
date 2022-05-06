@@ -66,15 +66,14 @@ spec:
               value: "{{tasks.planner.outputs.parameters.planner-output}}"
 
       - name: activators-seq
-        dependencies: [planner-output-transform]
+        dependencies: [planner-output-transform] # dependencies: [planner-output]
         template: activator
         arguments:
           parameters:
           - name: planner-output
-            # https://stackoverflow.com/questions/70987499/unable-to-use-jsonpath-function-for-output-parameter-in-argo-workflows 
-            # value: "{{=jsonpath(tasks.['planner'].outputs.parameters.planner-output, $.scene_ids)}}"
-            # value: {{=jsonpath(tasks.planner.outputs.parameters.planner-output, $.scene_ids)}}
-            # value: "{{tasks.planner.outputs.parameters.planner-output}}"
+            # Can't be used, see: https://github.com/argoproj/argo-workflows/issues/8432
+            # value: "{{=jsonpath(tasks.planner.outputs.parameters.planner-output, $.[0].scene_ids)}}"
+            # value: "{{=jsonpath(tasks.planner.outputs.parameters['planner-output'], .[0].scene_ids)}}"
             value: "{{tasks.planner-output-transform.outputs.parameters.planner-output-list}}"
 
   - name: activator
