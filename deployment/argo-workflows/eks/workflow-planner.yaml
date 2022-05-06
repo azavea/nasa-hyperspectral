@@ -56,13 +56,39 @@ spec:
             - name: planner-input
               value: "{{workflow.parameters.planner-input}}"
 
+      - name: planner-output-transform
+        dependencies: [planner]
+        template: planner-output-transform-template
+        arguments:
+          parameters:
+            - name: planner-output
+              value: "{{tasks.planner.outputs.parameters.planner-output}}"
+
       - name: activator
+        dependencies: [planner-output-transform]
         template: activator-template
         arguments:
           parameters:
           - name: activator-input
             value: "{{item}}"
-        withParam: "{{tasks.planner.outputs.parameters.planner-output}}"
+        withParam: "{{tasks.planner-output-transform.outputs.parameters.planner-output-list}}"
+
+      # as an input accepts a list of previous step outputs
+      - name: processor-step-aggregation
+        dependencies: [activator]
+        template: processor
+        arguments:
+          parameters:
+          - name: processor-input
+            value: "{{tasks.activator.outputs.parameters.activator-output}}"
+      # in case there is a need to work with every output individually and in parallel
+      # - name: processor-step-per-activation
+      #     template: processor
+      #     arguments:
+      #       parameters:
+      #       - name: processor-input
+      #         value: "{{item}}"
+      #     withParam: "{{tasks.activator.outputs.parameters.activator-output}}"
 
   - name: planner-template
     inputs:
@@ -116,3 +142,60 @@ spec:
       - name: activator-output
         valueFrom:
           path: /tmp/activator-output.json
+
+  # can be any ML / AOI clip / processing step
+  # at this point it is executed per each single activation output
+  - name: processor
+    inputs:
+      parameters:
+      - name: processor-input
+    script:
+      image: stedolan/jq
+      command: [bash]
+      source: |
+        # echo for logs
+        echo {{inputs.parameters.processor-input}}
+        # write out some output
+        echo {{inputs.parameters.processor-input}} > /tmp/activator-processor-output.json
+    outputs:
+      parameters:
+        - name: activator-processor-output
+          valueFrom:
+            path: /tmp/activator-processor-output.json
+
+  # manual extra JSON transformation step
+  - name: planner-output-transform-template
+    inputs:
+      parameters:
+      - name: planner-output
+    script:
+      # without setting arg into an env, argo trims JSON quotes in the source section
+      env:
+        - name: OUTPUT
+          value: "{{inputs.parameters.planner-output}}"
+      image: stedolan/jq
+      command: [bash]
+      source: |
+        # !IMPORTANT: see the comments below to simplify testing
+        # mock the output, to skip activation step and test the follow up steps
+        # echo "[\"aviris_f100510t01p00r09_sc01\", \"aviris_f100513t01p00r07_sc01\"]" > /tmp/planner-output-list.json
+        echo "$OUTPUT" | jq .scene_ids > /tmp/planner-output-list.json
+    outputs:
+      parameters:
+        - name: planner-output-list
+          valueFrom:
+            path: /tmp/planner-output-list.json
+
+  # Can't be used, see: https://github.com/argoproj/argo-workflows/issues/8432
+  # - name: planner-output-transform-template
+  #   inputs:
+  #     parameters:
+  #     - name: planner-output
+  #   data:
+  #     transformation:
+  #       - expression: "{{=jsonpath(inputs.parameters.planner-output), '$.[0].scene_ids')}}"
+  #   outputs:
+  #     parameters:
+  #       - name: planner-output-list
+  #         valueFrom:
+  #           path: /tmp/planner-output-list.json
