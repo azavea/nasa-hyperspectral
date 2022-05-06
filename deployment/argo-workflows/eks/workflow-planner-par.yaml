@@ -110,7 +110,7 @@ spec:
       parameters:
       - name: planner-input
     container:
-      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:4d1176b
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
       imagePullPolicy: Always # IfNotPresent
       command: [python, -m, activator.planner.main, --pipeline]
       args: ["{{inputs.parameters.planner-input}}"]
@@ -133,7 +133,7 @@ spec:
       parameters:
       - name: activator-input
     container:
-      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:4d1176b
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
       imagePullPolicy: Always # IfNotPresent
       env:
       - name: STAC_API_URI
