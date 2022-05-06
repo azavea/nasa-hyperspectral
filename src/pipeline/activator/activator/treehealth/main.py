@@ -32,7 +32,7 @@ logging.basicConfig(
     format='[%(relativeCreated)d|%(levelname)s|%(name)s|%(lineno)d] %(message)s', level=LOG_LEVEL)
 logger = logging.getLogger(__name__)
 
-AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-l1-cogs"
+AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-l2-cogs"
 
 COG_COLLECTION_EXTENSIONS = [
     'https://stac-extensions.github.io/eo/v1.0.0/schema.json',
