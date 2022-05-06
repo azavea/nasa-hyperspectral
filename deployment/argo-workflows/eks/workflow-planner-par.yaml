@@ -57,8 +57,16 @@ spec:
               value: "{{item}}"
         withParam: "{{workflow.parameters.planner-input}}"
 
-      - name: activators-seq
+      - name: planner-output-transform
         dependencies: [planner]
+        template: planner-output-transform-template
+        arguments:
+          parameters:
+            - name: planner-output
+              value: "{{tasks.planner.outputs.parameters.planner-output}}"
+
+      - name: activators-seq
+        dependencies: [planner-output-transform]
         template: activator
         arguments:
           parameters:
@@ -66,7 +74,8 @@ spec:
             # https://stackoverflow.com/questions/70987499/unable-to-use-jsonpath-function-for-output-parameter-in-argo-workflows 
             # value: "{{=jsonpath(tasks.['planner'].outputs.parameters.planner-output, $.scene_ids)}}"
             # value: {{=jsonpath(tasks.planner.outputs.parameters.planner-output, $.scene_ids)}}
-            value: "{{tasks.planner.outputs.parameters.planner-output}}"
+            # value: "{{tasks.planner.outputs.parameters.planner-output}}"
+            value: "{{tasks.planner-output-transform.outputs.parameters.planner-output-list}}"
 
   - name: activator
     inputs:
@@ -79,14 +88,14 @@ spec:
           parameters:
           - name: activator-input
             value: "{{item}}"
-        withParam: "{{=jsonpath(inputs.parameters.planner-output, $.scene_ids)}}"
+        withParam: "{{inputs.parameters.planner-output}}"
 
   - name: planner-template
     inputs:
       parameters:
       - name: planner-input
     container:
-      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:4d1176b
       imagePullPolicy: Always # IfNotPresent
       command: [python, -m, activator.planner.main, --pipeline]
       args: ["{{inputs.parameters.planner-input}}"]
@@ -109,7 +118,7 @@ spec:
       parameters:
       - name: activator-input
     container:
-      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:4d1176b
       imagePullPolicy: Always # IfNotPresent
       env:
       - name: STAC_API_URI
@@ -133,3 +142,33 @@ spec:
       - name: activator-output
         valueFrom:
           path: /tmp/activator-output.json
+
+  # manual extra JSON transformation step
+  - name: planner-output-transform-template
+    inputs:
+      parameters:
+      - name: planner-output
+    script:
+      image: stedolan/jq
+      command: [bash]
+      source: |
+        echo {{inputs.parameters.planner-output}} | jq .[0].scene_ids > /tmp/planner-output-list.json
+    outputs:
+      parameters:
+        - name: planner-output-list
+          valueFrom:
+            path: /tmp/planner-output-list.json
+
+  # Can't be used, see: https://github.com/argoproj/argo-workflows/issues/8432
+  # - name: planner-output-transform-template
+  #   inputs:
+  #     parameters:
+  #     - name: planner-output
+  #   data:
+  #     transformation:
+  #       - expression: "{{=jsonpath(inputs.parameters.planner-output), '$.[0].scene_ids')}}"
+  #   outputs:
+  #     parameters:
+  #       - name: planner-output-list
+  #         valueFrom:
+  #           path: /tmp/planner-output-list.json
