@@ -63,6 +63,9 @@ spec:
         arguments:
           parameters:
           - name: planner-output
+            # https://stackoverflow.com/questions/70987499/unable-to-use-jsonpath-function-for-output-parameter-in-argo-workflows 
+            # value: "{{=jsonpath(tasks.['planner'].outputs.parameters.planner-output, $.scene_ids)}}"
+            # value: {{=jsonpath(tasks.planner.outputs.parameters.planner-output, $.scene_ids)}}
             value: "{{tasks.planner.outputs.parameters.planner-output}}"
 
   - name: activator
@@ -76,7 +79,7 @@ spec:
           parameters:
           - name: activator-input
             value: "{{item}}"
-        withParam: "{{inputs.parameters.planner-output}}"
+        withParam: "{{=jsonpath(inputs.parameters.planner-output, $.scene_ids)}}"
 
   - name: planner-template
     inputs:
