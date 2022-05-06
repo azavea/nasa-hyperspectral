@@ -223,8 +223,9 @@ def main():
     )
 
     if not args.keep_temp_dir:
-        logger.info(f"Removing temp dir: {args.temp_dir}")
-        shutil.rmtree(args.temp_dir, ignore_errors=True)
+        if not args.temp_dir == '/tmp' and not args.temp_dir == '/tmp/':
+            logger.info(f"Removing temp dir: {args.temp_dir}")
+            shutil.rmtree(args.temp_dir, ignore_errors=True)
 
     # This is here for debugging purposes, do not delete.
     def delete_collection_item(collection_id, item_id):
