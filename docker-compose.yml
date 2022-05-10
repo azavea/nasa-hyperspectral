@@ -154,6 +154,21 @@ services:
     volumes:
       - $HOME/.aws:/root/.aws:ro
 
+  planner:
+    image: activator
+    entrypoint: [python, -m, activator.planner.main]
+    build:
+      context: ./src/pipeline/activator/
+    environment:
+      - STAC_API_URI=${STAC_API_URI:-http://franklin:9090}
+      - AWS_PROFILE=${AWS_PROFILE:-nasa}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      - ./src/pipeline/activator:/usr/local/src
+      - ./pipeline-data:/data
+      - $HOME/.aws:/root/.aws:ro
+      - conda-pkg-cache:/opt/conda/pkgs
+
   shellcheck:
     image: koalaman/shellcheck:stable
     volumes:

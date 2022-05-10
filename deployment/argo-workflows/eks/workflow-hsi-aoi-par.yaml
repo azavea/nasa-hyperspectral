@@ -1,0 +1,214 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: workflow-
+spec:
+  entrypoint: workflow-template
+  parallelism: 2
+  arguments:
+    parameters:
+    - name: planner-input
+      value: |
+        [{
+          "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  -114.887217,
+                  33.498289
+                ],
+                [
+                  -114.819923,
+                  33.66972
+                ],
+                [
+                  -116.769931,
+                  34.187606
+                ],
+                [
+                  -116.833779,
+                  34.015078
+                ],
+                [
+                  -114.887217,
+                  33.498289
+                ]
+              ]
+            ]
+          },
+          "datetime": "1993-10-12T00:00:00Z/2021-10-14T00:00:00Z",
+          "wavelengths": {
+            "min": 0.36,
+            "max": 0.46
+          },
+          "collection": "aviris-classic", 
+          "stacApiUri": "https://franklin.nasa-hsi.azavea.com"
+        }]
+  templates:
+  - name: workflow-template
+    dag:
+      tasks:
+      - name: planner
+        template: planner-template
+        arguments:
+          parameters:
+            - name: planner-input
+              value: "{{item}}"
+        withParam: "{{workflow.parameters.planner-input}}"
+
+      - name: planner-output-transform
+        dependencies: [planner]
+        template: planner-output-transform-template
+        arguments:
+          parameters:
+            - name: planner-output
+              value: "{{tasks.planner.outputs.parameters.planner-output}}"
+
+      - name: activators-seq
+        dependencies: [planner-output-transform] # dependencies: [planner-output]
+        template: activator
+        arguments:
+          parameters:
+          - name: planner-output
+            # Can't be used, see: https://github.com/argoproj/argo-workflows/issues/8432
+            # value: "{{=jsonpath(tasks.planner.outputs.parameters.planner-output, $.[0].scene_ids)}}"
+            # value: "{{=jsonpath(tasks.planner.outputs.parameters['planner-output'], .[0].scene_ids)}}"
+            value: "{{tasks.planner-output-transform.outputs.parameters.planner-output-list}}"
+
+  - name: activator
+    inputs:
+      parameters:
+      - name: planner-output
+    steps:
+    - - name: activator-step
+        template: activator-template
+        arguments:
+          parameters:
+          - name: activator-input
+            value: "{{item}}"
+        withParam: "{{inputs.parameters.planner-output}}"
+    # as an input accepts a list of previous step outputs
+    - - name: processor-step-aggregation
+        template: processor
+        arguments:
+          parameters:
+          - name: processor-input
+            value: "{{steps.activator-step.outputs.parameters.activator-output}}"
+    # in case there is a need to work with every output individually and in parallel
+    # - - name: processor-step-per-activation
+    #     template: processor
+    #     arguments:
+    #       parameters:
+    #       - name: processor-input
+    #         value: "{{item}}"
+    #     withParam: "{{steps.activator-step.outputs.parameters.activator-output}}"
+
+
+  - name: planner-template
+    inputs:
+      parameters:
+      - name: planner-input
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
+      imagePullPolicy: Always # IfNotPresent
+      command: [python, -m, activator.planner.main, --pipeline]
+      args: ["{{inputs.parameters.planner-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/
+      resources:
+        requests:
+          cpu: 500m
+          memory: 512M 
+        limits:
+          cpu: 500m
+          memory: 512M
+    outputs:
+      parameters:
+      - name: planner-output
+        valueFrom:
+          path: /tmp/planner-output.json
+
+  - name: activator-template
+    inputs:
+      parameters:
+      - name: activator-input
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
+      imagePullPolicy: Always # IfNotPresent
+      env:
+      - name: STAC_API_URI
+        value: "https://franklin.nasa-hsi.azavea.com"
+      - name: GDAL_CACHEMAX
+        value: "30%"
+      - name: GDAL_OUTPUT_FORMAT
+        value: "GTiff"
+      command: [python, -m, activator.aviris.main, --l1, --aviris-stac-id]
+      args: ["{{inputs.parameters.activator-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/
+      resources:
+        requests:
+          cpu: 3000m
+          memory: 8G 
+        limits:
+          cpu: 3200m
+          memory: 12G 
+    outputs:
+      parameters:
+      - name: activator-output
+        valueFrom:
+          path: /tmp/activator-output.json
+
+  # can be any ML / AOI clip / processing step
+  # at this point it is executed per each single activation output
+  - name: processor
+    inputs:
+      parameters:
+      - name: processor-input
+    script:
+      image: stedolan/jq
+      command: [bash]
+      source: |
+        # echo for logs
+        echo {{inputs.parameters.processor-input}}
+        # write out some output
+        echo {{inputs.parameters.processor-input}} > /tmp/activator-processor-output.json
+    outputs:
+      parameters:
+        - name: activator-processor-output
+          valueFrom:
+            path: /tmp/activator-processor-output.json
+
+  # manual extra JSON transformation step
+  - name: planner-output-transform-template
+    inputs:
+      parameters:
+      - name: planner-output
+    script:
+      image: stedolan/jq
+      command: [bash]
+      source: |
+        # !IMPORTANT: see the comments below to simplify testing
+        # mock the output, to skip activation step and test the follow up steps
+        # echo "[\"aviris_f100510t01p00r09_sc01\", \"aviris_f100513t01p00r07_sc01\"]" > /tmp/planner-output-list.json
+        # flatten identifiers from the previous step
+        # for the input list of length one can be done via .[0].scene_ids
+        echo {{inputs.parameters.planner-output}} | jq '.[].scene_ids' | jq -s 'add' > /tmp/planner-output-list.json
+    outputs:
+      parameters:
+        - name: planner-output-list
+          valueFrom:
+            path: /tmp/planner-output-list.json
+
+  # Can't be used, see: https://github.com/argoproj/argo-workflows/issues/8432
+  # - name: planner-output-transform-template
+  #   inputs:
+  #     parameters:
+  #     - name: planner-output
+  #   data:
+  #     transformation:
+  #       - expression: "{{=jsonpath(inputs.parameters.planner-output), '$.[0].scene_ids')}}"
+  #   outputs:
+  #     parameters:
+  #       - name: planner-output-list
+  #         valueFrom:
+  #           path: /tmp/planner-output-list.json
