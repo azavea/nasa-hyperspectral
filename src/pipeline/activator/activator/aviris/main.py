@@ -356,13 +356,13 @@ def main():
         default=os.environ.get("S3_PREFIX"),
     )
     parser.add_argument(
-        "--temp-dir", 
-        type=str, 
+        "--temp-dir",
+        type=str,
         default=os.environ.get("TEMP_DIR", None)
     )
     parser.add_argument(
-        "--output-format", 
-        type=str, 
+        "--output-format",
+        type=str,
         default=os.environ.get("GDAL_OUTPUT_FORMAT", "COG")
     )
     parser.add_argument(
@@ -503,7 +503,7 @@ def main():
             # Convert HDR data to pixel interleaved COG with GDAL
             # NUM_THREADS only speeds up compression and overview generation
             # gdal.Warp is used to fix rasters rotation
-            # NOTE: 
+            # NOTE:
             # We can't directly write TIFFs on S3 as the result of the gdal.Warp operation
             # see: https://github.com/OSGeo/gdal/issues/1189
             warp_opts = gdal.WarpOptions(

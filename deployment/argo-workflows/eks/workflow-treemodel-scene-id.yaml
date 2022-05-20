@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: workflow-
+spec:
+  entrypoint: workflow-template
+  parallelism: 30
+  arguments:
+    parameters:
+    - name: activator-input
+      value: |
+        ["f140603t01p00r18_sc01"]
+
+  templates:
+  - name: workflow-template
+    dag:
+      tasks:
+      - name: activator
+        template: activator-template
+        arguments:
+          parameters:
+          - name: activator-input
+            value: "{{item}}"
+        withParam: "{{workflow.parameters.activator-input}}"
+
+  - name: activator-template
+    inputs:
+      parameters:
+      - name: activator-input
+    retryStrategy:
+      limit: "10"
+      expression: "asInt(lastRetry.exitCode) == -42"
+      # https://argoproj.github.io/argo-workflows/fields/#backoff
+      backoff:
+        duration: "10m" # Default unit is seconds. Could also be a Duration, e.g.: "2m", "6h", "1d"
+        factor: "2"
+        maxDuration: "1d"
+    container:
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
+      imagePullPolicy: Always # IfNotPresent
+      env:
+      - name: STAC_API_URI
+        value: "https://franklin.nasa-hsi.azavea.com"
+      - name: GDAL_OUTPUT_FORMAT
+        value: "GTiff"
+      - name: AWS_REQUEST_PAYER
+        value: "requester"
+      - name: GDAL_DISABLE_READDIR_ON_OPEN
+        value: "YES"
+      command: [python, -m, activator.treehealth.main, --aviris-stac-id]
+      args: ["{{inputs.parameters.activator-input}}"]
+      # https://argoproj.github.io/argo-workflows/resource-duration/
+      resources:
+        requests:
+          cpu: 1200m
+          memory: 8G
+        limits:
+          cpu: 1200m
+          memory: 8G
+    outputs:
+      parameters:
+      - name: activator-output
+        valueFrom:
+          path: /tmp/activator-output.json
