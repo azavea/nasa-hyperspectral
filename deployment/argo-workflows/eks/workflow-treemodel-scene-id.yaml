@@ -36,7 +36,7 @@ spec:
         factor: "2"
         maxDuration: "1d"
     container:
-      image: quay.io/jmcclain/activator:latest
+      image: 513167130603.dkr.ecr.us-east-1.amazonaws.com/activator:latest
       imagePullPolicy: Always # IfNotPresent
       env:
       - name: STAC_API_URI
