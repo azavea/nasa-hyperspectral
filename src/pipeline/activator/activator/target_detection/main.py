@@ -3,32 +3,15 @@ import json
 import logging
 import os
 import shutil
-import tarfile
-import urllib.request
 from datetime import datetime, timezone
-from math import floor
-from pathlib import Path
-from random import randint
-from tempfile import mkdtemp
-from time import sleep
-from urllib.parse import urlparse
 
-import boto3
 import pystac
 import requests
-import torch
-from activator.utils.progress import (
-    DownloadProgressBar,
-    ProgressPercentage,
-    timing,
-    warp_callback,
-)
-from activator.utils.stac_client import STACClient
-from boto3.s3.transfer import TransferConfig
-from osgeo import gdal, osr
 
-from .cheaplab_view import cli_parser as inference_parser
-from .cheaplab_view import compute
+from activator.utils.stac_client import STACClient
+from .target import cli_parser as inference_parser
+from .target import compute
+
 
 # set a configurable logging level for the entire app
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
@@ -38,7 +21,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-l2-cogs"
+AVIRIS_ARCHIVE_COLLECTION_ID = "aviris-l1-cogs"
 
 COG_COLLECTION_EXTENSIONS = [
     "https://stac-extensions.github.io/eo/v1.0.0/schema.json",
@@ -50,20 +33,20 @@ COG_ITEM_EXTENSIONS = COG_COLLECTION_EXTENSIONS + [
 ]
 
 
-def collection_id_to_collection_id(aviris_collection_id):
+def collection_id_to_collection_id(aviris_collection_id, target):
+    assert(aviris_collection_id in {'aviris-l1-cogs', 'aviris-l2-cogs'})
+    assert(target in {'oil', 'plastic'})
     if aviris_collection_id == "aviris-l1-cogs":
-        collection_id = "aviris-treehealth-l1-cogs"
-        description = "Tree Health Predictions (L1)"
+        collection_id = f"aviris-{target}-l1-cogs"
+        description = f"{target.capitalize()} Predictions (L1)"
     elif aviris_collection_id == "aviris-l2-cogs":
-        collection_id = "aviris-treehealth-l2-cogs"
-        description = "Tree Health Preditions (L2)"
-    else:
-        raise Exception(f"Unrecognized collection id: {aviris_collection_id}")
+        collection_id = f"aviris-{target}-l2-cogs"
+        description = f"{target.capitalize()} Preditions (L2)"
     return collection_id, description
 
 
-def get_aviris_cog_collection(aviris_collection_id):
-    collection_id, description = collection_id_to_collection_id(aviris_collection_id)
+def get_aviris_cog_collection(aviris_collection_id, target):
+    collection_id, description = collection_id_to_collection_id(aviris_collection_id, target)
     collection = pystac.Collection(
         collection_id,
         description,
@@ -83,11 +66,8 @@ def get_aviris_cog_collection(aviris_collection_id):
     collection.links = []
     collection.properties = {}
     collection.properties["eo:bands"] = [
-        {"B1": "Red-Stage Conifer"},
-        {"B2": "Green-Stage Conifer"},
-        {"B3": "Non-Conifer"},
+        {"B1": f"Relative {target.capitalize()}"},
     ]
-
     return collection
 
 
@@ -128,7 +108,7 @@ def cli_parser():
     parser.add_argument(
         "--aviris-stac-id",
         type=str,
-        default="f140603t01p00r18_sc01",
+        default="f100517t01p00r06_sc01",
         help="STAC Item ID to process from the STAC collection",
     )
     parser.add_argument("--pipeline", type=str, help="JSON with instructions")
@@ -139,7 +119,7 @@ def cli_parser():
         "--s3-bucket", type=str, default=os.environ.get("S3_BUCKET", "aviris-data")
     )
     parser.add_argument(
-        "--s3-prefix", type=str, default=os.environ.get("S3_PREFIX", "tree-health")
+        "--s3-prefix", type=str, default=os.environ.get("S3_PREFIX", "target-detection")
     )
     parser.add_argument(
         "--stac-api-uri",
@@ -164,11 +144,21 @@ def cli_parser():
         action="store_true",
         help="Skip downloading and inference (useful for debugging).",
     )
+    parser.add_argument(
+        "--skip-registration",
+        action="store_true",
+        help="Skip registration of new item in Franklin (useful for debugging).",
+    )
+    parser.add_argument(
+        "--target", type=str, required=True, choices=['oil', 'plastic'],
+    )
+
     return parser
 
 
 def main():
 
+    # PYTHONPATH="." python3 -m activator.target_detection.main --stac-api-uri https://franklin.nasa-hsi.azavea.com --skip-compute --skip-registration --target oil
     try:
         warpMemoryLimit = int(os.environ.get("GDAL_WARP_MEMORY_LIMIT", None))
     except TypeError:
@@ -178,10 +168,10 @@ def main():
     args = pipeline_arguments(args)
 
     if not args.aviris_stac_id.startswith(args.aviris_collection_id):
-        args.aviris_stac_id = args.aviris_collection_id + "_" + args.aviris_stac_id
+        args.aviris_stac_id = f"{args.aviris_collection_id}_{args.aviris_stac_id}"
 
     stac_client = STACClient(args.stac_api_uri)
-    cog_collection = get_aviris_cog_collection(args.aviris_collection_id)
+    cog_collection = get_aviris_cog_collection(args.aviris_collection_id, args.target)
 
     # GET STAC Item from AVIRIS Catalog
     item = stac_client.get_collection_item(
@@ -232,7 +222,7 @@ def main():
             pass
 
     in_cid = args.aviris_collection_id
-    out_cid, _ = collection_id_to_collection_id(in_cid)
+    out_cid, _ = collection_id_to_collection_id(in_cid, args.target)
     s3_in = asset.href
     s3_in_splits = s3_in.split("/")[2:]
     s3_in_splits[1] = out_cid
@@ -244,8 +234,7 @@ def main():
     if not args.skip_compute:
         if not os.path.exists(in_filename):
             os.system(f"aws s3 cp {s3_in} {in_filename}")
-        os.system(f"gdal_edit.py -a_nodata -50 {in_filename}")
-        inference_args = f"--infile={in_filename} --outfile={out_filename} --device cpu --architecture tree --pth-load /usr/local/src/activator/treehealth/model.pth"
+        inference_args = f"--infile={in_filename} --outfile={out_filename} --npz-load /usr/local/src/activator/target_detection/{args.target}.npz"
         args2 = inference_parser().parse_args(inference_args.split())
         compute(args2)
         os.system(f"gdaladdo {out_filename}")
@@ -257,6 +246,7 @@ def main():
         pystac.Asset(s3_out, media_type=pystac.MediaType.COG, roles=["data"]),
     )
 
+    # Delete the temporary directory if not told otherwise
     if not args.keep_temp_dir:
         if not args.temp_dir == "/tmp" and not args.temp_dir == "/tmp/":
             logger.info(f"Removing temp dir: {args.temp_dir}")
@@ -275,13 +265,14 @@ def main():
 
     # Add COG Item to AVIRIS L2 STAC Collection
     logger.info(f"POST Item {cog_item.id} to {args.stac_api_uri}")
-    item_data = stac_client.post_collection_item(cog_collection.id, cog_item)
-    if item_data.get("id", None):
-        logger.info(f"Success: {item_data['id']}")
-        activation_output(item_data["id"], cog_collection.id)
-    else:
-        logger.error(f"Failure: {item_data}")
-        return -1
+    if not args.skip_registration:
+        item_data = stac_client.post_collection_item(cog_collection.id, cog_item)
+        if item_data.get("id", None):
+            logger.info(f"Success: {item_data['id']}")
+            activation_output(item_data["id"], cog_collection.id)
+        else:
+            logger.error(f"Failure: {item_data}")
+            return -1
 
 
 if __name__ == "__main__":

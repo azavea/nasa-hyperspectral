@@ -1,4 +1,4 @@
-FROM quay.io/jmcclain/raster-vision-pytorch:Mon_Feb_8_05_00_26_UTC_2021
+FROM quay.io/jmcclain/raster-vision-pytorch:Sun_May_1_05_01_12_UTC_2022
 
 RUN conda install -y notebook
 
